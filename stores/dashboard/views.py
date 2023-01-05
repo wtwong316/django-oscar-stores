@@ -89,7 +89,7 @@ class StoreCreateView(StoreEditMixin, CreateWithInlinesView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['title'] = _("Create new store")
+        ctx['title'] = _("Create new SDF")
         return ctx
 
     def forms_invalid(self, form, inlines):
@@ -157,7 +157,7 @@ class StoreGroupCreateView(generic.CreateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['title'] = _("Create new store group")
+        ctx['title'] = _("Create new SDF group")
         return ctx
 
     def form_valid(self, form):

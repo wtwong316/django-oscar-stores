@@ -18,8 +18,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'oscar_stores',
-        'USER': 'sample_role',
-        'PASSWORD': 'sample_password',
+        'USER': 'wai_takwong',
+        'PASSWORD': 'wai_takwong',
         'HOST': '127.0.0.1',
         'PORT': 5432,
     }
@@ -65,8 +65,9 @@ STATIC_ROOT = location('public')
 SECRET_KEY = 'sba9ti)x&amp;^fkod-g91@^_yi6y_#&amp;3mo#m5@n)i&amp;k+0h=+zsfkb'
 
 MIDDLEWARE = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -144,7 +145,7 @@ OSCAR_DASHBOARD_NAVIGATION.append(
 
 OSCAR_ALLOW_ANON_CHECKOUT = True
 
-OSCAR_SHOP_TAGLINE = "Stores extension"
+OSCAR_SHOP_TAGLINE = "CIHE DSRC SDU Agent"
 
 GEOIP_ENABLED = True
 GEOIP_PATH = os.path.join(os.path.dirname(__file__), '../geoip')
@@ -206,3 +207,10 @@ try:
     from .settings_local import *   # noqa F403
 except ImportError:
     pass
+
+GOOGLE_MAPS_API_KEY = 'AIzaSyB1Y2sRZh6K4PgxqEnUD5Bt-TtOc5x5aA0'
+from django.contrib.gis.measure import D
+# Maximal distance of 150 miles
+STORES_MAX_SEARCH_DISTANCE = D(mi=150)
+# Maximal distance of 150 kilometers
+STORES_MAX_SEARCH_DISTANCE = D(km=150)

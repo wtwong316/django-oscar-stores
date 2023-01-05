@@ -17,3 +17,5 @@ sandbox/public/media/uploads
 sandbox/public/media/cache
 
 settings_local.py
+venv/
+/venv/
