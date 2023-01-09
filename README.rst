@@ -1,45 +1,45 @@
 ============
-Oscar stores
+Oscar sdfs
 ============
 
-.. image:: https://github.com/django-oscar/django-oscar-stores/workflows/Tests/badge.svg
+.. image:: https://github.com/django-oscar/django-oscar-sdfs/workflows/Tests/badge.svg
 
-.. image:: http://codecov.io/github/django-oscar/django-oscar-stores/coverage.svg?branch=master
+.. image:: http://codecov.io/github/django-oscar/django-oscar-sdfs/coverage.svg?branch=master
     :alt: Coverage
-    :target: http://codecov.io/github/django-oscar/django-oscar-stores?branch=master
+    :target: http://codecov.io/github/django-oscar/django-oscar-sdfs?branch=master
 
-This is an extension for django-oscar_ that adds support for stores.  It
+This is an extension for django-oscar_ that adds support for sdfs.  It
 provides:
 
 .. _django-oscar: https://github.com/django-oscar/django-oscar
 
-* A store locator page using Google maps for geocoding.  It also supports using
-  the browser's location to show the nearest stores.
-* Store detail pages including opening hours
-* Store groups
-* A dashboard for managing stores
+* A sdf locator page using Google maps for geocoding.  It also supports using
+  the browser's location to show the nearest sdfs.
+* Sdf detail pages including opening hours
+* Sdf groups
+* A dashboard for managing sdfs
 
 It's highly extensible and can be used as a foundation for building sophisticated
-stores functionality within Oscar sites.
+sdfs functionality within Oscar sites.
 
 Screenshots
 -----------
 
 Customer-facing pages:
 
-.. image:: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/locator.thumb.png
-    :target: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/locator.png
+.. image:: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/locator.thumb.png
+    :target: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/locator.png
 
-.. image:: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/detail.thumb.png
-    :target: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/detail.png
+.. image:: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/detail.thumb.png
+    :target: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/detail.png
 
 Dashboard pages:
 
-.. image:: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/dashboard-list.thumb.png
-    :target: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/dashboard-list.png
+.. image:: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/dashboard-list.thumb.png
+    :target: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/dashboard-list.png
 
-.. image:: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/dashboard-detail.thumb.png
-    :target: https://github.com/django-oscar/django-oscar-stores/raw/master/docs/images/dashboard-detail.png
+.. image:: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/dashboard-detail.thumb.png
+    :target: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/dashboard-detail.png
 
 Dependencies
 ------------
@@ -86,9 +86,9 @@ Install package:
 
 .. code:: bash
 
-    $ pip install django-oscar-stores
+    $ pip install django-oscar-sdfs
 
-Then add ``stores`` and ``stores.dashboard`` to ``INSTALLED_APPS``.
+Then add ``sdfs`` and ``sdfs.dashboard`` to ``INSTALLED_APPS``.
 
 Now update your root ``urls.py``:
 
@@ -100,11 +100,11 @@ Now update your root ``urls.py``:
         # basic configuration for Oscar
         path('', include(apps.get_app_config('oscar').urls[0])),
 
-        # adds URLs for the dashboard store manager
-        path('dashboard/stores/', apps.get_app_config('stores_dashboard').urls),
+        # adds URLs for the dashboard sdf manager
+        path('dashboard/sdfs/', apps.get_app_config('sdfs_dashboard').urls),
 
         # adds URLs for overview and detail pages
-        path('stores/', apps.get_app_config('stores').urls),
+        path('sdfs/', apps.get_app_config('sdfs').urls),
 
         # adds internationalization URLs
         path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
@@ -121,7 +121,7 @@ Settings
 
 * ``STORES_GEODETIC_SRID`` (default: ``4326``).
 
-* ``STORES_MAX_SEARCH_DISTANCE`` (default: None). This filters stores
+* ``STORES_MAX_SEARCH_DISTANCE`` (default: None). This filters sdfs
   in queries by distance. Units can be set using distance object:
 
 .. code:: python
@@ -136,7 +136,7 @@ Contributing
 ------------
 
 There is sandbox site within the repo which is a sample Oscar project that uses
-the stores extension.  Set this up with:
+the sdfs extension.  Set this up with:
 
 .. code:: bash
 
@@ -157,6 +157,6 @@ Run tests with:
 License
 -------
 
-``django-oscar-stores`` is released under the permissive `New BSD license`_.
+``django-oscar-sdfs`` is released under the permissive `New BSD license`_.
 
-.. _`New BSD license`: http://github.com/django-oscar/django-oscar-stores/blob/master/LICENSE
+.. _`New BSD license`: http://github.com/django-oscar/django-oscar-sdfs/blob/master/LICENSE

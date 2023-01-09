@@ -1,27 +1,27 @@
 from django.template import Context, Template
 from django.test import TestCase
-from oscar.test.factories import ProductFactory
+from oscar.test.factories import SduFactory
 
-from tests.factories import StoreFactory, StoreStockFactory
+from tests.factories import SdfFactory, SdfStockFactory
 
 
-class StoreStockTest(TestCase):
+class SdfStockTest(TestCase):
 
     def setUp(self):
-        self.product = ProductFactory()
-        self.store1_location = '{"type": "Point", "coordinates": [87.39,12.02]}'
-        self.store2_location = '{"type": "Point", "coordinates": [88.39,11.02]}'
-        self.store1 = StoreFactory(
-            is_pickup_store=True, location=self.store1_location)
-        self.store2 = StoreFactory(
-            is_pickup_store=True, location=self.store2_location)
+        self.sdu = SduFactory()
+        self.sdf1_location = '{"type": "Point", "coordinates": [87.39,12.02]}'
+        self.sdf2_location = '{"type": "Point", "coordinates": [88.39,11.02]}'
+        self.sdf1 = SdfFactory(
+            is_pickup_sdf=True, location=self.sdf1_location)
+        self.sdf2 = SdfFactory(
+            is_pickup_sdf=True, location=self.sdf2_location)
 
-        self.store_stock1 = StoreStockFactory(
-            store=self.store1, product=self.product)
-        self.store_stock1 = StoreStockFactory(
-            store=self.store2, product=self.product)
+        self.sdf_stock1 = SdfStockFactory(
+            sdf=self.sdf1, sdu=self.sdu)
+        self.sdf_stock1 = SdfStockFactory(
+            sdf=self.sdf2, sdu=self.sdu)
 
-    def test_store_stock_loads(self):
+    def test_sdf_stock_loads(self):
         Template(
-            '{% load store_stock %}'
+            '{% load sdf_stock %}'
         ).render(Context())

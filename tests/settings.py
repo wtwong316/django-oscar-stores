@@ -11,7 +11,7 @@ SECRET_KEY = 'not a secret'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'oscar_stores',
+        'NAME': 'oscar_sdfs',
         'USER': 'wai_takwong',
         'PASSWORD': 'wai_takwong',
         'HOST': '127.0.0.1',
@@ -66,8 +66,8 @@ ROOT_URLCONF = 'sandbox.sandbox.urls'
 INSTALLED_APPS = [
     'django.contrib.gis',
     'sorl.thumbnail',
-    'stores',
-    'stores.dashboard',
+    'sdfs',
+    'sdfs.dashboard',
 ] + oscar.INSTALLED_APPS
 
 AUTHENTICATION_BACKENDS = (

@@ -114,10 +114,9 @@ TEMPLATES = [
 INSTALLED_APPS = [
     'django.contrib.gis',
     'sorl.thumbnail',
-    'stores',
-    'stores.dashboard',
-] + oscar.INSTALLED_APPS
-
+    'sdfs',
+    'sdfs.dashboard',
+    'django_countries'] + oscar.INSTALLED_APPS
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',
@@ -129,16 +128,16 @@ from oscar.defaults import * # noqa E402
 
 OSCAR_DASHBOARD_NAVIGATION.append(
     {
-        'label': _('Stores'),
-        'icon': 'fas fa-shopping-cart',
+        'label': _('Sdfs'),
+        'icon': 'fas fa-building',
         'children': [
             {
-                'label': _('Stores'),
-                'url_name': 'stores-dashboard:store-list',
+                'label': _('Sdfs'),
+                'url_name': 'sdfs-dashboard:sdf-list',
             },
             {
-                'label': _('Store groups'),
-                'url_name': 'stores-dashboard:store-group-list',
+                'label': _('Sdf groups'),
+                'url_name': 'sdfs-dashboard:sdf-group-list',
             },
         ]
     })
@@ -214,3 +213,7 @@ from django.contrib.gis.measure import D
 STORES_MAX_SEARCH_DISTANCE = D(mi=150)
 # Maximal distance of 150 kilometers
 STORES_MAX_SEARCH_DISTANCE = D(km=150)
+
+LOCALE_PATHS = (
+    os.path.join(PROJECT_DIR, 'locale/'),
+)

@@ -1,0 +1,6 @@
+{% load i18n %}
+{% blocktrans with name=sdf.name %}
+<strong>{{ name }}</strong> sdf saved.
+{% endblocktrans %}
+<a href="{{ sdf.get_absolute_url }}" class="btn btn-success">{% trans "View on site" %}</a>
+<a href="{% url 'sdfs-dashboard:sdf-update' sdf.pk %}" class="btn btn-warning">{% trans "Edit again" %}</a>

@@ -1,35 +1,35 @@
 from django.test import TestCase
 from oscar.core.loading import get_model
 
-from stores.dashboard.forms import DashboardStoreSearchForm
-from tests.factories import StoreAddressFactory, StoreFactory
+from sdfs.dashboard.forms import DashboardSdfSearchForm
+from tests.factories import SdfAddressFactory, SdfFactory
 
 
-class TestDashboardStoreSearchForm(TestCase):
+class TestDashboardSdfSearchForm(TestCase):
 
     def test_filters(self):
-        f = DashboardStoreSearchForm()
-        Store = get_model('stores', 'Store')
+        f = DashboardSdfSearchForm()
+        Sdf = get_model('sdfs', 'Sdf')
 
         location = '{"type": "Point", "coordinates": [144.917908,-37.815751]}'
 
-        store1 = StoreFactory(name='store1', location=location)
-        store2 = StoreFactory(name='store2', location=location)
+        sdf1 = SdfFactory(name='sdf1', location=location)
+        sdf2 = SdfFactory(name='sdf2', location=location)
 
-        StoreAddressFactory(
-            store=store1, line1='Great Portland st., London')
+        SdfAddressFactory(
+            sdf=sdf1, line1='Great Portland st., London')
 
-        StoreAddressFactory(
-            store=store2, line1='Sturt Street, Melbourne')
+        SdfAddressFactory(
+            sdf=sdf2, line1='Sturt Street, Melbourne')
 
         f.cleaned_data = {'address': 'portland st, london'}
-        qs = f.apply_filters(Store.objects.all())
-        self.assertEqual(list(qs), [store1])
+        qs = f.apply_filters(Sdf.objects.all())
+        self.assertEqual(list(qs), [sdf1])
 
-        f.cleaned_data = {'name': 'store2'}
-        qs = f.apply_filters(Store.objects.all())
-        self.assertEqual(list(qs), [store2])
+        f.cleaned_data = {'name': 'sdf2'}
+        qs = f.apply_filters(Sdf.objects.all())
+        self.assertEqual(list(qs), [sdf2])
 
-        f.cleaned_data = {'name': 'store2', 'address': 'london'}
-        qs = f.apply_filters(Store.objects.all())
+        f.cleaned_data = {'name': 'sdf2', 'address': 'london'}
+        qs = f.apply_filters(Sdf.objects.all())
         self.assertEqual(list(qs), [])

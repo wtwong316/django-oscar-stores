@@ -1,0 +1,64 @@
+{% extends "oscar/layout.html" %}
+{% load i18n image_tags static %}
+
+{% block extrahead %}
+    <style>map img { max-width: none; }</style>
+    <link rel="stylesheet" href="{% static 'sdfs/css/sdfs.css' %}">
+{% endblock %}
+
+{% block title %}
+    {{ sdf.name }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'home' %}">{% trans "Home" %}</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'sdfs:index' %}">{% trans "Sdfs" %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ sdf.name }}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block headertext %}{{ sdf.name }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="sdf-details">
+                {% if sdf.image %}
+                    {% oscar_thumbnail sdf.image "300x300" as im %}
+                    <img alt="{{ sdf.name }}" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img-fluid mb-3">
+                {% endif %}
+
+                {% include "sdfs/partials/sdf_address.html" %}
+                {% include "sdfs/partials/sdf_contact.html" %}
+            </div>
+<!--
+            <h3>{% trans "Opening hours" %}</h3>
+            {% include "sdfs/partials/sdf_opening_periods.html" %}
+-->
+        </div>
+        <div class="col-md-8">
+            <section class="row">
+                <map>
+                    <div class="sdf-map" style="width: 720px; height:450px;"></div>
+                </map>
+                {{ sdf.description|safe }}
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrascripts %}
+    {{ block.super }}
+    {% include "sdfs/partials/extrascripts.html" %}
+{% endblock %}
+
+{% block onbodyload %}
+    sdfs.maps.initSdf();
+{% endblock %}

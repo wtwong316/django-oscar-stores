@@ -3,25 +3,25 @@ from oscar.core.loading import get_model
 from oscar.test.factories import CountryFactory
 
 
-class StoreFactory(factory.django.DjangoModelFactory):
+class SdfFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = get_model('stores', 'Store')
+        model = get_model('sdfs', 'Sdf')
 
 
-class StoreAddressFactory(factory.django.DjangoModelFactory):
+class SdfAddressFactory(factory.django.DjangoModelFactory):
     country = factory.SubFactory(CountryFactory)
 
     class Meta:
-        model = get_model('stores', 'StoreAddress')
+        model = get_model('sdfs', 'SdfAddress')
 
 
-class StoreGroupFactory(factory.django.DjangoModelFactory):
-
-    class Meta:
-        model = get_model('stores', 'StoreGroup')
-
-
-class StoreStockFactory(factory.django.DjangoModelFactory):
+class SdfGroupFactory(factory.django.DjangoModelFactory):
 
     class Meta:
-        model = get_model('stores', 'StoreStock')
+        model = get_model('sdfs', 'SdfGroup')
+
+
+class SdfStockFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = get_model('sdfs', 'SdfStock')

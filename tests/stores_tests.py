@@ -4,30 +4,30 @@ from django.urls import reverse
 from django_webtest import WebTest
 from oscar.test.factories import CountryFactory
 
-from stores.models import Store
-from tests.factories import StoreFactory
+from sdfs.models import Sdf
+from tests.factories import SdfFactory
 
 
-class TestStore(TestCase):
+class TestSdf(TestCase):
 
-    def test_querying_available_pickup_stores(self):
+    def test_querying_available_pickup_sdfs(self):
         sample_location = '{"type": "Point", "coordinates": [88.39,11.02]}'
-        store1 = StoreFactory(is_pickup_store=True, location=sample_location)
-        store2 = StoreFactory(is_pickup_store=True, location=sample_location)
-        StoreFactory(is_pickup_store=False, location=sample_location)
-        store4 = StoreFactory(is_pickup_store=True, location=sample_location)
+        sdf1 = SdfFactory(is_pickup_sdf=True, location=sample_location)
+        sdf2 = SdfFactory(is_pickup_sdf=True, location=sample_location)
+        SdfFactory(is_pickup_sdf=False, location=sample_location)
+        sdf4 = SdfFactory(is_pickup_sdf=True, location=sample_location)
 
-        stores = list(Store.objects.pickup_stores())
+        sdfs = list(Sdf.objects.pickup_sdfs())
 
-        self.assertEqual(len(stores), 3)
-        self.assertIn(store1, stores)
-        self.assertIn(store2, stores)
-        self.assertIn(store4, stores)
+        self.assertEqual(len(sdfs), 3)
+        self.assertIn(sdf1, sdfs)
+        self.assertIn(sdf2, sdfs)
+        self.assertIn(sdf4, sdfs)
 
 
-def repr_opening_hours(store):
+def repr_opening_hours(sdf):
     r = {}
-    for period in store.opening_periods.all().order_by('start'):
+    for period in sdf.opening_periods.all().order_by('start'):
         if period.weekday not in r:
             r[period.weekday] = ''
         else:
@@ -37,7 +37,7 @@ def repr_opening_hours(store):
     return r
 
 
-class StoresWebTest(WebTest):
+class SdfsWebTest(WebTest):
     is_staff = False
     is_anonymous = True
     username = 'testuser'
@@ -63,7 +63,7 @@ class StoresWebTest(WebTest):
         return self.app.post(url, **kwargs)
 
 
-class TestASignedInUser(StoresWebTest):
+class TestASignedInUser(SdfsWebTest):
     is_staff = True
     is_anonymous = False
 
@@ -77,12 +77,12 @@ class TestASignedInUser(StoresWebTest):
             iso_3166_1_numeric=36,
         )
 
-    def test_can_create_a_new_store_without_opening_periods(self):
-        url = reverse('stores-dashboard:store-create')
+    def test_can_create_a_new_sdf_without_opening_periods(self):
+        url = reverse('sdfs-dashboard:sdf-create')
         page = self.get(url)
         create_form = page.form
 
-        create_form['name'] = 'Sample Store'
+        create_form['name'] = 'Sample Sdf'
         create_form['address-0-line1'] = '123 Invisible Street'
         create_form['address-0-line4'] = 'Awesometown'
         create_form['address-0-state'] = 'Victoria'
@@ -90,37 +90,37 @@ class TestASignedInUser(StoresWebTest):
         create_form['address-0-country'] = 'AU'
         create_form['location'] = '{"type": "Point", "coordinates": [30.203332,44.33333] }'
 
-        create_form['description'] = 'A short description of the store'
-        create_form['is_pickup_store'] = False
+        create_form['description'] = 'A short description of the sdf'
+        create_form['is_pickup_sdf'] = False
         create_form['is_active'] = True
 
         page = create_form.submit()
 
-        self.assertRedirects(page, reverse('stores-dashboard:store-list'))
+        self.assertRedirects(page, reverse('sdfs-dashboard:sdf-list'))
 
-        self.assertEqual(Store.objects.count(), 1)
+        self.assertEqual(Sdf.objects.count(), 1)
 
-        store = Store.objects.all()[0]
-        self.assertEqual(store.name, 'Sample Store')
-        self.assertEqual(store.location.x, 30.203332)
-        self.assertEqual(store.location.y, 44.33333)
+        sdf = Sdf.objects.all()[0]
+        self.assertEqual(sdf.name, 'Sample Sdf')
+        self.assertEqual(sdf.location.x, 30.203332)
+        self.assertEqual(sdf.location.y, 44.33333)
         self.assertEqual(
-            store.description,
-            'A short description of the store'
+            sdf.description,
+            'A short description of the sdf'
         )
-        self.assertEqual(store.is_pickup_store, False)
-        self.assertEqual(store.is_active, True)
+        self.assertEqual(sdf.is_pickup_sdf, False)
+        self.assertEqual(sdf.is_active, True)
 
-        self.assertEqual(store.address.line1, '123 Invisible Street')
-        self.assertEqual(store.address.line4, 'Awesometown')
-        self.assertEqual(store.address.state, 'Victoria')
-        self.assertEqual(store.address.postcode, '3456')
-        self.assertEqual(store.address.country, self.country)
+        self.assertEqual(sdf.address.line1, '123 Invisible Street')
+        self.assertEqual(sdf.address.line4, 'Awesometown')
+        self.assertEqual(sdf.address.state, 'Victoria')
+        self.assertEqual(sdf.address.postcode, '3456')
+        self.assertEqual(sdf.address.country, self.country)
 
-        self.assertEqual(store.opening_periods.count(), 0)
+        self.assertEqual(sdf.opening_periods.count(), 0)
 
     def test_workinghours_form(self):
-        url = reverse('stores-dashboard:store-create')
+        url = reverse('sdfs-dashboard:sdf-create')
         page = self.get(url)
         form = page.form
 
@@ -148,10 +148,10 @@ class TestASignedInUser(StoresWebTest):
         if resp.context and 'form' in resp.context:
             assert False, repr(resp.context['form'].errors)
 
-        store = Store.objects.get(name='WorkingHoursTest')
-        assert store.opening_periods.count() == 3
+        sdf = Sdf.objects.get(name='WorkingHoursTest')
+        assert sdf.opening_periods.count() == 3
 
-        self.assertEqual(repr_opening_hours(store), {
+        self.assertEqual(repr_opening_hours(sdf), {
             1: '10:00 - 11:00, 12:00 - 13:00',
             2: '12:00 - 13:00',
         })

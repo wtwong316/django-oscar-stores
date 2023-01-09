@@ -8,8 +8,8 @@ sandbox: install
 	./sandbox/manage.py migrate
 	./sandbox/manage.py loaddata sandbox/fixtures/auth.json
 	./sandbox/manage.py loaddata sandbox/fixtures/countries.json
-	./sandbox/manage.py loaddata sandbox/fixtures/stores.json
+	./sandbox/manage.py loaddata sandbox/fixtures/sdfs.json
 	./sandbox/manage.py thumbnail clear
 
 css:
-	lessc stores/static/stores/less/stores.less > stores/static/stores/css/stores.css
+	lessc sdfs/static/sdfs/less/sdfs.less > sdfs/static/sdfs/css/sdfs.css

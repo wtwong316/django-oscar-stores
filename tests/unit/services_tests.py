@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from stores.services import geocode
+from sdfs.services import geocode
 
 
 class GeoCodeTest(TestCase):

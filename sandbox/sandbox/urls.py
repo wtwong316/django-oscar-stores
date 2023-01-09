@@ -9,13 +9,13 @@ from django.views.i18n import JavaScriptCatalog
 admin.autodiscover()
 
 js_info_dict = {
-    'packages': ('stores',),
+    'packages': ('sdfs',),
 }
 
 urlpatterns = [
     path('', include(apps.get_app_config('oscar').urls[0])),
-    path('dashboard/stores/', apps.get_app_config('stores_dashboard').urls),
-    path('stores/', apps.get_app_config('stores').urls),
+    path('dashboard/sdfs/', apps.get_app_config('sdfs_dashboard').urls),
+    path('sdfs/', apps.get_app_config('sdfs').urls),
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
     path('jsi18n/', JavaScriptCatalog.as_view(**js_info_dict), name="javascript-catalog"),

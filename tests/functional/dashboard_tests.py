@@ -1,10 +1,10 @@
 from django.urls import reverse
 from oscar.test.testcases import WebTestCase
 
-from tests.factories import StoreAddressFactory, StoreFactory
+from tests.factories import SdfAddressFactory, SdfFactory
 
 
-class TestDashboardStoreSearchForm(WebTestCase):
+class TestDashboardSdfSearchForm(WebTestCase):
     is_staff = True
     is_anonymous = False
 
@@ -14,17 +14,17 @@ class TestDashboardStoreSearchForm(WebTestCase):
         location = '{"type": "Point", "coordinates": [144.917908,-37.815751]}'
         location = 'POINT(144.917908 -37.815751)'
 
-        self.store1 = StoreFactory(name='store1', location=location)
-        self.store2 = StoreFactory(name='store2', location=location)
+        self.sdf1 = SdfFactory(name='sdf1', location=location)
+        self.sdf2 = SdfFactory(name='sdf2', location=location)
 
-        StoreAddressFactory(
-            store=self.store1, line1='Great Portland st., London')
-        StoreAddressFactory(
-            store=self.store2, line1='Sturt Street, Melbourne')
+        SdfAddressFactory(
+            sdf=self.sdf1, line1='Great Portland st., London')
+        SdfAddressFactory(
+            sdf=self.sdf2, line1='Sturt Street, Melbourne')
 
     def test_list_with_search(self):
-        resp = self.get(reverse('stores-dashboard:store-list') + '?address=portland+london')
+        resp = self.get(reverse('sdfs-dashboard:sdf-list') + '?address=portland+london')
         self.assertIn('form', resp.context)
         self.assertEqual(resp.context['form'].cleaned_data, {'address': 'portland london',
                                                              'name': ''})
-        self.assertEqual(list(resp.context['object_list']), [self.store1])
+        self.assertEqual(list(resp.context['object_list']), [self.sdf1])

@@ -1,0 +1,19 @@
+{% load i18n %}
+
+{% if sdf.has_contact_details %}
+    <h3>{% trans "Contact" %}</h3>
+{% endif %}
+{% if sdf.manager_name %}
+    {{ sdf.manager_name }}<br />
+{% endif %}
+{% if sdf.phone %}
+<p>
+    <i class="fas fa-phone"></i> {{ sdf.phone }}<br />
+</p>
+{% endif %}
+{% if sdf.email %}
+<p>
+    <i class="fas fa-envelope"></i>
+    <a class="email" href="mailto:{{ sdf.email }}">{{ sdf.email }}</a><br />
+</p>
+{% endif %}

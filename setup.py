@@ -9,7 +9,7 @@ setup(
     url='https://github.com/django-oscar/django-oscar-stores',
     author="David Winterbottom",
     author_email="david.winterbottom@gmail.com",
-    description="An extension for Oscar to include stores",
+    description="An extension for Oscar to include sdfs",
     long_description=open(
         os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     keywords="django, oscar, e-commerce",

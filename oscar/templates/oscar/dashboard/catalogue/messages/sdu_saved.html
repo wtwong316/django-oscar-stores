@@ -1,0 +1,50 @@
+{% load i18n %}
+{% load django_tables2 %}
+
+<p>
+{% with name=sdu.title parent_name=sdu.parent.title %}
+    {% if sdu.is_child %}
+
+        {% if creating %}
+            {% if sdu.title %}
+                {% blocktrans %}
+                    Created sdu variant '{{ name }}'.
+                {% endblocktrans %}
+            {% else %}
+                {% blocktrans %}
+                    Created variant of '{{ parent_name }}'.
+                {% endblocktrans %}
+            {% endif %}
+        {% else %}
+            {% if sdu.title %}
+                {% blocktrans %}
+                    Updated sdu variant '{{ name }}'.
+                {% endblocktrans %}
+            {% else %}
+                {% blocktrans %}
+                    Updated a variant of '{{ parent_name }}'.
+                {% endblocktrans %}
+            {% endif %}
+        {% endif %}
+
+    {% else %}
+
+        {% if creating %}
+            {% blocktrans %}
+                Created sdu '{{ name }}'.
+            {% endblocktrans %}
+        {% else %}
+            {% blocktrans %}
+                Updated sdu '{{ name }}'.
+            {% endblocktrans %}
+        {% endif %}
+
+    {% endif %}
+{% endwith %}
+
+</p>
+
+<p>
+    <a href="{% url 'dashboard:catalogue-sdu' pk=sdu.pk %}{% querystring %}" class="btn btn-success">{% trans "Edit again" %}</a>
+    <a href="{{ sdu.get_absolute_url }}" class="btn btn-success">{% trans "View it on the site" %}</a>
+</p>

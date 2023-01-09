@@ -1,0 +1,155 @@
+{% extends "oscar/layout.html" %}
+{% load currency_filters i18n image_tags l10n static widget_tweaks %}
+
+{% block extrahead %}
+    <style>map img { max-width: none; }</style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}sdfs/css/sdfs.css" />
+{% endblock %}
+
+{% block title %}
+{{ queryset_description }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'home' %}">{% trans "Home" %}</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'sdfs:index' %}">{% trans "Sdfs" %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ queryset_description }}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block headertext %}
+{{ queryset_description }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% if all_sdfs %}
+        <div class="col-md-3 view-sdfs">
+            <form id="sdf-search" method="get">
+                <button type="button" class="btn btn-primary btn-block" data-behaviours="geo-location"><i class="fas fa-map-marker-alt"></i> {% trans "Use my location" %}</button>
+                <header class="divide-header">
+                    <em>-</em> <span>{% trans "or" %}</span> <em>-</em>
+                </header>
+
+                {{ form.non_field_errors }}
+
+                {# Hidden fields that are manipulated by JS #}
+                {{ form.latitude }}
+                {{ form.longitude }}
+
+                <div class="form-group">
+                    <div class="input-group">
+                        {% render_field form.query class+='form-control' %}
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.group.field.choices %}
+                    <h3>{% trans "Filter by group" %}</h3>
+                    {% include "oscar/partials/form_field.html" with field=form.group nolabel=True %}
+                {% endif %}
+            </form>
+
+                <h3>All sdfs</h3>
+                    <ul class="nav flex-column">
+                {% for sdf in all_sdfs %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'sdfs:detail' sdf.slug sdf.pk %}">
+                        {{ sdf.name }}
+                    </a>
+                </li>
+                {% endfor %}
+                </ul>
+        </div>
+
+        <div class="col-md-9">
+            {% if sdf_list %}
+                <div id="sdf-map" style="width: 100%; height: 380px;"></div>
+
+                {% for sdf in sdf_list %}
+                <div class="sdfs-list">
+                    <div class="sub-header">
+                        <h4>{{ sdf.name }}
+                        {% if sdf.distance %}
+                            <span class="text-muted small">{{ sdf.distance.km|floatformat:2 }} km</span>
+                        {% endif %}
+                        <a href="{% url 'sdfs:detail' sdf.slug sdf.pk %}" class="btn btn-primary float-right">{% trans "View sdf details" %}</a></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if sdf.image %}
+                                {% oscar_thumbnail sdf.image "400x400" as im %}
+                                <a href="{{ sdf.get_absolute_url }}"><img alt="{{ sdf.name }}" src="{{ im.url }}" width="{{ im.width}}" height="{{ im.height }}" class="img-fluid"></a>
+                            {% else %}
+                                <a href="{{ sdf.get_absolute_url }}">{{ sdf.name }}</a>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {% include "sdfs/partials/sdf_address.html" %}
+                            {% include "sdfs/partials/sdf_contact.html" %}
+                            <br/>
+                        </div>
+<!--
+                        <div class="col-md-4">
+                            {% include "sdfs/partials/sdf_opening_periods.html" %}
+                        </div>
+-->
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>{% trans "No sdfs found in the area." %}</p>
+            {% endif %}
+        </div>
+        {% else %}
+        <p>{% trans "No sdf data available." %}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extrascripts %}
+    {{ block.super }}
+    {% include "sdfs/partials/extrascripts.html" %}
+{% endblock %}
+
+{% block onbodyload %}
+    {% if sdf_list %}
+        var sdfData = [
+            {% for sdf in sdf_list %}
+            {
+                'name': '{{ sdf.name|escapejs }}',
+                'location': new google.maps.LatLng({{ sdf.location.y|unlocalize }}, {{ sdf.location.x|unlocalize }}),
+                'imageURL': '{% if sdf.image %}{{ sdf.image.url }}{% endif %}',
+                'address1': '{{ sdf.address.line1|escapejs }}',
+                'address2': '{{ sdf.address.line2|escapejs }}',
+                'address3': '{{ sdf.address.line3|escapejs }}',
+                'address4': '{{ sdf.address.line4|escapejs }}',
+                'postcode': '{{ sdf.address.postcode|escapejs }}',
+                'url': '{{ sdf.get_absolute_url|escapejs }}',
+                'email': '{{ sdf.email|escapejs }}',
+                'phone': '{% if sdf.phone %}{{ sdf.phone|escapejs }}{% endif %}',
+                'group': '{{ sdf.group.name|upper }}'
+            } {% if forloop.counter < sdf_list|length %},{% endif %}
+            {% endfor %}
+        ];
+        {% if longitude and latitude %}
+            var pnt = new google.maps.LatLng({{ latitude}}, {{ longitude }});
+        {% else %}
+            var pnt = null;
+        {% endif %}
+        sdfs.maps.overview.init(sdfData, pnt);
+    {% endif %}
+{% endblock %}
