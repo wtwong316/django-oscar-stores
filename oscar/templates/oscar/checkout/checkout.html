@@ -116,7 +116,7 @@
             </div>
         </div>
         {% for line in basket.all_lines %}
-            {% purchase_info_for_line request line as session %}
+            {% purchase_info_for_line order line as session %}
             <div class="basket-items">
                 <div class="row">
                     <div class="col-sm-2">

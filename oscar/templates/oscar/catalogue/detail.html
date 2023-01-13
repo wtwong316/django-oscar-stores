@@ -160,7 +160,7 @@
                 {% if sdu.num_approved_reviews > 3 %}
                     <a href="{% url 'catalogue:reviews-list' sdu_slug=sdu.slug sdu_pk=sdu.id %}" class="btn float-right">{% trans "See all reviews" %}</a>
                 {% endif %}
-                <h2>{% trans "Customer Reviews" %}</h2>
+                <h2>{% trans "Renter Reviews" %}</h2>
             </div>
 
             {% if sdu.num_approved_reviews == 0 %}

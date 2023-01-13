@@ -55,7 +55,7 @@ def permissions_required(permissions, login_url=None):
     message, analogous to Django's permission_required decorator.
     """
     if login_url is None:
-        login_url = reverse_lazy('customer:login')
+        login_url = reverse_lazy('renter:login')
 
     def _check_permissions(user):
         outcome = check_permissions(user, permissions)

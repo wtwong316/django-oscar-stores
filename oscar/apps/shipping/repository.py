@@ -44,7 +44,7 @@ class Repository(object):
                                     **kwargs):
         """
         Return a 'default' shipping method to show on the basket page to give
-        the customer an indication of what their order will cost.
+        the renter an indication of what their order will cost.
         """
         shipping_methods = self.get_shipping_methods(
             basket, shipping_addr=shipping_addr, **kwargs)

@@ -1,11 +1,11 @@
-{% extends "oscar/customer/baseaccountpage.html" %}
+{% extends "oscar/renter/baseaccountpage.html" %}
 
 
 {% load i18n %}
 
 {% block extra_breadcrumbs %}
     <li class="breadcrumb-item">
-        <a href="{% url 'customer:email-list' %}">{% trans 'Email history' %}</a>
+        <a href="{% url 'renter:email-list' %}">{% trans 'Email history' %}</a>
     </li>
 {% endblock %}
 

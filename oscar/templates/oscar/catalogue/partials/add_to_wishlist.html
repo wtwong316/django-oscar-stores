@@ -13,7 +13,7 @@
                     {% for wishlist in wishlists %}
                         {% if wishlist not in sdu_wishlists %}
                             <li>
-                                <a href="{% url 'customer:wishlists-add-sdu' key=wishlist.key sdu_pk=sdu.pk %}" class="dropdown-item">
+                                <a href="{% url 'renter:wishlists-add-sdu' key=wishlist.key sdu_pk=sdu.pk %}" class="dropdown-item">
                                     {% blocktrans with name=wishlist.name %}
                                         Add to '{{ name }}' wish list
                                     {% endblocktrans %}
@@ -22,7 +22,7 @@
                         {% endif %}
                     {% endfor %}
                     <li>
-                        <a href="{% url 'customer:wishlists-create-with-sdu' sdu_pk=sdu.pk %}" class="dropdown-item">
+                        <a href="{% url 'renter:wishlists-create-with-sdu' sdu_pk=sdu.pk %}" class="dropdown-item">
                             {% trans 'Create a new wishlist' %}
                         </a>
                     </li>
@@ -30,14 +30,14 @@
             </div>
         {% else %}
             {# 1 or no existing wishlists - show a simple button #}
-            <form id="add_to_wishlist_form" action="{% url 'customer:wishlists-add-sdu' sdu_pk=sdu.pk %}" method="post" class="btn-wishlist align-bottom">
+            <form id="add_to_wishlist_form" action="{% url 'renter:wishlists-add-sdu' sdu_pk=sdu.pk %}" method="post" class="btn-wishlist align-bottom">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-lg" data-loading-text="{% trans 'Adding...' %}">{% trans "Add to wish list" %}</button>
             </form>
         {% endif %}
 
         {% for wishlist in sdu_wishlists %}
-            <form action="{% url 'customer:wishlists-remove-sdu' key=wishlist.key sdu_pk=sdu.id %}" method="post">
+            <form action="{% url 'renter:wishlists-remove-sdu' key=wishlist.key sdu_pk=sdu.id %}" method="post">
                 {% csrf_token %}
                 {% blocktrans with name=wishlist.name url=wishlist.get_absolute_url %}
                     <span class="float-left">Product is in <a href="{{ url }}">'{{ name }}'</a> wishlist.</span>

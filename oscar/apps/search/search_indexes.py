@@ -54,8 +54,8 @@ class SduIndex(indexes.SearchIndex, indexes.Indexable):
         if obj.rating is not None:
             return int(obj.rating)
 
-    # Pricing and stock is tricky as it can vary per customer.  However, the
-    # most common case is for customers to see the same prices and stock levels
+    # Pricing and stock is tricky as it can vary per renter.  However, the
+    # most common case is for renters to see the same prices and stock levels
     # and so we implement that case here.
 
     def get_strategy(self):

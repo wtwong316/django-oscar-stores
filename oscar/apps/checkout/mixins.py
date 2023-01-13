@@ -280,10 +280,10 @@ class OrderPlacementMixin(CheckoutSessionMixin):
         # Attempt to add the order status URL to the email template ctx.
         try:
             if self.request.user.is_authenticated:
-                path = reverse('customer:order',
+                path = reverse('renter:order',
                                kwargs={'order_number': order.number})
             else:
-                path = reverse('customer:anon-order',
+                path = reverse('renter:anon-order',
                                kwargs={'order_number': order.number,
                                        'hash': order.verification_hash()})
         except NoReverseMatch:

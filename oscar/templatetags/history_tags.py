@@ -7,19 +7,19 @@ from django.utils.translation import gettext_lazy as _
 from oscar.core.loading import get_class, get_model
 
 Site = get_model('sites', 'Site')
-CustomerHistoryManager = get_class('customer.history', 'CustomerHistoryManager')
+RenterHistoryManager = get_class('renter.history', 'RenterHistoryManager')
 
 register = template.Library()
 
 
-@register.inclusion_tag('oscar/customer/history/recently_viewed_sdus.html',
+@register.inclusion_tag('oscar/renter/history/recently_viewed_sdus.html',
                         takes_context=True)
 def recently_viewed_sdus(context, current_sdu=None):
     """
     Inclusion tag listing the most recently viewed sdus
     """
     request = context['request']
-    sdus = CustomerHistoryManager.get(request)
+    sdus = RenterHistoryManager.get(request)
     if current_sdu:
         sdus = [p for p in sdus if p != current_sdu]
     return {'sdus': sdus,

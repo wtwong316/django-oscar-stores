@@ -399,7 +399,7 @@ class AbstractSdu(models.Model):
     sdu_options = models.ManyToManyField(
         'catalogue.Option', blank=True, verbose_name=_("Sdu options"),
         help_text=_("Options are values that can be associated with a item "
-                    "when it is added to a customer's basket.  This could be "
+                    "when it is added to a renter's basket.  This could be "
                     "something like a personalised message to be printed on "
                     "a T-shirt."))
 
@@ -1220,11 +1220,11 @@ class AbstractOption(models.Model):
     to print on a T-shirt.
 
     This is not the same as an 'attribute' as options do not have a fixed value
-    for a particular item.  Instead, option need to be specified by a customer
+    for a particular item.  Instead, option need to be specified by a renter
     when they add the item to their basket.
 
     The `type` of the option determines the form input that will be used to
-    collect the information from the customer, and the `required` attribute
+    collect the information from the renter, and the `required` attribute
     determines whether a value must be supplied in order to add the item to the basket.
     """
 

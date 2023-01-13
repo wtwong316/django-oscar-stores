@@ -119,7 +119,7 @@ INSTALLED_APPS = [
     'django_countries'] + oscar.INSTALLED_APPS
 
 AUTHENTICATION_BACKENDS = (
-    'oscar.apps.customer.auth_backends.EmailBackend',
+    'oscar.apps.renter.auth_backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -129,7 +129,7 @@ from oscar.defaults import * # noqa E402
 OSCAR_DASHBOARD_NAVIGATION.append(
     {
         'label': _('Sdfs'),
-        'icon': 'fas fa-building',
+        'icon': 'fas fa-building-o',
         'children': [
             {
                 'label': _('Sdfs'),
@@ -144,7 +144,7 @@ OSCAR_DASHBOARD_NAVIGATION.append(
 
 OSCAR_ALLOW_ANON_CHECKOUT = True
 
-OSCAR_SHOP_TAGLINE = "CIHE DSRC SDU Agent"
+OSCAR_SHOP_TAGLINE = "SDU Agent"
 
 GEOIP_ENABLED = True
 GEOIP_PATH = os.path.join(os.path.dirname(__file__), '../geoip')
@@ -208,12 +208,13 @@ except ImportError:
     pass
 
 GOOGLE_MAPS_API_KEY = 'AIzaSyB1Y2sRZh6K4PgxqEnUD5Bt-TtOc5x5aA0'
+
 from django.contrib.gis.measure import D
-# Maximal distance of 150 miles
-STORES_MAX_SEARCH_DISTANCE = D(mi=150)
 # Maximal distance of 150 kilometers
 STORES_MAX_SEARCH_DISTANCE = D(km=150)
 
 LOCALE_PATHS = (
     os.path.join(PROJECT_DIR, 'locale/'),
 )
+
+OSCAR_DEFAULT_CURRENCY = 'HKD'

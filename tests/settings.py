@@ -71,7 +71,7 @@ INSTALLED_APPS = [
 ] + oscar.INSTALLED_APPS
 
 AUTHENTICATION_BACKENDS = (
-    'oscar.apps.customer.auth_backends.EmailBackend',
+    'oscar.apps.renter.auth_backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

@@ -85,7 +85,7 @@ class AbstractConditionalOffer(models.Model):
     """
     name = models.CharField(
         _("Name"), max_length=128, unique=True,
-        help_text=_("This is displayed within the customer's basket"))
+        help_text=_("This is displayed within the renter's basket"))
     slug = fields.AutoSlugField(
         _("Slug"), max_length=128, unique=True, populate_from='name')
     description = models.TextField(_("Description"), blank=True,
@@ -93,7 +93,7 @@ class AbstractConditionalOffer(models.Model):
                                                " browsing page"))
 
     # Offers come in a few different types:
-    # (a) Offers that are available to all customers on the site. e.g. a
+    # (a) Offers that are available to all renters on the site. e.g. a
     #     3-for-2 offer.
     # (b) Offers that are linked to a voucher, and only become available once
     #     that voucher has been applied to the basket
@@ -790,7 +790,7 @@ class AbstractCondition(BaseOfferMixin, models.Model):
     def is_partially_satisfied(self, offer, basket):
         """
         Determine if the basket partially meets the condition.  This is useful
-        for up-selling messages to entice customers to buy something more in
+        for up-selling messages to entice renters to buy something more in
         order to qualify for an offer.
         """
         return False
@@ -843,7 +843,7 @@ class AbstractRange(models.Model):
     # Whether this range is public
     is_public = models.BooleanField(
         _('Is public?'), default=False,
-        help_text=_("Public ranges have a customer-facing page"))
+        help_text=_("Public ranges have a renter-facing page"))
 
     includes_all_sdus = models.BooleanField(
         _('Includes all sdus?'), default=False)

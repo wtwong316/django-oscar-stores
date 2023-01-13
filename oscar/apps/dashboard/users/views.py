@@ -17,9 +17,9 @@ from oscar.views.generic import BulkEditMixin
 UserSearchForm, SduAlertSearchForm, SduAlertUpdateForm = get_classes(
     'dashboard.users.forms', ('UserSearchForm', 'SduAlertSearchForm',
                               'SduAlertUpdateForm'))
-PasswordResetForm = get_class('customer.forms', 'PasswordResetForm')
+PasswordResetForm = get_class('renter.forms', 'PasswordResetForm')
 UserTable = get_class('dashboard.users.tables', 'UserTable')
-SduAlert = get_model('customer', 'SduAlert')
+SduAlert = get_model('renter', 'SduAlert')
 User = get_user_model()
 
 
@@ -122,7 +122,7 @@ class IndexView(BulkEditMixin, FormMixin, SingleTableView):
 class UserDetailView(DetailView):
     template_name = 'oscar/dashboard/users/detail.html'
     model = User
-    context_object_name = 'customer'
+    context_object_name = 'renter'
 
 
 class PasswordResetView(SingleObjectMixin, FormView):
@@ -191,7 +191,7 @@ class SduAlertListView(ListView):
                     | Q(user__last_name__istartswith=parts[-1])
                 ).distinct()
             self.description \
-                += _(" with customer name matching '%s'") % data['name']
+                += _(" with renter name matching '%s'") % data['name']
 
         if data['email']:
             queryset = queryset.filter(
@@ -199,7 +199,7 @@ class SduAlertListView(ListView):
                 | Q(email__icontains=data['email'])
             )
             self.description \
-                += _(" with customer email matching '%s'") % data['email']
+                += _(" with renter email matching '%s'") % data['email']
 
         return queryset
 

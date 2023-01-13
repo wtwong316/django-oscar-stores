@@ -31,18 +31,18 @@ class CheckoutSessionMixin(object):
     """
 
     # A pre-condition is a condition that MUST be met in order for a view
-    # to be available. If it isn't then the customer should be redirected
+    # to be available. If it isn't then the renter should be redirected
     # to a view *earlier* in the chain.
     # pre_conditions is a list of method names that get executed before the
     # normal flow of the view. Each method should check some condition has been
     # met. If not, then an exception is raised that indicates the URL the
-    # customer will be redirected to.
+    # renter will be redirected to.
 
     pre_conditions = None
 
     # A *skip* condition is a condition that MUST NOT be met in order for a
     # view to be available. If the condition is met, this means the view MUST
-    # be skipped and the customer should be redirected to a view *later* in
+    # be skipped and the renter should be redirected to a view *later* in
     # the chain.
     # Skip conditions work similar to pre-conditions, and get evaluated after
     # pre-conditions have been evaluated.
@@ -350,7 +350,7 @@ class CheckoutSessionMixin(object):
                 address = UserAddress._default_manager.get(pk=addr_id)
             except UserAddress.DoesNotExist:
                 # An address was selected but now it has disappeared.  This can
-                # happen if the customer flushes their address book midway
+                # happen if the renter flushes their address book midway
                 # through checkout.  No idea why they would do this but it can
                 # happen.  Checkouts are highly vulnerable to race conditions
                 # like this.
@@ -409,7 +409,7 @@ class CheckoutSessionMixin(object):
                 user_address = UserAddress._default_manager.get(pk=addr_id)
             except UserAddress.DoesNotExist:
                 # An address was selected but now it has disappeared.  This can
-                # happen if the customer flushes their address book midway
+                # happen if the renter flushes their address book midway
                 # through checkout.  No idea why they would do this but it can
                 # happen.  Checkouts are highly vulnerable to race conditions
                 # like this.

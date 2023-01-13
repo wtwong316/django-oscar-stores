@@ -129,7 +129,7 @@ class ReviewListView(BulkEditMixin, generic.ListView):
                     | Q(user__last_name__istartswith=parts[-1])
                 ).distinct()
             self.desc_ctx['name_filter'] \
-                = _(" with customer name matching '%s'") % name
+                = _(" with renter name matching '%s'") % name
 
         return queryset
 

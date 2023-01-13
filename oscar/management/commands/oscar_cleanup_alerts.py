@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 from oscar.core.loading import get_model
 
-ProductAlert = get_model('customer', 'ProductAlert')
+ProductAlert = get_model('renter', 'ProductAlert')
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         if no options specified. All alerts that have the
         status ``UNCONFIRMED`` and have been created before the
         threshold date will be removed assuming that the emails
-        are wrong or the customer changed their mind.
+        are wrong or the renter changed their mind.
         """
         delta = timedelta(days=int(options['days']),
                           hours=int(options['hours']))

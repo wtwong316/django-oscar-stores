@@ -41,7 +41,7 @@ if not is_model_registered('order', 'ShippingAddress'):
     __all__.append('ShippingAddress')
 
 
-if not is_model_registered('order', 'BillingAddress'):
+if not is_model_registered('request', 'BillingAddress'):
     class BillingAddress(AbstractBillingAddress):
         pass
 

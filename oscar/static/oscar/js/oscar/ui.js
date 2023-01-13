@@ -277,11 +277,11 @@ var oscar = (function(o, $) {
         }
     };
 
-    o.customer = {
+    o.renter = {
         wishlists: {
             init: function() {
                 $('.clipboard-item').on( "click", function(event) {
-                    o.customer.wishlists.copyHrefToClipboard($(this));
+                    o.renter.wishlists.copyHrefToClipboard($(this));
                     event.preventDefault();
                 });
             },

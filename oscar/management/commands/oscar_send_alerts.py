@@ -7,13 +7,13 @@ from oscar.core.loading import get_class
 
 logger = logging.getLogger(__name__)
 
-AlertsDispatcher = get_class('customer.alerts.utils', 'AlertsDispatcher')
+AlertsDispatcher = get_class('renter.alerts.utils', 'AlertsDispatcher')
 
 
 class Command(BaseCommand):
     """
     Check stock records of sdus for availability and send out alerts
-    to customers that have registered for an alert.
+    to renters that have registered for an alert.
     """
     help = _("Check for sdus that are back in "
              "stock and send out alerts")

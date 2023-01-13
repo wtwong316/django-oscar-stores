@@ -77,7 +77,7 @@ class Dispatcher(object):
 
     def send_user_email_messages(self, user, messages, attachments=None):
         """
-        Send message to the registered user / customer and collect data in database.
+        Send message to the registered user / renter and collect data in database.
         """
         if not user.email:
             self.logger.warning("Unable to send email messages as user #%d has"

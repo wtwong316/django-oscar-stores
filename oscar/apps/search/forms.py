@@ -55,7 +55,7 @@ class SearchForm(FacetedSearchForm):
 
     SORT_BY_CHOICES = [
         (RELEVANCY, _("Relevancy")),
-        (TOP_RATED, _("Customer rating")),
+        (TOP_RATED, _("Renter rating")),
         (NEWEST, _("Newest")),
         (PRICE_HIGH_TO_LOW, _("Price high to low")),
         (PRICE_LOW_TO_HIGH, _("Price low to high")),

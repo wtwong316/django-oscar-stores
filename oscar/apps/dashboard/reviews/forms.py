@@ -30,7 +30,7 @@ class SduReviewSearchForm(forms.Form):
                                     widget=DatePickerInput)
     date_to = forms.DateTimeField(required=False, label=_('to'),
                                   widget=DatePickerInput)
-    name = forms.CharField(required=False, label=_('Customer name'))
+    name = forms.CharField(required=False, label=_('Renter name'))
 
     def get_friendly_status(self):
         raw = int(self.cleaned_data['status'])

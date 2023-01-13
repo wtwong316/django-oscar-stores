@@ -11,9 +11,9 @@
 
         <small><a href="{% url 'catalogue:reviews-list' sdu_slug=sdu.slug sdu_pk=sdu.id %}">
                 {% blocktrans count sdu.num_approved_reviews as num_reviews %}
-                    {{ num_reviews }} customer review
+                    {{ num_reviews }} renter review
                 {% plural %}
-                    {{ num_reviews }} customer reviews
+                    {{ num_reviews }} renter reviews
                 {% endblocktrans %}
         </a></small>
         &nbsp;

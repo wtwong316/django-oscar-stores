@@ -16,7 +16,7 @@ class Shop(OscarConfig):
         from django.contrib.auth.forms import SetPasswordForm
 
         self.catalogue_app = apps.get_app_config('catalogue')
-        self.customer_app = apps.get_app_config('customer')
+        self.renter_app = apps.get_app_config('renter')
         self.basket_app = apps.get_app_config('basket')
         self.checkout_app = apps.get_app_config('checkout')
         self.search_app = apps.get_app_config('search')
@@ -24,7 +24,7 @@ class Shop(OscarConfig):
         self.offer_app = apps.get_app_config('offer')
         self.wishlists_app = apps.get_app_config('wishlists')
 
-        self.password_reset_form = get_class('customer.forms', 'PasswordResetForm')
+        self.password_reset_form = get_class('renter.forms', 'PasswordResetForm')
         self.set_password_form = SetPasswordForm
 
     def get_urls(self):
@@ -37,7 +37,7 @@ class Shop(OscarConfig):
             path('catalogue/', self.catalogue_app.urls),
             path('basket/', self.basket_app.urls),
             path('checkout/', self.checkout_app.urls),
-            path('accounts/', self.customer_app.urls),
+            path('accounts/', self.renter_app.urls),
             path('search/', self.search_app.urls),
             path('dashboard/', self.dashboard_app.urls),
             path('offers/', self.offer_app.urls),

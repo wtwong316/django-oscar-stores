@@ -114,7 +114,7 @@ class IndexView(TemplateView):
         orders = Order.objects.all()
         alerts = StockAlert.objects.all()
         baskets = Basket.objects.filter(status=Basket.OPEN)
-        customers = User.objects.filter(orders__isnull=False).distinct()
+        renters = User.objects.filter(orders__isnull=False).distinct()
         lines = Line.objects.filter()
         sdus = Sdu.objects.all()
 
@@ -128,7 +128,7 @@ class IndexView(TemplateView):
             baskets = baskets.filter(
                 lines__stockrecord__partner_id__in=partners_ids
             ).distinct()
-            customers = customers.filter(
+            renters = renters.filter(
                 orders__lines__partner_id__in=partners_ids
             ).distinct()
             lines = lines.filter(partner_id__in=partners_ids)
@@ -153,7 +153,7 @@ class IndexView(TemplateView):
             )['total_incl_tax__sum'] or D('0.00'),
 
             'hourly_report_dict': self.get_hourly_report(orders),
-            'total_customers_last_day': customers.filter(
+            'total_renters_last_day': renters.filter(
                 date_joined__gt=datetime_24hrs_ago,
             ).count(),
 
@@ -165,7 +165,7 @@ class IndexView(TemplateView):
             'total_open_stock_alerts': open_alerts.count(),
             'total_closed_stock_alerts': closed_alerts.count(),
 
-            'total_customers': customers.count(),
+            'total_renters': renters.count(),
             'total_open_baskets': baskets.count(),
             'total_orders': orders.count(),
             'total_lines': lines.count(),

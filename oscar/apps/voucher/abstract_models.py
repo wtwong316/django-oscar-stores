@@ -85,7 +85,7 @@ class AbstractVoucher(models.Model):
     Note that there are three possible "usage" modes:
     (a) Single use
     (b) Multi-use
-    (c) Once per customer
+    (c) Once per renter
 
     Oscar enforces those modes by creating VoucherApplication
     instances when a voucher is used for an order.
@@ -102,11 +102,11 @@ class AbstractVoucher(models.Model):
         verbose_name=_("Offers"), limit_choices_to={'offer_type': "Voucher"})
 
     SINGLE_USE, MULTI_USE, ONCE_PER_CUSTOMER = (
-        'Single use', 'Multi-use', 'Once per customer')
+        'Single use', 'Multi-use', 'Once per renter')
     USAGE_CHOICES = (
-        (SINGLE_USE, _("Can be used once by one customer")),
-        (MULTI_USE, _("Can be used multiple times by multiple customers")),
-        (ONCE_PER_CUSTOMER, _("Can only be used once per customer")),
+        (SINGLE_USE, _("Can be used once by one renter")),
+        (MULTI_USE, _("Can be used multiple times by multiple renters")),
+        (ONCE_PER_CUSTOMER, _("Can only be used once per renter")),
     )
     usage = models.CharField(_("Usage"), max_length=128,
                              choices=USAGE_CHOICES, default=MULTI_USE)

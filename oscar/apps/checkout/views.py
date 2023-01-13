@@ -83,7 +83,7 @@ class IndexView(CheckoutSessionMixin, generic.FormView):
                     _("Create your account and then you will be redirected "
                       "back to the checkout process"))
                 self.success_url = "%s?next=%s&email=%s" % (
-                    reverse('customer:register'),
+                    reverse('renter:register'),
                     reverse('checkout:shipping-address'),
                     quote(email)
                 )
@@ -441,7 +441,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
         """
         Handle a request to place an order.
 
-        This method is normally called after the customer has clicked "place
+        This method is normally called after the renter has clicked "place
         order" on the preview page. It's responsible for (re-)validating any
         form information then building the submission dict to pass to the
         `submit` method.
@@ -556,7 +556,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
         logger.info("Order #%s: beginning submission process for basket #%d",
                     order_number, basket.id)
 
-        # Freeze the basket so it cannot be manipulated while the customer is
+        # Freeze the basket so it cannot be manipulated while the renter is
         # completing payment on a 3rd party site.  Also, store a reference to
         # the basket in the session so that we know which basket to thaw if we
         # get an unsuccessful payment response when redirecting to a 3rd party
@@ -568,7 +568,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
         # error occurs.
         error_msg = _("A problem occurred while processing payment for this "
                       "order - no payment has been taken.  Please "
-                      "contact customer services if this problem persists")
+                      "contact renter services if this problem persists")
 
         signals.pre_payment.send_robust(sender=self, view=self)
 
@@ -582,7 +582,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
             # Something went wrong with payment but in an anticipated way.  Eg
             # their bankcard has expired, wrong card number - that kind of
             # thing. This type of exception is supposed to set a friendly error
-            # message that makes sense to the customer.
+            # message that makes sense to the renter.
             msg = str(e)
             logger.warning(
                 "Order #%s: unable to take payment (%s) - restoring basket",
@@ -639,7 +639,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
         except Exception as e:
             # Hopefully you only ever reach this in development
             logger.exception("Order #%s: unhandled exception while placing order (%s)", order_number, e)
-            error_msg = _("A problem occurred while placing this order. Please contact customer services.")
+            error_msg = _("A problem occurred while placing this order. Please contact renter services.")
             self.restore_frozen_basket()
             return self.render_preview(self.request, error=error_msg, **payment_kwargs)
 

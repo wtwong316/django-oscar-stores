@@ -19,10 +19,10 @@ class Base(object):
     #:  have a unique code.
     code = '__default__'
 
-    #: The name of the shipping method, shown to the customer during checkout
+    #: The name of the shipping method, shown to the renter during checkout
     name = 'Default shipping'
 
-    #: A more detailed description of the shipping method shown to the customer
+    #: A more detailed description of the shipping method shown to the renter
     #:  during checkout.  Can contain HTML.
     description = ''
 

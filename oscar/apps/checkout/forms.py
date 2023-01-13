@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 
-from oscar.apps.customer.utils import normalise_email
+from oscar.apps.renter.utils import normalise_email
 from oscar.core.compat import get_user_model
 from oscar.core.loading import get_class, get_model
 from oscar.forms.mixins import PhoneNumberMixin
@@ -53,10 +53,10 @@ class GatewayForm(AuthenticationForm):
     username = forms.EmailField(label=_("My email address is"))
     GUEST, NEW, EXISTING = 'anonymous', 'new', 'existing'
     CHOICES = (
-        (GUEST, _('I am a new customer and want to checkout as a guest')),
-        (NEW, _('I am a new customer and want to create an account '
+        (GUEST, _('I am a new renter and want to checkout as a guest')),
+        (NEW, _('I am a new renter and want to create an account '
                 'before checking out')),
-        (EXISTING, _('I am a returning customer, and my password is')))
+        (EXISTING, _('I am a returning renter, and my password is')))
     options = forms.ChoiceField(widget=forms.widgets.RadioSelect,
                                 choices=CHOICES, initial=GUEST)
 

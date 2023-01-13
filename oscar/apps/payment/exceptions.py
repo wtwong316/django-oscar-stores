@@ -4,7 +4,7 @@ class PaymentError(Exception):
 
 class UserCancelled(PaymentError):
     """
-    Exception for when a customer decides to cancel their payment
+    Exception for when a renter decides to cancel their payment
     after the process has started -- for example if they press a "Cancel"
     button on a third-party payment platform.
     """

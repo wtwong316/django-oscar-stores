@@ -25,7 +25,7 @@ sdfs functionality within Oscar sites.
 Screenshots
 -----------
 
-Customer-facing pages:
+Renter-facing pages:
 
 .. image:: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/locator.thumb.png
     :target: https://github.com/django-oscar/django-oscar-sdfs/raw/master/docs/images/locator.png

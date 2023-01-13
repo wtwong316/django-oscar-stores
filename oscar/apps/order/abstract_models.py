@@ -41,7 +41,7 @@ class AbstractOrder(models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
 
     # Orders can be placed without the user authenticating so we don't always
-    # have a customer ID.
+    # have a renter ID.
     user = models.ForeignKey(
         AUTH_USER_MODEL, related_name='orders', null=True, blank=True,
         verbose_name=_("User"), on_delete=models.SET_NULL)
@@ -117,7 +117,7 @@ class AbstractOrder(models.Model):
         """
         Set a new status for this order.
 
-        If the requested status is not valid, then ``InvalidOrderStatus`` is
+        If the ordered status is not valid, then ``InvalidOrderStatus`` is
         raised.
         """
         if new_status == self.status:
@@ -156,7 +156,7 @@ class AbstractOrder(models.Model):
 
     @property
     def is_anonymous(self):
-        # It's possible for an order to be placed by a customer who then
+        # It's possible for an order to be placed by a renter who then
         # deletes their profile.  Hence, we need to check that a guest email is
         # set.
         return self.user is None and bool(self.guest_email)
@@ -436,7 +436,7 @@ class AbstractOrderStatusChange(models.Model):
 
 class AbstractCommunicationEvent(models.Model):
     """
-    An order-level event involving a communication to the customer, such
+    An order-level event involving a communication to the renter, such
     as an confirmation email being sent.
     """
     order = models.ForeignKey(
@@ -588,7 +588,7 @@ class AbstractLine(models.Model):
         """
         Set a new status for this line
 
-        If the requested status is not valid, then ``InvalidLineStatus`` is
+        If the ordered status is not valid, then ``InvalidLineStatus`` is
         raised.
         """
         if new_status == self.status:

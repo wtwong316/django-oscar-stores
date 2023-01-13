@@ -13,7 +13,7 @@ from oscar.models.fields import AutoSlugField
 
 class AbstractEmail(models.Model):
     """
-    This is a record of an email sent to a customer.
+    This is a record of an email sent to a renter.
     """
     user = models.ForeignKey(
         AUTH_USER_MODEL,

@@ -12,8 +12,8 @@ from oscar.core.loading import get_class, get_model
 
 Sdu = get_model('catalogue', 'sdu')
 Category = get_model('catalogue', 'category')
-SduAlert = get_model('customer', 'SduAlert')
-SduAlertForm = get_class('customer.forms', 'SduAlertForm')
+SduAlert = get_model('renter', 'SduAlert')
+SduAlertForm = get_class('renter.forms', 'SduAlertForm')
 get_sdu_search_handler_class = get_class(
     'catalogue.search_handlers', 'get_sdu_search_handler_class')
 

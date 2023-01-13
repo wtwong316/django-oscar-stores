@@ -42,7 +42,7 @@ class OrderCreator(object):
     def place_order(self, basket, total,  # noqa (too complex (12))
                     shipping_method, shipping_charge, user=None,
                     shipping_address=None, billing_address=None,
-                    order_number=None, status=None, request=None, surcharges=None, **kwargs):
+                    order_number=None, status=None, order=None, surcharges=None, **kwargs):
         """
         Placing an order involves creating all the relevant models based on the
         basket and session data.
@@ -65,7 +65,7 @@ class OrderCreator(object):
             # Ok - everything seems to be in order, let's place the order
             order = self.create_order_model(
                 user, basket, shipping_address, shipping_method, shipping_charge,
-                billing_address, total, order_number, status, request, **kwargs)
+                billing_address, total, order_number, status, order, **kwargs)
             for line in basket.all_lines():
                 self.create_line_models(order, line)
                 self.update_stock_records(line)
@@ -108,7 +108,7 @@ class OrderCreator(object):
 
     def create_order_model(self, user, basket, shipping_address,
                            shipping_method, shipping_charge, billing_address,
-                           total, order_number, status, request=None, surcharges=None, **extra_order_fields):
+                           total, order_number, status, order=None, surcharges=None, **extra_order_fields):
         """Create an order model."""
         order_data = {'basket': basket,
                       'number': order_number,
@@ -130,7 +130,7 @@ class OrderCreator(object):
         if extra_order_fields:
             order_data.update(extra_order_fields)
         if 'site' not in order_data:
-            order_data['site'] = Site._default_manager.get_current(request)
+            order_data['site'] = Site._default_manager.get_current(order)
         order = Order(**order_data)
         order.save()
         if surcharges is not None:
@@ -284,7 +284,7 @@ class OrderDispatcher:
 
     def dispatch_order_messages(self, order, messages, event_code, attachments=None, **kwargs):
         """
-        Dispatch order-related messages to the customer.
+        Dispatch order-related messages to the renter.
         """
         self.dispatcher.logger.info("Order #%s - sending %s messages", order.number, event_code)
         if order.is_anonymous:

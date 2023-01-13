@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(help_text='This will be shown in the checkout and basket once the voucher is entered', max_length=128, unique=True, verbose_name='Name')),
                 ('code', models.CharField(db_index=True, help_text='Case insensitive / No spaces allowed', max_length=128, unique=True, verbose_name='Code')),
-                ('usage', models.CharField(choices=[('Single use', 'Can be used once by one customer'), ('Multi-use', 'Can be used multiple times by multiple customers'), ('Once per customer', 'Can only be used once per customer')], default='Multi-use', max_length=128, verbose_name='Usage')),
+                ('usage', models.CharField(choices=[('Single use', 'Can be used once by one renter'), ('Multi-use', 'Can be used multiple times by multiple renters'), ('Once per renter', 'Can only be used once per renter')], default='Multi-use', max_length=128, verbose_name='Usage')),
                 ('start_datetime', models.DateTimeField(db_index=True, verbose_name='Start datetime')),
                 ('end_datetime', models.DateTimeField(db_index=True, verbose_name='End datetime')),
                 ('num_basket_additions', models.PositiveIntegerField(default=0, verbose_name='Times added to basket')),

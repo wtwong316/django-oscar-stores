@@ -6,7 +6,7 @@ from oscar.core.compat import get_user_model
 from oscar.core.loading import get_model
 
 User = get_user_model()
-SduAlert = get_model('customer', 'SduAlert')
+SduAlert = get_model('renter', 'SduAlert')
 
 
 class UserSearchForm(forms.Form):

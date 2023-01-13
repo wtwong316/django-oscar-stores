@@ -112,8 +112,8 @@ class BasketMiddleware:
                 # Occasionally, a view will want to pass an alternative basket
                 # to be rendered.  This can happen as part of checkout
                 # processes where the submitted basket is frozen when the
-                # customer is redirected to another site (eg PayPal).  When the
-                # customer returns and we want to show the order preview
+                # renter is redirected to another site (eg PayPal).  When the
+                # renter returns and we want to show the order preview
                 # template, we need to ensure that the frozen basket gets
                 # rendered (not request.basket).  We still keep a reference to
                 # the request basket (just in case).

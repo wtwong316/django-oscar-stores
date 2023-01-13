@@ -357,10 +357,10 @@ class OfferDeleteView(DeleteView):
 
 class OfferDetailView(ListView):
     # Slightly odd, but we treat the offer detail view as a list view so the
-    # order discounts can be browsed.
+    # request discounts can be browsed.
     model = OrderDiscount
     template_name = 'oscar/dashboard/offers/offer_detail.html'
-    context_object_name = 'order_discounts'
+    context_object_name = 'request_discounts'
     paginate_by = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
 
     def dispatch(self, request, *args, **kwargs):
@@ -396,7 +396,7 @@ class OfferDetailView(ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(offer_id=self.offer.pk) \
-            .select_related('order')
+            .select_related('request')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -406,6 +406,6 @@ class OfferDetailView(ListView):
     def render_to_response(self, context):
         if self.request.GET.get('format') == 'csv':
             formatter = OrderDiscountCSVFormatter()
-            return formatter.generate_response(context['order_discounts'],
+            return formatter.generate_response(context['request_discounts'],
                                                offer=self.offer)
         return super().render_to_response(context)

@@ -251,7 +251,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sdu',
             name='sdu_options',
-            field=models.ManyToManyField(blank=True, help_text="Options are values that can be associated with a item when it is added to a customer's basket.  This could be something like a personalised message to be printed on a T-shirt.", to='catalogue.Option', verbose_name='Sdu options'),
+            field=models.ManyToManyField(blank=True, help_text="Options are values that can be associated with a item when it is added to a renter's basket.  This could be something like a personalised message to be printed on a T-shirt.", to='catalogue.Option', verbose_name='Sdu options'),
         ),
         migrations.AddField(
             model_name='attributeoption',

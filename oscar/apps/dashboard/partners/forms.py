@@ -10,7 +10,7 @@ from oscar.core.loading import get_class, get_model
 User = get_user_model()
 Partner = get_model('partner', 'Partner')
 PartnerAddress = get_model('partner', 'PartnerAddress')
-EmailUserCreationForm = get_class('customer.forms', 'EmailUserCreationForm')
+EmailUserCreationForm = get_class('renter.forms', 'EmailUserCreationForm')
 
 
 class PartnerSearchForm(forms.Form):

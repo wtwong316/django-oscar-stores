@@ -86,7 +86,7 @@ class AbstractStockRecord(models.Model):
     their SKU, the number they have in stock and price information.
 
     Stockrecords are used by 'strategies' to determine availability and pricing
-    information for the customer.
+    information for the renter.
     """
     sdu = models.ForeignKey(
         'catalogue.Sdu',
@@ -157,7 +157,7 @@ class AbstractStockRecord(models.Model):
         """
         The effective number in stock (e.g. available to buy).
 
-        This is correct property to show the customer, not the
+        This is correct property to show the renter, not the
         :py:attr:`.num_in_stock` field as that doesn't account for allocations.
         This can be negative in some unusual circumstances
         """

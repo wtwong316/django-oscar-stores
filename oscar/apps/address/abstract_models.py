@@ -214,7 +214,7 @@ class AbstractAddress(models.Model):
     }
 
     title = models.CharField(
-        pgettext_lazy("Treatment Pronouns for the customer", "Title"),
+        pgettext_lazy("Treatment Pronouns for the renter", "Title"),
         max_length=64, choices=TITLE_CHOICES, blank=True)
     first_name = models.CharField(_("First name"), max_length=255, blank=True)
     last_name = models.CharField(_("Last name"), max_length=255, blank=True)

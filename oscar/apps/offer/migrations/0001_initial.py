@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=128, unique=True, verbose_name='Name')),
                 ('slug', oscar.models.fields.autoslugfield.AutoSlugField(blank=True, editable=False, max_length=128, populate_from='name', unique=True, verbose_name='Slug')),
                 ('description', models.TextField(blank=True)),
-                ('is_public', models.BooleanField(default=False, help_text='Public ranges have a customer-facing page', verbose_name='Is public?')),
+                ('is_public', models.BooleanField(default=False, help_text='Public ranges have a renter-facing page', verbose_name='Is public?')),
                 ('includes_all_sdus', models.BooleanField(default=False, verbose_name='Includes all sdus?')),
                 ('proxy_class', oscar.models.fields.NullCharField(default=None, max_length=255, unique=True, verbose_name='Custom class')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date Created')),
@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
             name='ConditionalOffer',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text="This is displayed within the customer's basket", max_length=128, unique=True, verbose_name='Name')),
+                ('name', models.CharField(help_text="This is displayed within the renter's basket", max_length=128, unique=True, verbose_name='Name')),
                 ('slug', oscar.models.fields.autoslugfield.AutoSlugField(blank=True, editable=False, max_length=128, populate_from='name', unique=True, verbose_name='Slug')),
                 ('description', models.TextField(blank=True, help_text='This is displayed on the offer browsing page', verbose_name='Description')),
                 ('offer_type', models.CharField(choices=[('Site', 'Site offer - available to all users'), ('Voucher', 'Voucher offer - only available after entering the appropriate voucher code'), ('User', 'User offer - available to certain types of user'), ('Session', 'Session offer - temporary offer, available for a user for the duration of their session')], default='Site', max_length=128, verbose_name='Type')),

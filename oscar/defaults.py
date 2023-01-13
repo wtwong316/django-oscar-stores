@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-OSCAR_SHOP_NAME = 'Oscar'
+OSCAR_SHOP_NAME = 'CIHE DSRC'
 OSCAR_SHOP_TAGLINE = ''
 OSCAR_HOMEPAGE = reverse_lazy('catalogue:index')
 
@@ -55,7 +55,7 @@ OSCAR_ALLOW_ANON_REVIEWS = True
 OSCAR_MODERATE_REVIEWS = False
 
 # Accounts
-OSCAR_ACCOUNTS_REDIRECT_URL = 'customer:profile-view'
+OSCAR_ACCOUNTS_REDIRECT_URL = 'renter:profile-view'
 
 # This enables sending alert notifications/emails instantly when sdus get
 # back in stock by listening to stock record update signals.
@@ -113,23 +113,23 @@ OSCAR_DASHBOARD_NAVIGATION = [
                 'label': _('Categories'),
                 'url_name': 'dashboard:catalogue-category-list',
             },
-            {
-                'label': _('Ranges'),
-                'url_name': 'dashboard:range-list',
-            },
-            {
-                'label': _('Low stock alerts'),
-                'url_name': 'dashboard:stock-alert-list',
-            },
-            {
-                'label': _('Options'),
-                'url_name': 'dashboard:catalogue-option-list',
-            },
+            #{
+            #    'label': _('Ranges'),
+            #    'url_name': 'dashboard:range-list',
+            #},
+            #{
+            #    'label': _('Low stock alerts'),
+            #    'url_name': 'dashboard:stock-alert-list',
+            #},
+            #{
+            #    'label': _('Options'),
+            #    'url_name': 'dashboard:catalogue-option-list',
+            #},
         ]
     },
     {
         'label': _('Fulfilment'),
-        'icon': 'fas fa-building',
+        'icon': 'fas fa-building-o',
         'children': [
             {
                 'label': _('Orders'),
@@ -154,11 +154,11 @@ OSCAR_DASHBOARD_NAVIGATION = [
         ]
     },
     {
-        'label': _('Customers'),
+        'label': _('Renters'),
         'icon': 'fas fa-users',
         'children': [
             {
-                'label': _('Customers'),
+                'label': _('Renters'),
                 'url_name': 'dashboard:users-index',
             },
             {
@@ -167,43 +167,43 @@ OSCAR_DASHBOARD_NAVIGATION = [
             },
         ]
     },
-    {
-        'label': _('Offers'),
-        'icon': 'fas fa-bullhorn',
-        'children': [
-            {
-                'label': _('Offers'),
-                'url_name': 'dashboard:offer-list',
-            },
-            {
-                'label': _('Vouchers'),
-                'url_name': 'dashboard:voucher-list',
-            },
-            {
-                'label': _('Voucher Sets'),
-                'url_name': 'dashboard:voucher-set-list',
-            },
-
-        ],
-    },
-    {
-        'label': _('Content'),
-        'icon': 'fas fa-folder',
-        'children': [
-            {
-                'label': _('Pages'),
-                'url_name': 'dashboard:page-list',
-            },
-            {
-                'label': _('Email templates'),
-                'url_name': 'dashboard:comms-list',
-            },
-            {
-                'label': _('Reviews'),
-                'url_name': 'dashboard:reviews-list',
-            },
-        ]
-    },
+    #{
+    #    'label': _('Offers'),
+    #    'icon': 'fas fa-bullhorn',
+    #    'children': [
+    #        {
+    #            'label': _('Offers'),
+    #            'url_name': 'dashboard:offer-list',
+    #        },
+    #        {
+    #            'label': _('Vouchers'),
+    #            'url_name': 'dashboard:voucher-list',
+    #        },
+    #        {
+    #            'label': _('Voucher Sets'),
+    #            'url_name': 'dashboard:voucher-set-list',
+    #        },
+    #
+    #    ],
+    #},
+    #{
+    #    'label': _('Content'),
+    #    'icon': 'fas fa-folder',
+    #    'children': [
+    #        {
+    #            'label': _('Pages'),
+    #            'url_name': 'dashboard:page-list',
+    #        },
+    #        {
+    #            'label': _('Email templates'),
+    #            'url_name': 'dashboard:comms-list',
+    #        },
+    #        {
+    #            'label': _('Reviews'),
+    #            'url_name': 'dashboard:reviews-list',
+    #        },
+    #    ]
+    #},
     {
         'label': _('Reports'),
         'icon': 'fas fa-chart-bar',

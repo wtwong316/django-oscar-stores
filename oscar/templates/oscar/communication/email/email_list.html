@@ -1,4 +1,4 @@
-{% extends "oscar/customer/baseaccountpage.html" %}
+{% extends "oscar/renter/baseaccountpage.html" %}
 {% load i18n %}
 
 {% block tabcontent %}
@@ -14,7 +14,7 @@
                 {% for email in emails %}
                     <tr>
                         <td>
-                            <a href="{% url 'customer:email-detail' email_id=email.id %}">{{ email.subject }}</a>
+                            <a href="{% url 'renter:email-detail' email_id=email.id %}">{{ email.subject }}</a>
                         </td>
                         <td>{{ email.date_sent }}</td>
                     </tr>

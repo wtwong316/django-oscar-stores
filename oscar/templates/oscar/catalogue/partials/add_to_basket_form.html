@@ -19,7 +19,7 @@
     {% if has_active_alert %}
         <p>{% trans "You have an active stock alert for this sdu." %}</p>
     {% else %}
-        <form id="alert_form" method="post" action="{% url 'customer:alert-create' pk=sdu.id %}" class="add-to-basket mb-0">
+        <form id="alert_form" method="post" action="{% url 'renter:alert-create' pk=sdu.id %}" class="add-to-basket mb-0">
             {% csrf_token %}
             <p>{% trans "You can get an email alert when this sdu is back in stock." %}</p>
             {% include "oscar/partials/form_fields.html" with form=alert_form %}

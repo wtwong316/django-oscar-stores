@@ -4,17 +4,17 @@ from django.core.management.base import BaseCommand
 
 from oscar.core.loading import get_model
 
-Product = get_model('catalogue', 'Product')
+Sdu = get_model('catalogue', 'Sdu')
 
 
 class Command(BaseCommand):
-    help = """Update the denormalised reviews average on all Product instances.
+    help = """Update the denormalised reviews average on all Sdu instances.
               Should only be necessary when changing to e.g. a weight-based
               rating."""
 
     def handle(self, *args, **options):
-        # Iterate over all Products (not just ones with reviews)
-        sdus = Product.objects.all()
+        # Iterate over all Sdus (not just ones with reviews)
+        sdus = Sdu.objects.all()
         for sdu in sdus:
             sdu.update_rating()
         self.stdout.write(

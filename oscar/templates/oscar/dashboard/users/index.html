@@ -6,12 +6,12 @@
 {% block body_class %}{{ block.super }} users{% endblock %}
 
 {% block title %}
-    {% trans "Customers" %} | {{ block.super }}
+    {% trans "Renters" %} | {{ block.super }}
 {% endblock %}
 
 {% block header %}
     <div class="page-header">
-        <h1>{% trans "Customers" %}</h1>
+        <h1>{% trans "Renters" %}</h1>
     </div>
 {% endblock header %}
 
@@ -19,7 +19,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{% trans "Customers" %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Renters" %}</li>
         </ol>
     </nav>
 {% endblock %}
@@ -45,7 +45,7 @@
         {% else %}
             <table class="table table-striped table-bordered table-hover">
                 <caption>{{ queryset_description }}</caption>
-                <tr><td>{% trans "No customers found." %}</td></tr>
+                <tr><td>{% trans "No renters found." %}</td></tr>
             </table>
         {% endif %}
     {% endblock %}

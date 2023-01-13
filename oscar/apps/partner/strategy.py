@@ -50,7 +50,7 @@ class Base(object):
     Given a sdu, strategies are responsible for returning a
     ``PurchaseInfo`` instance which contains:
 
-    - The appropriate stockrecord for this customer
+    - The appropriate stockrecord for this renter
     - A pricing policy instance
     - An availability policy instance
     """
