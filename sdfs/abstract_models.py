@@ -49,7 +49,7 @@ class SdfGroup(models.Model):
 
 
 class Sdf(models.Model):
-    name = models.CharField(_('Name'), max_length=100)
+    name = models.CharField(_('SdfId'), max_length=100)
     slug = models.SlugField(_('Slug'), max_length=100, null=True)
 
     # Contact details
@@ -114,53 +114,53 @@ class Sdf(models.Model):
     #def has_contact_details(self):
     #    return any([self.manager_name, self.phone, self.email])
 
+"""
+class OpeningPeriod(models.Model):
+    PERIOD_FORMAT = _("%(start)s - %(end)s")
+    (MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
+     FRIDAY, SATURDAY, SUNDAY, PUBLIC_HOLIDAYS) = range(1, 9)
+    WEEK_DAYS = {
+        MONDAY: _("Monday"),
+        TUESDAY: _("Tuesday"),
+        WEDNESDAY: _("Wednesday"),
+        THURSDAY: _("Thursday"),
+        FRIDAY: _("Friday"),
+        SATURDAY: _("Saturday"),
+        SUNDAY: _("Sunday"),
+        PUBLIC_HOLIDAYS: _("Public Holidays")
+    }
+    sdf = models.ForeignKey('sdfs.Sdf', models.CASCADE, verbose_name=_("Sdf"),
+                              related_name='opening_periods')
 
-#class OpeningPeriod(models.Model):
-#    PERIOD_FORMAT = _("%(start)s - %(end)s")
-#    (MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
-#     FRIDAY, SATURDAY, SUNDAY, PUBLIC_HOLIDAYS) = range(1, 9)
-#    WEEK_DAYS = {
-#        MONDAY: _("Monday"),
-#        TUESDAY: _("Tuesday"),
-#        WEDNESDAY: _("Wednesday"),
-#        THURSDAY: _("Thursday"),
-#        FRIDAY: _("Friday"),
-#        SATURDAY: _("Saturday"),
-#        SUNDAY: _("Sunday"),
-#        PUBLIC_HOLIDAYS: _("Public Holidays")
-#    }
-#    sdf = models.ForeignKey('sdfs.Sdf', models.CASCADE, verbose_name=_("Sdf"),
-#                              related_name='opening_periods')
+    weekday_choices = [(k, v) for k, v in WEEK_DAYS.items()]
+    weekday = models.PositiveIntegerField(
+        _("Weekday"),
+        choices=weekday_choices)
+    start = models.TimeField(
+        _("Start"),
+        null=True,
+        blank=True,
+        help_text=_("Leaving start and end time empty is displayed as 'Closed'"))
+    end = models.TimeField(
+        _("End"),
+        null=True,
+        blank=True,
+        help_text=_("Leaving start and end time empty is displayed as 'Closed'"))
 
-#    weekday_choices = [(k, v) for k, v in WEEK_DAYS.items()]
-#    weekday = models.PositiveIntegerField(
-#        _("Weekday"),
-#        choices=weekday_choices)
-#    start = models.TimeField(
-#        _("Start"),
-#        null=True,
-#        blank=True,
-#        help_text=_("Leaving start and end time empty is displayed as 'Closed'"))
-#    end = models.TimeField(
-#        _("End"),
-#        null=True,
-#        blank=True,
-#        help_text=_("Leaving start and end time empty is displayed as 'Closed'"))
+   def __str__(self):
+       return "%s: %s to %s" % (self.weekday, self.start, self.end)
 
-#   def __str__(self):
-#       return "%s: %s to %s" % (self.weekday, self.start, self.end)
+    class Meta:
+        abstract = True
+        ordering = ['weekday']
+        verbose_name = _("Opening period")
+        verbose_name_plural = _("Opening periods")
+        app_label = 'sdfs'
 
-#    class Meta:
-#        abstract = True
-#        ordering = ['weekday']
-#        verbose_name = _("Opening period")
-#        verbose_name_plural = _("Opening periods")
-#        app_label = 'sdfs'
-
-#    def clean(self):
-#        if self.start and self.end and self.end <= self.start:
-#            raise ValidationError(_("Start must be before end"))
-
+    def clean(self):
+        if self.start and self.end and self.end <= self.start:
+            raise ValidationError(_("Start must be before end"))
+"""
 
 class SdfStock(models.Model):
     sdf = models.ForeignKey(
@@ -222,3 +222,4 @@ class SdfStock(models.Model):
     @property
     def is_available_to_buy(self):
         return self.num_in_stock > self.num_allocated
+

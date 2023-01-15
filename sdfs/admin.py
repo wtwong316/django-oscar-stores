@@ -3,7 +3,9 @@ from oscar.core.loading import get_model
 
 Sdf = get_model('sdfs', 'Sdf')
 SdfGroup = get_model('sdfs', 'SdfGroup')
-#OpeningPeriod = get_model('sdfs', 'OpeningPeriod')
+"""
+OpeningPeriod = get_model('sdfs', 'OpeningPeriod')
+"""
 SdfStock = get_model('sdfs', 'SdfStock')
 
 
@@ -13,5 +15,8 @@ class SdfAdmin(admin.ModelAdmin):
 
 admin.site.register(Sdf, SdfAdmin)
 admin.site.register(SdfGroup)
-#admin.site.register(OpeningPeriod)
+"""
+admin.site.register(OpeningPeriod)
+"""
 admin.site.register(SdfStock)
+
