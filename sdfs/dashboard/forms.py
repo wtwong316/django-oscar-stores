@@ -80,7 +80,7 @@ class SdfForm(forms.ModelForm):
 
 
 class DashboardSdfSearchForm(forms.Form):
-    name = forms.CharField(label=_('Sdf name'), required=False)
+    name = forms.CharField(label=_('Sdf AppId'), required=False)
     address = forms.CharField(label=_('Address'), required=False)
 
     def is_empty(self):

@@ -49,7 +49,7 @@ class SdfGroup(models.Model):
 
 
 class Sdf(models.Model):
-    name = models.CharField(_('SdfId'), max_length=100)
+    name = models.CharField(_('AppId'), max_length=100)
     slug = models.SlugField(_('Slug'), max_length=100, null=True)
 
     # Contact details
