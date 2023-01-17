@@ -25,7 +25,7 @@ var oscar = (function(o, $) {
 
         // Do not create extra image form if number of maximum allowed forms has reached.
         if (numExisting < numMax) {
-            var $newImg = o.dashboard._extraProductImg.clone();
+            var $newImg = o.dashboard._extraSduImg.clone();
             var sduId = $('#images-0-sdu').val();
             $newImg.insertAfter($extraImg);
             // update attrs on cloned el
@@ -144,7 +144,7 @@ var oscar = (function(o, $) {
             o.dashboard.initMasks(el);
             o.dashboard.initWYSIWYG(el);
             o.dashboard.initSelects(el);
-            o.dashboard.initProductImages(el);
+            o.dashboard.initSduImages(el);
         },
         initMasks: function(el) {
             $(el).find(':input').inputmask();
@@ -277,12 +277,12 @@ var oscar = (function(o, $) {
                 }
             });
         },
-        initProductImages: function() {
+        initSduImages: function() {
             // convert last 'extra' form into a multi-upload
             // (assumes `extra=1` in django formset)
             var $sduImages = $('#sdu_images');
             var $extraImg = $sduImages.find('.upload-image li').last();
-            o.dashboard._extraProductImg = $extraImg.clone();
+            o.dashboard._extraSduImg = $extraImg.clone();
 
             $sduImages.find('a:disabled').parents('sortable-handle').sortable('disable');
 

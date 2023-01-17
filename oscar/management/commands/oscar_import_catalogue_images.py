@@ -19,7 +19,7 @@ class Command(BaseCommand):
             '--filename',
             dest='filename',
             default='upc',
-            help='Product field to lookup from image filename')
+            help='Sdu field to lookup from image filename')
 
     def handle(self, *args, **options):
         logger.info("Starting image import")

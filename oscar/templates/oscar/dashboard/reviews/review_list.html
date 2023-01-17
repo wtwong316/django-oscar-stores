@@ -54,7 +54,7 @@
                 <tr>
                     <th></th>
                     <th>{% trans "Title" context "Review title" %}</th>
-                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Sdu" %}</th>
                     <th>{% trans "User" %}</th>
                     <th>{% anchor 'score' _("Score") %}</th>
                     <th>{% anchor 'total_votes' _("Votes") %}</th>
@@ -72,7 +72,7 @@
                             {% if review.sdu %}
                                 <a href='{{ review.sdu.get_absolute_url }}'>{{ review.sdu.title }}</a> </td>
                         {% else %}
-                            {% trans "[Product deleted]" %}
+                            {% trans "[Sdu deleted]" %}
                         {% endif %}
                         <td>
                             {% if not review.is_anonymous %}

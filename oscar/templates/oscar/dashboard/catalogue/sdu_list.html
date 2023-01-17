@@ -34,7 +34,7 @@
         </div>
         <div class="card card-body">
             <form action="{% url 'dashboard:catalogue-sdu-create' %}" method="get" class="form-inline">
-                {% include "oscar/dashboard/partials/form_fields_inline.html" with form=sduclass_form %}
+                {% include "oscar/dashboard/partials/form_fields_inline.html" with form=sdu_class_form %}
                 <button class="btn btn-primary" type="submit" data-loading-text="{% trans 'Submitting...' %}">
                     <i class="fas fa-plus-circle"></i> {% trans "New SDU" %}
                 </button>

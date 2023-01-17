@@ -75,14 +75,14 @@ class SduListView(PartnerSduFilterMixin, SingleTableView):
 
     template_name = 'oscar/dashboard/catalogue/sdu_list.html'
     form_class = SduSearchForm
-    sduclass_form_class = SduClassSelectForm
+    sdu_class_form_class = SduClassSelectForm
     table_class = SduTable
     context_table_name = 'sdus'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form'] = self.form
-        ctx['sduclass_form'] = self.sduclass_form_class()
+        ctx['sdu_class_form'] = self.sdu_class_form_class()
         return ctx
 
     def get_description(self, form):
@@ -157,7 +157,7 @@ class SduListView(PartnerSduFilterMixin, SingleTableView):
 
 class SduCreateRedirectView(generic.RedirectView):
     permanent = False
-    sduclass_form_class = SduClassSelectForm
+    sdu_class_form_class = SduClassSelectForm
 
     def get_sdu_create_url(self, sdu_class):
         """ Allow site to provide custom URL """
@@ -169,7 +169,7 @@ class SduCreateRedirectView(generic.RedirectView):
         return reverse('dashboard:catalogue-sdu-list')
 
     def get_redirect_url(self, **kwargs):
-        form = self.sduclass_form_class(self.request.GET)
+        form = self.sdu_class_form_class(self.request.GET)
         if form.is_valid():
             sdu_class = form.cleaned_data['sdu_class']
             return self.get_sdu_create_url(sdu_class)
@@ -998,7 +998,7 @@ class OptionDeleteView(PopUpWindowDeleteMixin, generic.DeleteView):
         ctx['title'] = _("Delete Option '%s'") % self.object.name
 
         sdus = self.object.sdu_set.count()
-        sdu_classes = self.object.sduclass_set.count()
+        sdu_classes = self.object.sdu_class_set.count()
         if any([sdus, sdu_classes]):
             ctx['disallow'] = True
             ctx['title'] = _("Unable to delete '%s'") % self.object.name

@@ -105,7 +105,7 @@ class BasketView(ModelFormSetView):
         context['voucher_form'] = self.get_basket_voucher_form()
 
         # Shipping information is included to give an idea of the total order
-        # cost.  It is also important for PayPal Express where the renter
+        # cost.  It is also important for PayPal Express where the customer
         # gets redirected away from the basket page and needs to see what the
         # estimated order total is beforehand.
         context['shipping_methods'] = self.get_shipping_methods(

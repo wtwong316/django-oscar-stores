@@ -100,7 +100,7 @@
     {% block sdu_description %}
         {% if sdu.description %}
         <div id="sdu_description" class="sub-header">
-            <h2>{% trans "Product Description" %}</h2>
+            <h2>{% trans "Sdu Description" %}</h2>
         </div>
         <p>{{ sdu.description|safe }}</p>
         {% endif %}
@@ -108,7 +108,7 @@
 
     {% block sdu_info %}
     <div class="sub-header">
-        <h2>{% trans "Product Information" %}</h2>
+        <h2>{% trans "Sdu Information" %}</h2>
     </div>
     <table class="table table-striped">
         {% if sdu.upc %}
@@ -117,7 +117,7 @@
         </tr>
         {% endif %}
         <tr>
-            <th>{% trans "Product Type" %}</th><td>{{ sdu.get_sdu_class.name }}</td>
+            <th>{% trans "Sdu Type" %}</th><td>{{ sdu.get_sdu_class.name }}</td>
         </tr>
 
         {% purchase_info_for_sdu request sdu as session %}
