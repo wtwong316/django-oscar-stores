@@ -221,12 +221,13 @@ class AbstractAddress(models.Model):
 
     # We use quite a few lines of an address as they are often quite long and
     # it's easier to just hide the unnecessary ones than add extra ones.
-    line1 = models.CharField(_("First line of address"), max_length=255)
-    line2 = models.CharField(
-        _("Second line of address"), max_length=255, blank=True)
-    line3 = models.CharField(
-        _("Third line of address"), max_length=255, blank=True)
-    line4 = models.CharField(_("City"), max_length=255, blank=True)
+    line1 = models.CharField(_("Street name"), max_length=255)
+    line2 = models.CharField(_("Street number"), max_length=255, blank=True)
+    line3 = models.CharField(_("Building"), max_length=255, blank=True)
+    line4 = models.CharField(_("Floor"), max_length=255, blank=True)
+    line5 = models.CharField(_("Room"), max_length=255, blank=True)
+    line6 = models.CharField(_("District"), max_length=255, blank=True)
+    line7 = models.CharField(_("City"), max_length=255, blank=True)
     state = models.CharField(_("State/County"), max_length=255, blank=True)
     postcode = UppercaseCharField(
         _("Post/Zip-code"), max_length=64, blank=True)
@@ -239,10 +240,10 @@ class AbstractAddress(models.Model):
     # `search_fields`.  This is effectively a poor man's Solr text field.
     search_text = models.TextField(
         _("Search text - used only for searching addresses"), editable=False)
-    search_fields = ['first_name', 'last_name', 'line1', 'line2', 'line3', 'line4', 'state', 'postcode', 'country']
+    search_fields = ['first_name', 'last_name', 'line1', 'line3', 'line6']
 
     # Fields, used for `summary` property definition and hash generation.
-    base_fields = hash_fields = ['salutation', 'line1', 'line2', 'line3', 'line4', 'state', 'postcode', 'country']
+    base_fields = hash_fields = ['salutation', 'line1', 'line3', 'line6', 'line7', 'state', 'postcode', 'country']
 
     def __str__(self):
         return self.summary
@@ -261,7 +262,7 @@ class AbstractAddress(models.Model):
     def clean(self):
         # Strip all whitespace
         for field in ['first_name', 'last_name', 'line1', 'line2', 'line3',
-                      'line4', 'state', 'postcode']:
+                      'line4', 'line5', 'line6', 'line7', 'state', 'postcode']:
             if self.__dict__[field]:
                 self.__dict__[field] = self.__dict__[field].strip()
 

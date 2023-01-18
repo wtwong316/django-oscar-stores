@@ -23,8 +23,10 @@ class VoucherAdmin(admin.ModelAdmin):
 
 
 class VoucherApplicationAdmin(admin.ModelAdmin):
-    list_display = ('voucher', 'user', 'inquiry', 'date_created')
-    readonly_fields = ('voucher', 'user', 'inquiry')
+    #list_display = ('voucher', 'user', 'inquiry', 'date_created')
+    list_display = ('voucher', 'user', 'date_created')
+    #readonly_fields = ('voucher', 'user', 'inquiry')
+    readonly_fields = ('voucher', 'user')
 
 
 admin.site.register(Voucher, VoucherAdmin)

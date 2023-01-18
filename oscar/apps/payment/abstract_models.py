@@ -66,11 +66,11 @@ class AbstractSource(models.Model):
     This source object tracks how much money has been authorised, debited and
     refunded, which is useful when payment takes place in multiple stages.
     """
-    inquiry = models.ForeignKey(
-        'inquiry.inquiry',
-        on_delete=models.CASCADE,
-        related_name='sources',
-        verbose_name=_("inquiry"))
+    #inquiry = models.ForeignKey(
+    #    'inquiry.Inquiry',
+    #    on_delete=models.CASCADE,
+    #    related_name='sources',
+    #    verbose_name=_("Inquiry"))
     source_type = models.ForeignKey(
         'payment.SourceType',
         on_delete=models.CASCADE,

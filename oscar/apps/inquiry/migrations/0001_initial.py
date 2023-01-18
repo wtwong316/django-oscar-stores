@@ -32,10 +32,13 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(blank=True, choices=[('Mr', 'Mr'), ('Miss', 'Miss'), ('Mrs', 'Mrs'), ('Ms', 'Ms'), ('Dr', 'Dr')], max_length=64, verbose_name='Title')),
                 ('first_name', models.CharField(blank=True, max_length=255, verbose_name='First name')),
                 ('last_name', models.CharField(blank=True, max_length=255, verbose_name='Last name')),
-                ('line1', models.CharField(max_length=255, verbose_name='First line of address')),
-                ('line2', models.CharField(blank=True, max_length=255, verbose_name='Second line of address')),
-                ('line3', models.CharField(blank=True, max_length=255, verbose_name='Third line of address')),
-                ('line4', models.CharField(blank=True, max_length=255, verbose_name='City')),
+                ('line1', models.CharField(max_length=255, verbose_name='Street name')),
+                ('line2', models.CharField(max_length=255, verbose_name='Street number')),
+                ('line3', models.CharField(blank=True, max_length=255, verbose_name='Building')),
+                ('line4', models.CharField(max_length=255, verbose_name='Floor')),
+                ('line5', models.CharField(max_length=255, verbose_name='Room')),
+                ('line6', models.CharField(max_length=255, verbose_name='District')),
+                ('line7', models.CharField(blank=True, max_length=255, verbose_name='City')),
                 ('state', models.CharField(blank=True, max_length=255, verbose_name='State/County')),
                 ('postcode', oscar.models.fields.UppercaseCharField(blank=True, max_length=64, verbose_name='Post/Zip-code')),
                 ('search_text', models.TextField(editable=False, verbose_name='Search text - used only for searching addresses')),
@@ -163,7 +166,7 @@ class Migration(migrations.Migration):
                 ('code', models.CharField(max_length=128, verbose_name='Surcharge code')),
                 ('incl_tax', models.DecimalField(decimal_places=2, default=0, max_digits=12, verbose_name='Surcharge (inc. tax)')),
                 ('excl_tax', models.DecimalField(decimal_places=2, default=0, max_digits=12, verbose_name='Surcharge (excl. tax)')),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='surcharges', to='inquiry.inquiry', verbose_name='Surcharges')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='surcharges', to='inquiry.Inquiry', verbose_name='Surcharges')),
             ],
             options={
                 'ordering': ['pk'],
@@ -197,7 +200,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='shippingevent',
             name='inquiry',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='shipping_events', to='inquiry.inquiry', verbose_name='Inquiry'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='shipping_events', to='inquiry.Inquiry', verbose_name='Inquiry'),
         ),
         migrations.CreateModel(
             name='ShippingAddress',
@@ -206,10 +209,13 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(blank=True, choices=[('Mr', 'Mr'), ('Miss', 'Miss'), ('Mrs', 'Mrs'), ('Ms', 'Ms'), ('Dr', 'Dr')], max_length=64, verbose_name='Title')),
                 ('first_name', models.CharField(blank=True, max_length=255, verbose_name='First name')),
                 ('last_name', models.CharField(blank=True, max_length=255, verbose_name='Last name')),
-                ('line1', models.CharField(max_length=255, verbose_name='First line of address')),
-                ('line2', models.CharField(blank=True, max_length=255, verbose_name='Second line of address')),
-                ('line3', models.CharField(blank=True, max_length=255, verbose_name='Third line of address')),
-                ('line4', models.CharField(blank=True, max_length=255, verbose_name='City')),
+                ('line1', models.CharField(max_length=255, verbose_name='Street name')),
+                ('line2', models.CharField(max_length=255, verbose_name='Street number')),
+                ('line3', models.CharField(blank=True, max_length=255, verbose_name='Building')),
+                ('line4', models.CharField(max_length=255, verbose_name='Floor')),
+                ('line5', models.CharField(max_length=255, verbose_name='Room')),
+                ('line6', models.CharField(max_length=255, verbose_name='District')),
+                ('line7', models.CharField(blank=True, max_length=255, verbose_name='City')),
                 ('state', models.CharField(blank=True, max_length=255, verbose_name='State/County')),
                 ('postcode', oscar.models.fields.UppercaseCharField(blank=True, max_length=64, verbose_name='Post/Zip-code')),
                 ('search_text', models.TextField(editable=False, verbose_name='Search text - used only for searching addresses')),
@@ -250,7 +256,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='paymentevent',
             name='inquiry',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payment_events', to='inquiry.inquiry', verbose_name='Inquiry'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payment_events', to='inquiry.Inquiry', verbose_name='Inquiry'),
         ),
         migrations.AddField(
             model_name='paymentevent',
@@ -264,7 +270,7 @@ class Migration(migrations.Migration):
                 ('old_status', models.CharField(blank=True, max_length=100, verbose_name='Old Status')),
                 ('new_status', models.CharField(blank=True, max_length=100, verbose_name='New Status')),
                 ('date_created', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Date Created')),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='status_changes', to='inquiry.inquiry', verbose_name='Inquiry Status Changes')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='status_changes', to='inquiry.Inquiry', verbose_name='Inquiry Status Changes')),
             ],
             options={
                 'verbose_name': 'Inquiry Status Change',
@@ -281,7 +287,7 @@ class Migration(migrations.Migration):
                 ('message', models.TextField(verbose_name='Message')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date Created')),
                 ('date_updated', models.DateTimeField(auto_now=True, verbose_name='Date Updated')),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notes', to='inquiry.inquiry', verbose_name='Inquiry')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notes', to='inquiry.Inquiry', verbose_name='Inquiry')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             options={
@@ -303,7 +309,7 @@ class Migration(migrations.Migration):
                 ('frequency', models.PositiveIntegerField(null=True, verbose_name='Frequency')),
                 ('amount', models.DecimalField(decimal_places=2, default=0, max_digits=12, verbose_name='Amount')),
                 ('message', models.TextField(blank=True)),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='discounts', to='inquiry.inquiry', verbose_name='Inquiry')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='discounts', to='inquiry.Inquiry', verbose_name='Inquiry')),
             ],
             options={
                 'verbose_name': 'Inquiry Discount',
@@ -337,7 +343,7 @@ class Migration(migrations.Migration):
                 ('shipping_incl_tax', models.DecimalField(decimal_places=2, default=0, max_digits=12, verbose_name='Shiping (inc. tax)')),
                 ('shipping_excl_tax', models.DecimalField(decimal_places=2, default=0, max_digits=12, verbose_name='Shipping (excl. tax)')),
                 ('line', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='prices', to='inquiry.line', verbose_name='Line')),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='line_prices', to='inquiry.inquiry', verbose_name='Option')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='line_prices', to='inquiry.Inquiry', verbose_name='Option')),
             ],
             options={
                 'verbose_name': 'Line Price',
@@ -364,7 +370,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='line',
             name='inquiry',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines', to='inquiry.inquiry', verbose_name='Inquiry'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines', to='inquiry.Inquiry', verbose_name='Inquiry'),
         ),
         migrations.AddField(
             model_name='line',
@@ -387,7 +393,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date_created', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Date')),
                 ('event_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='communication.communicationeventtype', verbose_name='Event Type')),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='communication_events', to='inquiry.inquiry', verbose_name='Inquiry')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='communication_events', to='inquiry.Inquiry', verbose_name='Inquiry')),
             ],
             options={
                 'verbose_name': 'Communication Event',

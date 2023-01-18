@@ -9,7 +9,8 @@ Bankcard = get_model('payment', 'Bankcard')
 
 
 class SourceAdmin(admin.ModelAdmin):
-    list_display = ('inquiry', 'source_type', 'amount_allocated',
+    #list_display = ('inquiry', 'source_type', 'amount_allocated',
+    list_display = ('source_type', 'amount_allocated',
                     'amount_debited', 'balance', 'reference')
 
 

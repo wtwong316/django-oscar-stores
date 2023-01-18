@@ -32,8 +32,8 @@ OSCAR_DELETE_IMAGE_FILES = True
 OSCAR_MISSING_IMAGE_URL = 'image_not_found.jpg'
 
 # Address settings
-OSCAR_REQUIRED_ADDRESS_FIELDS = ('first_name', 'last_name', 'line1',
-                                 'line4', 'postcode', 'country')
+#OSCAR_REQUIRED_ADDRESS_FIELDS = ('first_name', 'last_name', 'line1', 'line4', 'postcode', 'country')
+OSCAR_REQUIRED_ADDRESS_FIELDS = ('first_name', 'last_name', 'line1', 'line2', 'line4', 'line5', 'line6')
 
 # Pagination settings
 

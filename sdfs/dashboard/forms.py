@@ -16,7 +16,7 @@ class SdfAddressForm(forms.ModelForm):
         #fields = [
         #    'line1', 'line2', 'line3', 'line4', 'state', 'postcode', 'country']
         fields = [
-            'line1', 'line2', 'line3', 'line4']
+            'line1', 'line2', 'line3', 'line4', 'line5', 'line6']
 
 
 class SdfForm(forms.ModelForm):
@@ -80,7 +80,7 @@ class SdfForm(forms.ModelForm):
 
 
 class DashboardSdfSearchForm(forms.Form):
-    name = forms.CharField(label=_('Sdf AppId'), required=False)
+    name = forms.CharField(label=_('SurveyId'), required=False)
     address = forms.CharField(label=_('Address'), required=False)
 
     def is_empty(self):

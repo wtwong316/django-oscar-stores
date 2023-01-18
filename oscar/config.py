@@ -23,7 +23,6 @@ class Shop(OscarConfig):
         self.dashboard_app = apps.get_app_config('dashboard')
         self.offer_app = apps.get_app_config('offer')
         self.wishlists_app = apps.get_app_config('wishlists')
-
         self.password_reset_form = get_class('renter.forms', 'PasswordResetForm')
         self.set_password_form = SetPasswordForm
 

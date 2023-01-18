@@ -12,7 +12,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('inquiry', '0001_initial'),
         ('offer', '0001_initial'),
     ]
 
@@ -65,7 +64,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date_created', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inquiry.inquiry', verbose_name='Inquiry')),
+                #('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inquiry.Inquiry', verbose_name='Inquiry')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
                 ('voucher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='voucher.voucher', verbose_name='Voucher')),
             ],

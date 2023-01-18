@@ -262,10 +262,10 @@ class AbstractVoucherApplication(models.Model):
         null=True,
         on_delete=models.CASCADE,
         verbose_name=_("User"))
-    inquiry = models.ForeignKey(
-        'inquiry.Inquiry',
-        on_delete=models.CASCADE,
-        verbose_name=_("Inquiry"))
+    #inquiry = models.ForeignKey(
+    #    'inquiry.Inquiry',
+    #    on_delete=models.CASCADE,
+    #    verbose_name=_("Inquiry"))
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
