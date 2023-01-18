@@ -4,11 +4,11 @@ from oscar.core.loading import is_model_registered
 __all__ = []
 
 
-if not is_model_registered('shipping', 'OrderAndItemCharges'):
-    class OrderAndItemCharges(abstract_models.AbstractOrderAndItemCharges):
+if not is_model_registered('shipping', 'InquiryAndItemCharges'):
+    class InquiryAndItemCharges(abstract_models.AbstractInquiryAndItemCharges):
         pass
 
-    __all__.append('OrderAndItemCharges')
+    __all__.append('InquiryAndItemCharges')
 
 
 if not is_model_registered('shipping', 'WeightBased'):

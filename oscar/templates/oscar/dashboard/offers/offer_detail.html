@@ -47,7 +47,7 @@
                 {% endif %}
             </td>
             <td>{% trans "Total cost:" %} <strong>{{ offer.total_discount|currency }}</strong></td>
-            <td>{% trans "Number of orders:" %} <strong>{{ offer.num_orders }}</strong></td>
+            <td>{% trans "Number of inquiries:" %} <strong>{{ offer.num_inquiries }}</strong></td>
             <td>{% trans "Number of uses:" %} <strong>{{ offer.num_applications }}</strong></td>
         </tr>
     </table>
@@ -145,25 +145,25 @@
     </table>
     {% endif %}
 
-    {% if order_discounts %}
+    {% if inquiry_discounts %}
         <div class="table-header">
             <a class="float-right btn" href=".?format=csv">{% trans "Export to CSV" %}</a>
-            <h2>{% trans "Orders that used this offer" %}</h2>
+            <h2>{% trans "Inquiries that used this offer" %}</h2>
         </div>
         <table class="table table-bordered table-striped">
             <thead>
-                <th>{% trans "Order number" %}</th>
-                <th>{% trans "Order date" %}</th>
-                <th>{% trans "Order total" %}</th>
+                <th>{% trans "Inquiry number" %}</th>
+                <th>{% trans "Inquiry date" %}</th>
+                <th>{% trans "Inquiry total" %}</th>
                 <th>{% trans "Cost" %}</th>
             </thead>
             <tbody>
-                {% for discount in order_discounts %}
-                    {% with order=discount.order %}
+                {% for discount in inquiry_discounts %}
+                    {% with inquiry=discount.inquiry %}
                         <tr>
-                            <td><a href="{% url 'dashboard:order-detail' number=order.number %}">{{ order.number }}</a></td>
-                            <td>{{ order.date_placed }}</td>
-                            <td>{{ order.total_incl_tax|currency }}</td>
+                            <td><a href="{% url 'dashboard:inquiry-detail' number=inquiry.number %}">{{ inquiry.number }}</a></td>
+                            <td>{{ inquiry.date_placed }}</td>
+                            <td>{{ inquiry.total_incl_tax|currency }}</td>
                             <td>{{ discount.amount|currency }}</td>
                         </tr>
                     {% endwith %}

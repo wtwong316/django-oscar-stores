@@ -1,0 +1,36 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Shipping address" %} | {% trans "Inquiry" %} {{ inquiry.number }} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:inquiry-list' %}">{% trans "Inquirys" %}</a></li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard:inquiry-detail' number=inquiry.number %}">{{ inquiry.number }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Edit shipping address" %}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block headertext %}
+    {% blocktrans %}Edit shipping address for inquiry {{ inquiry.number }}{% endblocktrans %}
+{% endblock  %}
+
+{% block content %}
+
+    <form method="post" class="card card-body">
+        {% csrf_token %}
+        {% include "oscar/dashboard/partials/form_fields.html" with form=form style='horizontal' %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Updating...' %}">{% trans "Update address" %}</button>
+            {% trans "or" %} <a href="{% url 'dashboard:inquiry-detail' number=inquiry.number %}">{% trans "cancel" %}</a>
+        </div>
+    </form>
+
+{% endblock content %}

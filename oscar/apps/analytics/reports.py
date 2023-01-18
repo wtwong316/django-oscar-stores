@@ -59,11 +59,11 @@ class UserReportCSVFormatter(ReportCSVFormatter):
                       _('Date registered'),
                       _('Sdu views'),
                       _('Basket additions'),
-                      _('Orders'),
-                      _('Order lines'),
-                      _('Order items'),
+                      _('Inquiries'),
+                      _('Inquiry lines'),
+                      _('Inquiry items'),
                       _('Total spent'),
-                      _('Date of last order')]
+                      _('Date of last inquiry')]
         writer.writerow(header_row)
 
         for record in users:
@@ -71,11 +71,11 @@ class UserReportCSVFormatter(ReportCSVFormatter):
                    self.format_date(record.user.date_joined),
                    record.num_sdu_views,
                    record.num_basket_additions,
-                   record.num_orders,
-                   record.num_order_lines,
-                   record.num_order_items,
+                   record.num_inquiries,
+                   record.num_inquiry_lines,
+                   record.num_inquiry_items,
                    record.total_spent,
-                   self.format_datetime(record.date_last_order)]
+                   self.format_datetime(record.date_last_inquiry)]
             writer.writerow(row)
 
 

@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 from oscar.apps.basket.signals import basket_addition
 from oscar.apps.catalogue.signals import sdu_viewed
-from oscar.apps.order.signals import order_placed
+from oscar.apps.inquiry.signals import inquiry_placed
 from oscar.apps.search.signals import user_search
 from oscar.core.loading import get_model
 
@@ -45,32 +45,32 @@ def _update_counter(model, field_name, filter_kwargs, increment=1):
             "IntegrityError when updating analytics counter for %s", model)
 
 
-def _record_sdus_in_order(order):
+def _record_sdus_in_inquiry(inquiry):
     # surely there's a way to do this without causing a query for each line?
-    for line in order.lines.all():
+    for line in inquiry.lines.all():
         _update_counter(
             SduRecord, 'num_purchases',
             {'sdu': line.sdu}, line.quantity)
 
 
-def _record_user_order(user, order):
+def _record_user_inquiry(user, inquiry):
     try:
         record = UserRecord.objects.filter(user=user)
         affected = record.update(
-            num_orders=F('num_orders') + 1,
-            num_order_lines=F('num_order_lines') + order.num_lines,
-            num_order_items=F('num_order_items') + order.num_items,
-            total_spent=F('total_spent') + order.total_incl_tax,
-            date_last_order=order.date_placed)
+            num_inquiries=F('num_inquiries') + 1,
+            num_inquiry_lines=F('num_inquiry_lines') + inquiry.num_lines,
+            num_inquiry_items=F('num_inquiry_items') + inquiry.num_items,
+            total_spent=F('total_spent') + inquiry.total_incl_tax,
+            date_last_inquiry=inquiry.date_placed)
         if not affected:
             UserRecord.objects.create(
-                user=user, num_orders=1, num_order_lines=order.num_lines,
-                num_order_items=order.num_items,
-                total_spent=order.total_incl_tax,
-                date_last_order=order.date_placed)
+                user=user, num_inquiries=1, num_inquiry_lines=inquiry.num_lines,
+                num_inquiry_items=inquiry.num_items,
+                total_spent=inquiry.total_incl_tax,
+                date_last_inquiry=inquiry.date_placed)
     except IntegrityError:      # pragma: no cover
         logger.error(
-            "IntegrityError in analytics when recording a user order.")
+            "IntegrityError in analytics when recording a user inquiry.")
 
 
 # Receivers
@@ -101,10 +101,10 @@ def receive_basket_addition(sender, sdu, user, **kwargs):
         _update_counter(UserRecord, 'num_basket_additions', {'user': user})
 
 
-@receiver(order_placed)
-def receive_order_placed(sender, order, user, **kwargs):
+@receiver(inquiry_placed)
+def receive_inquiry_placed(sender, inquiry, user, **kwargs):
     if kwargs.get('raw', False):
         return
-    _record_sdus_in_order(order)
+    _record_sdus_in_inquiry(inquiry)
     if user and user.is_authenticated:
-        _record_user_order(user, order)
+        _record_user_inquiry(user, inquiry)

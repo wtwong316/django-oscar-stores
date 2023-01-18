@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('order', '0001_initial'),
+        ('inquiry', '0001_initial'),
         ('offer', '0001_initial'),
     ]
 
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('start_datetime', models.DateTimeField(db_index=True, verbose_name='Start datetime')),
                 ('end_datetime', models.DateTimeField(db_index=True, verbose_name='End datetime')),
                 ('num_basket_additions', models.PositiveIntegerField(default=0, verbose_name='Times added to basket')),
-                ('num_orders', models.PositiveIntegerField(default=0, verbose_name='Times on orders')),
+                ('num_inquiries', models.PositiveIntegerField(default=0, verbose_name='Times on inquiries')),
                 ('total_discount', models.DecimalField(decimal_places=2, default=Decimal('0.00'), max_digits=12, verbose_name='Total discount')),
                 ('date_created', models.DateTimeField(auto_now_add=True, db_index=True)),
                 ('offers', models.ManyToManyField(limit_choices_to={'offer_type': 'Voucher'}, related_name='vouchers', to='offer.ConditionalOffer', verbose_name='Offers')),
@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date_created', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.order', verbose_name='Order')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inquiry.inquiry', verbose_name='Inquiry')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
                 ('voucher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='voucher.voucher', verbose_name='Voucher')),
             ],

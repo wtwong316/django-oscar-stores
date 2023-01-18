@@ -68,8 +68,8 @@ class AbstractVoucherSet(models.Model):
         return value['result']
 
     @property
-    def num_orders(self):
-        value = self.vouchers.aggregate(result=Sum('num_orders'))
+    def num_inquiries(self):
+        value = self.vouchers.aggregate(result=Sum('num_inquiries'))
         return value['result']
 
     @property
@@ -88,7 +88,7 @@ class AbstractVoucher(models.Model):
     (c) Once per renter
 
     Oscar enforces those modes by creating VoucherApplication
-    instances when a voucher is used for an order.
+    instances when a voucher is used for an inquiry.
     """
     name = models.CharField(_("Name"), max_length=128, unique=True,
                             help_text=_("This will be shown in the checkout"
@@ -117,7 +117,7 @@ class AbstractVoucher(models.Model):
     # Reporting information. Not used to enforce any consumption limits.
     num_basket_additions = models.PositiveIntegerField(
         _("Times added to basket"), default=0)
-    num_orders = models.PositiveIntegerField(_("Times on orders"), default=0)
+    num_inquiries = models.PositiveIntegerField(_("Times on inquiries"), default=0)
     total_discount = models.DecimalField(
         _("Total discount"), decimal_places=2, max_digits=12,
         default=Decimal('0.00'))
@@ -187,7 +187,7 @@ class AbstractVoucher(models.Model):
                     voucher=self, user=user).exists()
                 if not is_available:
                     message = _("You have already used this voucher in "
-                                "a previous order")
+                                "a previous inquiry")
         return is_available, message
 
     def is_available_for_basket(self, basket):
@@ -209,15 +209,15 @@ class AbstractVoucher(models.Model):
                 break
         return is_available, message
 
-    def record_usage(self, order, user):
+    def record_usage(self, inquiry, user):
         """
-        Records a usage of this voucher in an order.
+        Records a usage of this voucher in an inquiry.
         """
         if user.is_authenticated:
-            self.applications.create(voucher=self, order=order, user=user)
+            self.applications.create(voucher=self, inquiry=inquiry, user=user)
         else:
-            self.applications.create(voucher=self, order=order)
-        self.num_orders += 1
+            self.applications.create(voucher=self, inquiry=inquiry)
+        self.num_inquiries += 1
         self.save()
     record_usage.alters_data = True
 
@@ -243,7 +243,7 @@ class AbstractVoucher(models.Model):
 
 class AbstractVoucherApplication(models.Model):
     """
-    For tracking how often a voucher has been used in an order.
+    For tracking how often a voucher has been used in an inquiry.
 
     This is used to enforce the voucher usage mode in
     Voucher.is_available_to_user, and created in Voucher.record_usage.
@@ -262,10 +262,10 @@ class AbstractVoucherApplication(models.Model):
         null=True,
         on_delete=models.CASCADE,
         verbose_name=_("User"))
-    order = models.ForeignKey(
-        'order.Order',
+    inquiry = models.ForeignKey(
+        'inquiry.Inquiry',
         on_delete=models.CASCADE,
-        verbose_name=_("Order"))
+        verbose_name=_("Inquiry"))
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:

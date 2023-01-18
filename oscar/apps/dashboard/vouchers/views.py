@@ -20,7 +20,7 @@ VoucherSetSearchForm = get_class('dashboard.vouchers.forms', 'VoucherSetSearchFo
 VoucherSearchForm = get_class('dashboard.vouchers.forms', 'VoucherSearchForm')
 Voucher = get_model('voucher', 'Voucher')
 VoucherSet = get_model('voucher', 'VoucherSet')
-OrderDiscount = get_model('order', 'OrderDiscount')
+InquiryDiscount = get_model('inquiry', 'InquiryDiscount')
 
 
 class VoucherListView(generic.ListView):
@@ -34,7 +34,7 @@ class VoucherListView(generic.ListView):
         self.search_filters = []
         qs = self.model._default_manager.all()
         qs = sort_queryset(qs, self.request,
-                           ['num_basket_additions', 'num_orders',
+                           ['num_basket_additions', 'num_inquiries',
                             'date_created'],
                            '-date_created')
 
@@ -131,8 +131,8 @@ class VoucherStatsView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        discounts = OrderDiscount.objects.filter(voucher_id=self.object.id)
-        discounts = discounts.order_by('-order__date_placed')
+        discounts = InquiryDiscount.objects.filter(voucher_id=self.object.id)
+        discounts = discounts.order_by('-inquiry__date_placed')
         ctx['discounts'] = discounts
         return ctx
 
@@ -258,7 +258,7 @@ class VoucherSetDetailView(generic.ListView):
             .order_by('-date_created'))
 
         qs = sort_queryset(qs, self.request,
-                           ['num_basket_additions', 'num_orders',
+                           ['num_basket_additions', 'num_inquiries',
                             'date_created'],
                            '-date_created')
 
@@ -299,7 +299,7 @@ class VoucherSetListView(generic.ListView):
         qs = self.model.objects.all().order_by('-date_created')
         qs = sort_queryset(
             qs, self.request,
-            ['num_basket_additions', 'num_orders', 'date_created'], '-date_created')
+            ['num_basket_additions', 'num_inquiries', 'date_created'], '-date_created')
         return qs
 
     def get_context_data(self, **kwargs):

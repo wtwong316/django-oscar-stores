@@ -45,20 +45,20 @@ class AbstractBase(models.Model):
         return D('0.00')
 
 
-class AbstractOrderAndItemCharges(AbstractBase):
+class AbstractInquiryAndItemCharges(AbstractBase):
     """
     Standard shipping method
 
     This method has two components:
-    * a charge per order
+    * a charge per inquiry
     * a charge per item
 
     Many sites use shipping logic which fits into this system.  However, for
     more complex shipping logic, a custom shipping method object will need to
     be provided that subclasses ShippingMethod.
     """
-    price_per_order = models.DecimalField(
-        _("Price per order"), decimal_places=2, max_digits=12,
+    price_per_inquiry = models.DecimalField(
+        _("Price per inquiry"), decimal_places=2, max_digits=12,
         default=D('0.00'))
     price_per_item = models.DecimalField(
         _("Price per item"), decimal_places=2, max_digits=12,
@@ -72,8 +72,8 @@ class AbstractOrderAndItemCharges(AbstractBase):
     class Meta(AbstractBase.Meta):
         abstract = True
         app_label = 'shipping'
-        verbose_name = _("Order and Item Charge")
-        verbose_name_plural = _("Order and Item Charges")
+        verbose_name = _("Inquiry and Item Charge")
+        verbose_name_plural = _("Inquiry and Item Charges")
 
     def calculate(self, basket):
         if (self.free_shipping_threshold is not None
@@ -82,7 +82,7 @@ class AbstractOrderAndItemCharges(AbstractBase):
                 currency=basket.currency, excl_tax=D('0.00'),
                 incl_tax=D('0.00'))
 
-        charge = self.price_per_order
+        charge = self.price_per_inquiry
         for line in basket.lines.all():
             if line.sdu.is_shipping_required:
                 charge += line.quantity * self.price_per_item

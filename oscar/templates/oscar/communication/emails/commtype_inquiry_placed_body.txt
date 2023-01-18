@@ -1,0 +1,25 @@
+{% load currency_filters i18n url_tags %}{% blocktrans with inquiry_number=inquiry.number %}Hello,
+
+We are pleased to confirm your inquiry {{ inquiry_number }} has been received and
+will be processed shortly.{% endblocktrans %}
+
+{% trans 'Your inquiry contains:' %}
+
+{% for line in inquiry.lines.all %} * {{ line.title }} - {%  trans 'quantity:' %} {{ line.quantity }} - {% trans 'price:' %} {{ line.line_price_incl_tax|currency:inquiry.currency }}
+{% endfor %}
+{% trans 'Basket total:' %} {{ inquiry.basket_total_incl_tax|currency:inquiry.currency }}
+{% trans 'Shipping:' %} {{ inquiry.shipping_incl_tax|currency:inquiry.currency }}
+{% trans 'Inquiry Total:' %} {{ inquiry.total_incl_tax|currency:inquiry.currency }}
+
+{% trans 'Shipping address:' %}
+
+{% for field in inquiry.shipping_address.active_address_fields %}  {{ field }}
+{% endfor %}
+
+{% if status_url %}
+{% absolute_url site.domain status_path as absolute_status_url %}
+{% blocktrans %}You can view the status of this inquiry at the below URL:
+{{ absolute_status_url }}{% endblocktrans %}
+{% endif %}
+
+{% blocktrans %}The team{% endblocktrans %}

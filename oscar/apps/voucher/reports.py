@@ -17,14 +17,14 @@ class VoucherReportCSVFormatter(ReportCSVFormatter):
         writer = self.get_csv_writer(response)
         header_row = [_('Voucher code'),
                       _('Added to a basket'),
-                      _('Used in an order'),
+                      _('Used in an inquiry'),
                       _('Total discount')]
         writer.writerow(header_row)
 
         for voucher in vouchers:
             row = [voucher.code,
                    voucher.num_basket_additions,
-                   voucher.num_orders,
+                   voucher.num_inquiries,
                    voucher.total_discount]
             writer.writerow(row)
 

@@ -6,22 +6,22 @@ ReportCSVFormatter = get_class(
     'dashboard.reports.reports', 'ReportCSVFormatter')
 
 
-class OrderDiscountCSVFormatter(ReportCSVFormatter):
-    filename_template = 'order-discounts-for-offer-%s.csv'
+class InquiryDiscountCSVFormatter(ReportCSVFormatter):
+    filename_template = 'inquiry-discounts-for-offer-%s.csv'
 
-    def generate_csv(self, response, order_discounts):
+    def generate_csv(self, response, inquiry_discounts):
         writer = self.get_csv_writer(response)
-        header_row = [_('Order number'),
-                      _('Order date'),
-                      _('Order total'),
+        header_row = [_('Inquiry number'),
+                      _('Inquiry date'),
+                      _('Inquiry total'),
                       _('Cost')]
         writer.writerow(header_row)
-        for order_discount in order_discounts:
-            order = order_discount.order
-            row = [order.number,
-                   self.format_datetime(order.date_placed),
-                   order.total_incl_tax,
-                   order_discount.amount]
+        for inquiry_discount in inquiry_discounts:
+            inquiry = inquiry_discount.inquiry
+            row = [inquiry.number,
+                   self.format_datetime(inquiry.date_placed),
+                   inquiry.total_incl_tax,
+                   inquiry_discount.amount]
             writer.writerow(row)
 
     def filename(self, offer):

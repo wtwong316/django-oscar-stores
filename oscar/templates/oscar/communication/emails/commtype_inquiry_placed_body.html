@@ -1,0 +1,66 @@
+{% extends "oscar/communication/emails/base.html" %}
+{% load currency_filters i18n url_tags %}
+
+{% block tbody %}
+<tr>
+    <td class="content-block">
+        <p xmlns="http://www.w3.org/1999/html">{% trans 'Hello,' %}</p>
+        <p>{% blocktrans with inquiry_number=inquiry.number %}We are pleased to confirm your inquiry {{ inquiry_number }} has been received and
+        will be processed shortly.{% endblocktrans %}</p>
+    </td>
+</tr>
+
+<tr>
+    <td class="content-block">
+        <table class="inquiry">
+            <tbody><tr>
+                <td>{% trans 'Your inquiry contains:' %}</td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="inquiry-items" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            {% for line in inquiry.lines.all %}
+                                <tr>
+                                    <td>{{ line.title }} &times; {{ line.quantity }}</td>
+                                    <td class="alignright">{{ line.line_price_incl_tax|currency:inquiry.currency }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td class="alignright">{% trans 'Basket total:' %}</td>
+                                <td class="alignright">{{ inquiry.basket_total_incl_tax|currency:inquiry.currency }}</td>
+                            </tr>
+                            <tr>
+                                <td class="alignright">{% trans 'Shipping:' %}</td>
+                                <td class="alignright">{{ inquiry.shipping_incl_tax|currency:inquiry.currency }}</td>
+                            </tr>
+                            <tr class="total">
+                                <td class="alignright" width="80%">{% trans 'Inquiry Total:' %}</td>
+                                <td class="alignright">{{ inquiry.total_incl_tax|currency:inquiry.currency }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody></table>
+    </td>
+</tr>
+
+<tr>
+    <td class="content-block">
+        <p>{% trans 'Shipping address:' %}</p>
+        <p>{% for field in inquiry.shipping_address.active_address_fields %}  {{ field }}<br/>
+        {% endfor %}</p>
+    </td>
+</tr>
+
+{% if status_url %}
+    <tr>
+        <td class="content-block">
+            {% absolute_url site.domain status_path as absolute_status_url %}
+            {% blocktrans %}You can view the status of this inquiry by clicking <a href="{{ absolute_status_url }}" title="inquiry status">here</a>{% endblocktrans %}
+        </td>
+    </tr>
+{% endif %}
+
+{% endblock %}

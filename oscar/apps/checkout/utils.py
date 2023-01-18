@@ -6,9 +6,9 @@ class CheckoutSessionData(object):
     Responsible for marshalling all the checkout session data
 
     Multi-stage checkouts often require several forms to be submitted and their
-    data persisted until the final order is placed. This class helps store and
+    data persisted until the final inquiry is placed. This class helps store and
     organise checkout form data until it is required to write out the final
-    order.
+    inquiry.
     """
     SESSION_KEY = 'checkout_data'
 
@@ -238,11 +238,11 @@ class CheckoutSessionData(object):
     # Submission methods
     # ==================
 
-    def set_order_number(self, order_number):
-        self._set('submission', 'order_number', order_number)
+    def set_inquiry_number(self, inquiry_number):
+        self._set('submission', 'inquiry_number', inquiry_number)
 
-    def get_order_number(self):
-        return self._get('submission', 'order_number')
+    def get_inquiry_number(self):
+        return self._get('submission', 'inquiry_number')
 
     def set_submitted_basket(self, basket):
         self._set('submission', 'basket_id', basket.id)

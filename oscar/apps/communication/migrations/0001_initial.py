@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('code', oscar.models.fields.autoslugfield.AutoSlugField(blank=True, editable=False, help_text='Code used for looking up this event programmatically', max_length=128, populate_from='name', separator='_', unique=True, validators=[django.core.validators.RegexValidator(message="Code can only contain the uppercase letters (A-Z), digits, and underscores, and can't start with a digit.", regex='^[A-Z_][0-9A-Z_]*$')], verbose_name='Code')),
                 ('name', models.CharField(db_index=True, max_length=255, verbose_name='Name')),
-                ('category', models.CharField(choices=[('Order related', 'Order related'), ('User related', 'User related')], default='Order related', max_length=255, verbose_name='Category')),
+                ('category', models.CharField(choices=[('Inquiry related', 'Inquiry related'), ('User related', 'User related')], default='Inquiry related', max_length=255, verbose_name='Category')),
                 ('email_subject_template', models.CharField(blank=True, max_length=255, null=True, verbose_name='Email Subject Template')),
                 ('email_body_template', models.TextField(blank=True, null=True, verbose_name='Email Body Template')),
                 ('email_body_html_template', models.TextField(blank=True, help_text='HTML template', null=True, verbose_name='Email Body HTML Template')),

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Order preview" %} | {{ block.super }}
+    {% trans "Inquiry preview" %} | {{ block.super }}
 {% endblock %}
 
 {% block checkout_nav %}
@@ -10,19 +10,19 @@
 {% endblock %}
 
 {% block checkout_title %}
-    {% trans "Preview order" %}
+    {% trans "Preview inquiry" %}
 {% endblock %}
 
-{% block place_order %}
-    <form method="post" action="{% url 'checkout:preview' %}" id="place_order_form">
+{% block place_inquiry %}
+    <form method="post" action="{% url 'checkout:preview' %}" id="place_inquiry_form">
         {% csrf_token %}
-        <input type="hidden" name="action" value="place_order" />
+        <input type="hidden" name="action" value="place_inquiry" />
 
         {% comment %}
             When submitting sensitive data on the payment details page (eg a bankcard)
             we don't want to save the data and so we pass the bound form to the preview
             template and render it in a hidden div.  Then the payment information will
-            get re-submitted when the user confirms the order.
+            get re-submitted when the user confirms the inquiry.
         {% endcomment %}
         <div style="display:none">
             {% block hiddenforms %}{% endblock %}
@@ -31,9 +31,9 @@
         <div class="form-group clearfix">
             <div class="row">
                 <div class="col-sm-3 offset-sm-9">
-                     <button id='place-order' type="submit" class="btn btn-primary btn-lg btn-block" data-loading-text="{% trans 'Submitting...' %}">{% trans "Place order" %}</button>
+                     <button id='place-inquiry' type="submit" class="btn btn-primary btn-lg btn-block" data-loading-text="{% trans 'Submitting...' %}">{% trans "Place inquiry" %}</button>
                 </div>
             </div>
         </div>
     </form>
-{% endblock place_order %}
+{% endblock place_inquiry %}

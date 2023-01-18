@@ -25,8 +25,8 @@ BasketLineFormSet, SavedLineFormSet = get_classes(
     'basket.formsets', ('BasketLineFormSet', 'SavedLineFormSet'))
 Repository = get_class('shipping.repository', 'Repository')
 
-OrderTotalCalculator = get_class(
-    'checkout.calculators', 'OrderTotalCalculator')
+InquiryTotalCalculator = get_class(
+    'checkout.calculators', 'InquiryTotalCalculator')
 BasketMessageGenerator = get_class('basket.utils', 'BasketMessageGenerator')
 SurchargeApplicator = get_class("checkout.applicator", "SurchargeApplicator")
 
@@ -104,10 +104,10 @@ class BasketView(ModelFormSetView):
         context = super().get_context_data(**kwargs)
         context['voucher_form'] = self.get_basket_voucher_form()
 
-        # Shipping information is included to give an idea of the total order
+        # Shipping information is included to give an idea of the total inquiry
         # cost.  It is also important for PayPal Express where the customer
         # gets redirected away from the basket page and needs to see what the
-        # estimated order total is beforehand.
+        # estimated inquiry total is beforehand.
         context['shipping_methods'] = self.get_shipping_methods(
             self.request.basket)
         method = self.get_default_shipping_method(self.request.basket)
@@ -142,7 +142,7 @@ class BasketView(ModelFormSetView):
             self.request.basket, shipping_charge=shipping_charge
         )
         context['surcharges'] = surcharges
-        context['order_total'] = OrderTotalCalculator().calculate(
+        context['inquiry_total'] = InquiryTotalCalculator().calculate(
             self.request.basket, shipping_charge, surcharges=surcharges)
         return context
 

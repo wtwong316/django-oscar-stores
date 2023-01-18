@@ -10,11 +10,11 @@
             <th>{% trans "Date registered" %}</th>
             <th>{% trans "Sdu views" %}</th>
             <th>{% trans "Basket additions" %}</th>
-            <th>{% trans "Orders" %}</th>
-            <th>{% trans "Order lines" %}</th>
-            <th>{% trans "Order items" %}</th>
+            <th>{% trans "Inquiries" %}</th>
+            <th>{% trans "Inquiry lines" %}</th>
+            <th>{% trans "Inquiry items" %}</th>
             <th>{% trans "Total spent" %}</th>
-            <th>{% trans "Date of last order" %}</th>
+            <th>{% trans "Date of last inquiry" %}</th>
         </tr>
         {% for user in objects %}
             <tr>
@@ -23,11 +23,11 @@
                 <td>{{ user.user.date_joined }}</td>
                 <td>{{ user.num_sdu_views }}</td>
                 <td>{{ user.num_basket_additions }}</td>
-                <td>{{ user.num_orders }}</td>
-                <td>{{ user.num_order_lines }}</td>
-                <td>{{ user.num_order_items }}</td>
+                <td>{{ user.num_inquiries }}</td>
+                <td>{{ user.num_inquiry_lines }}</td>
+                <td>{{ user.num_inquiry_items }}</td>
                 <td>{{ user.total_spent|currency }}</td>
-                <td>{{ user.date_last_order|default:"-" }}</td>
+                <td>{{ user.date_last_inquiry|default:"-" }}</td>
             </tr>
         {% endfor %}
     </table>

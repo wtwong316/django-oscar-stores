@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with number=inquiry.number %}Confirmation of inqury {{ number }}{% endblocktrans %}

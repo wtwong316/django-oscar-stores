@@ -13,7 +13,7 @@ from oscar.forms.mixins import PhoneNumberMixin
 from . import bankcards
 
 Country = get_model('address', 'Country')
-BillingAddress = get_model('order', 'BillingAddress')
+BillingAddress = get_model('inquiry', 'BillingAddress')
 Bankcard = get_model('payment', 'Bankcard')
 AbstractAddressForm = get_class('address.forms', 'AbstractAddressForm')
 

@@ -92,7 +92,7 @@
                         <th>{% trans "Status" %}</th>
                         <th>{% trans "Num offers" %}</th>
                         <th>{% anchor 'num_basket_additions' _("Num baskets") %}</th>
-                        <th>{% anchor 'num_orders' _("Num orders") %}</th>
+                        <th>{% anchor 'num_inquiries' _("Num inquiries") %}</th>
                         <th>{% anchor 'date_created' _("Date created") %}</th>
                         {% if form.is_bound and form.cleaned_data.in_set is not False %}
                         <th>{% trans "Set" %}</th>
@@ -116,7 +116,7 @@
                             </td>
                             <td>{{ voucher.offers.count }}</td>
                             <td>{{ voucher.num_basket_additions }}</td>
-                            <td>{{ voucher.num_orders }}</td>
+                            <td>{{ voucher.num_inquiries }}</td>
                             <td>{{ voucher.date_created }}</td>
                             {% if form.is_bound and form.cleaned_data.in_set is not False %}
                             <td>

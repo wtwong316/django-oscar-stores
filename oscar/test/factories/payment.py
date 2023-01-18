@@ -17,7 +17,7 @@ class SourceTypeFactory(factory.django.DjangoModelFactory):
 
 class SourceFactory(factory.django.DjangoModelFactory):
     order = factory.SubFactory(
-        'oscar.test.factories.OrderFactory')
+        'oscar.test.factories.InquiryFactory')
     source_type = factory.SubFactory(SourceTypeFactory)
 
     class Meta:
@@ -25,8 +25,8 @@ class SourceFactory(factory.django.DjangoModelFactory):
 
 
 class TransactionFactory(factory.django.DjangoModelFactory):
-    amount = factory.LazyAttribute(lambda obj: obj.source.order.total_incl_tax)
-    reference = factory.LazyAttribute(lambda obj: obj.source.order.number)
+    amount = factory.LazyAttribute(lambda obj: obj.source.inquiry.total_incl_tax)
+    reference = factory.LazyAttribute(lambda obj: obj.source.inquiry.number)
     source = factory.SubFactory(SourceFactory)
     status = 'authorised'
 

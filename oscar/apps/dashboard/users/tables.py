@@ -17,7 +17,7 @@ class UserTable(DashboardTable):
     active = Column(accessor='is_active')
     staff = Column(accessor='is_staff')
     date_registered = Column(accessor='date_joined')
-    num_orders = Column(accessor='orders__count', orderable=False, verbose_name=_('Number of Orders'))
+    num_inquirys = Column(accessor='inquirys__count', orderable=False, verbose_name=_('Number of Inquiries'))
     actions = TemplateColumn(
         template_name='oscar/dashboard/users/user_row_actions.html',
         verbose_name=' ')

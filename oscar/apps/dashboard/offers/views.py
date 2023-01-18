@@ -19,14 +19,14 @@ ConditionalOffer = get_model('offer', 'ConditionalOffer')
 Condition = get_model('offer', 'Condition')
 Range = get_model('offer', 'Range')
 Sdu = get_model('catalogue', 'Sdu')
-OrderDiscount = get_model('order', 'OrderDiscount')
+InquiryDiscount = get_model('inquiry', 'InquiryDiscount')
 Benefit = get_model('offer', 'Benefit')
 MetaDataForm, ConditionForm, BenefitForm, RestrictionsForm, OfferSearchForm \
     = get_classes('dashboard.offers.forms',
                   ['MetaDataForm', 'ConditionForm', 'BenefitForm',
                    'RestrictionsForm', 'OfferSearchForm'])
-OrderDiscountCSVFormatter = get_class(
-    'dashboard.offers.reports', 'OrderDiscountCSVFormatter')
+InquiryDiscountCSVFormatter = get_class(
+    'dashboard.offers.reports', 'InquiryDiscountCSVFormatter')
 
 
 class OfferListView(ListView):
@@ -358,7 +358,7 @@ class OfferDeleteView(DeleteView):
 class OfferDetailView(ListView):
     # Slightly odd, but we treat the offer detail view as a list view so the
     # request discounts can be browsed.
-    model = OrderDiscount
+    model = InquiryDiscount
     template_name = 'oscar/dashboard/offers/offer_detail.html'
     context_object_name = 'request_discounts'
     paginate_by = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
@@ -405,7 +405,7 @@ class OfferDetailView(ListView):
 
     def render_to_response(self, context):
         if self.request.GET.get('format') == 'csv':
-            formatter = OrderDiscountCSVFormatter()
+            formatter = InquiryDiscountCSVFormatter()
             return formatter.generate_response(context['request_discounts'],
                                                offer=self.offer)
         return super().render_to_response(context)

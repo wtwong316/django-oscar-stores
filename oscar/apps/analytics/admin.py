@@ -14,7 +14,7 @@ class UserSduViewAdmin(admin.ModelAdmin):
 
 class UserRecordAdmin(admin.ModelAdmin):
     list_display = ('user', 'num_sdu_views', 'num_basket_additions',
-                    'num_orders', 'total_spent', 'date_last_order')
+                    'num_inquiries', 'total_spent', 'date_last_inquiry')
 
 
 admin.site.register(get_model('analytics', 'sdurecord'),

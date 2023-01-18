@@ -21,8 +21,8 @@ Voucher = get_model('voucher', 'Voucher')
 Basket = get_model('basket', 'Basket')
 StockAlert = get_model('partner', 'StockAlert')
 Sdu = get_model('catalogue', 'Sdu')
-Order = get_model('order', 'Order')
-Line = get_model('order', 'Line')
+Inquiry = get_model('inquiry', 'Inquiry')
+Line = get_model('inquiry', 'Line')
 User = get_user_model()
 
 
@@ -53,13 +53,13 @@ class IndexView(TemplateView):
         """
         return Voucher.objects.filter(end_datetime__gt=now())
 
-    def get_hourly_report(self, orders, hours=24, segments=10):
+    def get_hourly_report(self, inquiries, hours=24, segments=10):
         """
-        Get report of order revenue split up in hourly chunks. A report is
+        Get report of inquiry revenue split up in hourly chunks. A report is
         generated for the last *hours* (default=24) from the current time.
-        The report provides ``max_revenue`` of the hourly order revenue sum,
+        The report provides ``max_revenue`` of the hourly inquiry revenue sum,
         ``y-range`` as the labelling for the y-axis in a template and
-        ``order_total_hourly``, a list of properties for hourly chunks.
+        ``inquiry_total_hourly``, a list of properties for hourly chunks.
         *segments* defines the number of labelling segments used for the y-axis
         when generating the y-axis labels (default=10).
         """
@@ -67,21 +67,21 @@ class IndexView(TemplateView):
         time_now = now().replace(minute=0, second=0)
         start_time = time_now - timedelta(hours=hours - 1)
 
-        order_total_hourly = []
+        inquiry_total_hourly = []
         for hour in range(0, hours, 2):
             end_time = start_time + timedelta(hours=2)
-            hourly_orders = orders.filter(date_placed__gte=start_time,
+            hourly_inquiries = inquiries.filter(date_placed__gte=start_time,
                                           date_placed__lt=end_time)
-            total = hourly_orders.aggregate(
+            total = hourly_inquiries.aggregate(
                 Sum('total_incl_tax')
             )['total_incl_tax__sum'] or D('0.0')
-            order_total_hourly.append({
+            inquiry_total_hourly.append({
                 'end_time': end_time,
                 'total_incl_tax': total
             })
             start_time = end_time
 
-        max_value = max([x['total_incl_tax'] for x in order_total_hourly])
+        max_value = max([x['total_incl_tax'] for x in inquiry_total_hourly])
         divisor = 1
         while divisor < max_value / 50:
             divisor *= 10
@@ -89,7 +89,7 @@ class IndexView(TemplateView):
         max_value *= divisor
         if max_value:
             segment_size = (max_value) / D('100.0')
-            for item in order_total_hourly:
+            for item in inquiry_total_hourly:
                 item['percentage'] = int(item['total_incl_tax'] / segment_size)
 
             y_range = []
@@ -98,11 +98,11 @@ class IndexView(TemplateView):
                 y_range.append(idx * y_axis_steps)
         else:
             y_range = []
-            for item in order_total_hourly:
+            for item in inquiry_total_hourly:
                 item['percentage'] = 0
 
         ctx = {
-            'order_total_hourly': order_total_hourly,
+            'inquiry_total_hourly': inquiry_total_hourly,
             'max_revenue': max_value,
             'y_range': y_range,
         }
@@ -111,17 +111,17 @@ class IndexView(TemplateView):
     def get_stats(self):
         datetime_24hrs_ago = now() - timedelta(hours=24)
 
-        orders = Order.objects.all()
+        inquiries = Inquiry.objects.all()
         alerts = StockAlert.objects.all()
         baskets = Basket.objects.filter(status=Basket.OPEN)
-        renters = User.objects.filter(orders__isnull=False).distinct()
+        renters = User.objects.filter(inquiries__isnull=False).distinct()
         lines = Line.objects.filter()
         sdus = Sdu.objects.all()
 
         user = self.request.user
         if not user.is_staff:
             partners_ids = tuple(user.partners.values_list('id', flat=True))
-            orders = orders.filter(
+            inquiries = inquiries.filter(
                 lines__partner_id__in=partners_ids
             ).distinct()
             alerts = alerts.filter(stockrecord__partner_id__in=partners_ids)
@@ -129,30 +129,30 @@ class IndexView(TemplateView):
                 lines__stockrecord__partner_id__in=partners_ids
             ).distinct()
             renters = renters.filter(
-                orders__lines__partner_id__in=partners_ids
+                inquiries__lines__partner_id__in=partners_ids
             ).distinct()
             lines = lines.filter(partner_id__in=partners_ids)
             sdus = sdus.filter(stockrecords__partner_id__in=partners_ids)
 
-        orders_last_day = orders.filter(date_placed__gt=datetime_24hrs_ago)
+        inquiries_last_day = inquiries.filter(date_placed__gt=datetime_24hrs_ago)
 
         open_alerts = alerts.filter(status=StockAlert.OPEN)
         closed_alerts = alerts.filter(status=StockAlert.CLOSED)
 
-        total_lines_last_day = lines.filter(order__in=orders_last_day).count()
+        total_lines_last_day = lines.filter(inquiry__in=inquiries_last_day).count()
         stats = {
-            'total_orders_last_day': orders_last_day.count(),
+            'total_inquiries_last_day': inquiries_last_day.count(),
             'total_lines_last_day': total_lines_last_day,
 
-            'average_order_costs': orders_last_day.aggregate(
+            'average_inquiry_costs': inquiries_last_day.aggregate(
                 Avg('total_incl_tax')
             )['total_incl_tax__avg'] or D('0.00'),
 
-            'total_revenue_last_day': orders_last_day.aggregate(
+            'total_revenue_last_day': inquiries_last_day.aggregate(
                 Sum('total_incl_tax')
             )['total_incl_tax__sum'] or D('0.00'),
 
-            'hourly_report_dict': self.get_hourly_report(orders),
+            'hourly_report_dict': self.get_hourly_report(inquiries),
             'total_renters_last_day': renters.filter(
                 date_joined__gt=datetime_24hrs_ago,
             ).count(),
@@ -167,13 +167,13 @@ class IndexView(TemplateView):
 
             'total_renters': renters.count(),
             'total_open_baskets': baskets.count(),
-            'total_orders': orders.count(),
+            'total_inquiries': inquiries.count(),
             'total_lines': lines.count(),
-            'total_revenue': orders.aggregate(
+            'total_revenue': inquiries.aggregate(
                 Sum('total_incl_tax')
             )['total_incl_tax__sum'] or D('0.00'),
 
-            'order_status_breakdown': orders.order_by(
+            'inquiry_status_breakdown': inquiries.order_by(
                 'status'
             ).values('status').annotate(freq=Count('id'))
         }

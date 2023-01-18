@@ -2,12 +2,12 @@ from oscar.apps.offer.abstract_models import (
     AbstractBenefit, AbstractCondition, AbstractConditionalOffer,
     AbstractRange, AbstractRangeSdu, AbstractRangeSduFileUpload)
 from oscar.apps.offer.results import (
-    SHIPPING_DISCOUNT, ZERO_DISCOUNT, BasketDiscount, PostOrderAction,
+    SHIPPING_DISCOUNT, ZERO_DISCOUNT, BasketDiscount, PostInquiryAction,
     ShippingDiscount)
 from oscar.core.loading import is_model_registered
 
 __all__ = [
-    'BasketDiscount', 'ShippingDiscount', 'PostOrderAction',
+    'BasketDiscount', 'ShippingDiscount', 'PostInquiryAction',
     'SHIPPING_DISCOUNT', 'ZERO_DISCOUNT'
 ]
 

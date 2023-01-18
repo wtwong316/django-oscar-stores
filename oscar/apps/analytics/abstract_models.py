@@ -53,17 +53,17 @@ class AbstractUserRecord(models.Model):
     num_basket_additions = models.PositiveIntegerField(
         _('Basket Additions'), default=0)
 
-    # Order stats
-    num_orders = models.PositiveIntegerField(
-        _('Orders'), default=0, db_index=True)
-    num_order_lines = models.PositiveIntegerField(
-        _('Order Lines'), default=0, db_index=True)
-    num_order_items = models.PositiveIntegerField(
-        _('Order Items'), default=0, db_index=True)
+    # Inquiry stats
+    num_inquiries = models.PositiveIntegerField(
+        _('Inquiries'), default=0, db_index=True)
+    num_inquiry_lines = models.PositiveIntegerField(
+        _('Inquiry Lines'), default=0, db_index=True)
+    num_inquiry_items = models.PositiveIntegerField(
+        _('Inquiry Items'), default=0, db_index=True)
     total_spent = models.DecimalField(_('Total Spent'), decimal_places=2,
                                       max_digits=12, default=Decimal('0.00'))
-    date_last_order = models.DateTimeField(
-        _('Last Order Date'), blank=True, null=True)
+    date_last_inquiry = models.DateTimeField(
+        _('Last Inquiry Date'), blank=True, null=True)
 
     class Meta:
         abstract = True

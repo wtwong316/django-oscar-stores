@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('order', '0001_initial'),
+        ('inquiry', '0001_initial'),
     ]
 
     operations = [
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('amount_refunded', models.DecimalField(decimal_places=2, default=Decimal('0.00'), max_digits=12, verbose_name='Amount Refunded')),
                 ('reference', models.CharField(blank=True, max_length=255, verbose_name='Reference')),
                 ('label', models.CharField(blank=True, max_length=128, verbose_name='Label')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sources', to='order.order', verbose_name='Order')),
+                ('inquiry', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sources', to='inquiry.inquiry', verbose_name='Inquiry')),
             ],
             options={
                 'verbose_name': 'Source',

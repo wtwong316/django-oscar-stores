@@ -45,7 +45,7 @@ class AbstractEmail(models.Model):
 
 class AbstractCommunicationEventType(models.Model):
     """
-    A 'type' of communication.  Like an order confirmation email.
+    A 'type' of communication.  Like an inquiry confirmation email.
     """
 
     #: Code used for looking up this event programmatically.
@@ -67,10 +67,10 @@ class AbstractCommunicationEventType(models.Model):
 
     # We allow communication types to be categorised
     # For backwards-compatibility, the choice values are quite verbose
-    ORDER_RELATED = 'Order related'
+    ORDER_RELATED = 'Inquiry related'
     USER_RELATED = 'User related'
     CATEGORY_CHOICES = (
-        (ORDER_RELATED, _('Order related')),
+        (ORDER_RELATED, _('Inquiry related')),
         (USER_RELATED, _('User related'))
     )
 
@@ -159,7 +159,7 @@ class AbstractCommunicationEventType(models.Model):
     def __str__(self):
         return self.name
 
-    def is_order_related(self):
+    def is_inquiry_related(self):
         return self.category == self.ORDER_RELATED
 
     def is_user_related(self):

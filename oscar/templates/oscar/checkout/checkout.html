@@ -98,15 +98,15 @@
         {% endblock payment_method %}
     </div>
 
-    {% block order_contents %}
+    {% block inquiry_contents %}
         <div class="sub-header">
-            {% block order_contents_actions %}
+            {% block inquiry_contents_actions %}
                 <a href="{% url 'basket:summary' %}" class="float-right">
-                    {% trans "Edit order contents" %}
+                    {% trans "Edit inquiry contents" %}
                 </a>
             {% endblock %}
 
-            <h2>{% trans "Order contents" %}</h2>
+            <h2>{% trans "Inquiry contents" %}</h2>
         </div>
         <div class="basket-title">
             <div class="row">
@@ -116,7 +116,7 @@
             </div>
         </div>
         {% for line in basket.all_lines %}
-            {% purchase_info_for_line order line as session %}
+            {% purchase_info_for_line inquiry line as session %}
             <div class="basket-items">
                 <div class="row">
                     <div class="col-sm-2">
@@ -159,7 +159,7 @@
             </div>
         </div>
 
-    {% endblock order_contents %}
+    {% endblock inquiry_contents %}
 
     {% block shipping_method %}
     {% endblock shipping_method %}
@@ -167,7 +167,7 @@
     {% block payment_details %}
     {% endblock payment_details %}
 
-    {% block place_order %}
-    {% endblock place_order %}
+    {% block place_inquiry %}
+    {% endblock place_inquiry %}
 
 {% endblock content %}

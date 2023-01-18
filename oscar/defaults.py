@@ -133,11 +133,11 @@ OSCAR_DASHBOARD_NAVIGATION = [
         'children': [
             {
                 'label': _('Orders'),
-                'url_name': 'dashboard:order-list',
+                'url_name': 'dashboard:inquiry-list',
             },
             {
                 'label': _('Statistics'),
-                'url_name': 'dashboard:order-stats',
+                'url_name': 'dashboard:inquiry-stats',
             },
             {
                 'label': _('Partners'),

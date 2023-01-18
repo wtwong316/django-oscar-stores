@@ -31,7 +31,7 @@ class ShippingAddressForm(PhoneNumberMixin, AbstractAddressForm):
             self.fields['country'].empty_label = None
 
     class Meta:
-        model = get_model('order', 'shippingaddress')
+        model = get_model('inquiry', 'shippingaddress')
         fields = [
             'first_name', 'last_name',
             'line1', 'line2', 'line3', 'line4',

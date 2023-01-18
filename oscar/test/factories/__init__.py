@@ -23,9 +23,9 @@ from oscar.test.factories.wishlists import *  # noqa
 Basket = get_model('basket', 'Basket')
 Free = get_class('shipping.methods', 'Free')
 Voucher = get_model('voucher', 'Voucher')
-OrderCreator = get_class('order.utils', 'OrderCreator')
-OrderTotalCalculator = get_class('checkout.calculators',
-                                 'OrderTotalCalculator')
+InquiryCreator = get_class('inquiry.utils', 'InquiryCreator')
+InquiryTotalCalculator = get_class('checkout.calculators',
+                                 'InquiryTotalCalculator')
 SurchargeApplicator = get_class('checkout.applicator', 'SurchargeApplicator')
 Partner = get_model('partner', 'Partner')
 StockRecord = get_model('partner', 'StockRecord')
@@ -147,11 +147,11 @@ def create_basket(empty=False):
     return basket
 
 
-def create_order(number=None, basket=None, user=None, shipping_address=None,
+def create_inquiry(number=None, basket=None, user=None, shipping_address=None,
                  shipping_method=None, billing_address=None,
                  total=None, **kwargs):
     """
-    Helper method for creating an order for testing
+    Helper method for creating an inquiry for testing
     """
     if not basket:
         basket = Basket.objects.create()
@@ -166,10 +166,10 @@ def create_order(number=None, basket=None, user=None, shipping_address=None,
     shipping_charge = shipping_method.calculate(basket)
     surcharges = SurchargeApplicator().get_applicable_surcharges(basket)
     if total is None:
-        total = OrderTotalCalculator().calculate(basket, shipping_charge, surcharges)
+        total = InquiryTotalCalculator().calculate(basket, shipping_charge, surcharges)
     kwargs['surcharges'] = surcharges
-    order = OrderCreator().place_order(
-        order_number=number,
+    inquiry = InquiryCreator().place_inquiry(
+        inquiry_number=number,
         user=user,
         basket=basket,
         shipping_address=shipping_address,
@@ -179,7 +179,7 @@ def create_order(number=None, basket=None, user=None, shipping_address=None,
         total=total,
         **kwargs)
     basket.set_as_submitted()
-    return order
+    return inquiry
 
 
 def create_offer(name="Dùｍϻϒ offer", offer_type="Site",

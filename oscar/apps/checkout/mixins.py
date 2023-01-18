@@ -8,15 +8,15 @@ from django.urls import NoReverseMatch, reverse
 from oscar.apps.checkout.signals import post_checkout
 from oscar.core.loading import get_class, get_model
 
-OrderCreator = get_class('order.utils', 'OrderCreator')
-OrderDispatcher = get_class('order.utils', 'OrderDispatcher')
+InquiryCreator = get_class('inquiry.utils', 'InquiryCreator')
+InquiryDispatcher = get_class('inquiry.utils', 'InquiryDispatcher')
 CheckoutSessionMixin = get_class('checkout.session', 'CheckoutSessionMixin')
-BillingAddress = get_model('order', 'BillingAddress')
-ShippingAddress = get_model('order', 'ShippingAddress')
-OrderNumberGenerator = get_class('order.utils', 'OrderNumberGenerator')
-PaymentEventType = get_model('order', 'PaymentEventType')
-PaymentEvent = get_model('order', 'PaymentEvent')
-PaymentEventQuantity = get_model('order', 'PaymentEventQuantity')
+BillingAddress = get_model('inquiry', 'BillingAddress')
+ShippingAddress = get_model('inquiry', 'ShippingAddress')
+InquiryNumberGenerator = get_class('inquiry.utils', 'InquiryNumberGenerator')
+PaymentEventType = get_model('inquiry', 'PaymentEventType')
+PaymentEvent = get_model('inquiry', 'PaymentEvent')
+PaymentEventQuantity = get_model('inquiry', 'PaymentEventQuantity')
 UserAddress = get_model('address', 'UserAddress')
 Basket = get_model('basket', 'Basket')
 
@@ -24,15 +24,15 @@ Basket = get_model('basket', 'Basket')
 logger = logging.getLogger('oscar.checkout')
 
 
-class OrderPlacementMixin(CheckoutSessionMixin):
+class InquiryPlacementMixin(CheckoutSessionMixin):
     """
-    Mixin which provides functionality for placing orders.
+    Mixin which provides functionality for placing inquiries.
 
-    Any view class which needs to place an order should use this mixin.
+    Any view class which needs to place an inquiry should use this mixin.
     """
     # Any payment sources should be added to this list as part of the
-    # handle_payment method.  If the order is placed successfully, then
-    # they will be persisted. We need to have the order instance before the
+    # handle_payment method.  If the inquiry is placed successfully, then
+    # they will be persisted. We need to have the inquiry instance before the
     # payment sources can be saved.
     _payment_sources = None
 
@@ -45,7 +45,7 @@ class OrderPlacementMixin(CheckoutSessionMixin):
     # Payment handling methods
     # ------------------------
 
-    def handle_payment(self, order_number, total, **kwargs):
+    def handle_payment(self, inquiry_number, total, **kwargs):
         """
         Handle any payment processing and record payment sources and events.
 
@@ -55,13 +55,13 @@ class OrderPlacementMixin(CheckoutSessionMixin):
         This method is responsible for handling payment and recording the
         payment sources (using the add_payment_source method) and payment
         events (using add_payment_event) so they can be
-        linked to the order when it is saved later on.
+        linked to the inquiry when it is saved later on.
         """
         pass
 
     def add_payment_source(self, source):
         """
-        Record a payment source for this order
+        Record a payment source for this inquiry
         """
         if self._payment_sources is None:
             self._payment_sources = []
@@ -69,7 +69,7 @@ class OrderPlacementMixin(CheckoutSessionMixin):
 
     def add_payment_event(self, event_type_name, amount, reference=''):
         """
-        Record a payment event for creation once the order is placed
+        Record a payment event for creation once the inquiry is placed
         """
         event_type, __ = PaymentEventType.objects.get_or_create(
             name=event_type_name)
@@ -81,39 +81,39 @@ class OrderPlacementMixin(CheckoutSessionMixin):
             reference=reference)
         self._payment_events.append(event)
 
-    # Placing order methods
+    # Placing inquiry methods
     # ---------------------
 
-    def generate_order_number(self, basket):
+    def generate_inquiry_number(self, basket):
         """
-        Return a new order number
+        Return a new inquiry number
         """
-        return OrderNumberGenerator().order_number(basket)
+        return InquiryNumberGenerator().inquiry_number(basket)
 
-    def handle_order_placement(self, order_number, user, basket,
+    def handle_inquiry_placement(self, inquiry_number, user, basket,
                                shipping_address, shipping_method,
-                               shipping_charge, billing_address, order_total,
+                               shipping_charge, billing_address, inquiry_total,
                                surcharges=None, **kwargs):
         """
-        Write out the order models and return the appropriate HTTP response
+        Write out the inquiry models and return the appropriate HTTP response
 
         We deliberately pass the basket in here as the one tied to the request
-        isn't necessarily the correct one to use in placing the order.  This
+        isn't necessarily the correct one to use in placing the inquiry.  This
         can happen when a basket gets frozen.
         """
-        order = self.place_order(
-            order_number=order_number, user=user, basket=basket,
+        inquiry = self.place_inquiry(
+            inquiry_number=inquiry_number, user=user, basket=basket,
             shipping_address=shipping_address, shipping_method=shipping_method,
-            shipping_charge=shipping_charge, order_total=order_total,
+            shipping_charge=shipping_charge, inquiry_total=inquiry_total,
             billing_address=billing_address, surcharges=surcharges, **kwargs)
         basket.submit()
-        return self.handle_successful_order(order)
+        return self.handle_successful_inquiry(inquiry)
 
-    def place_order(self, order_number, user, basket, shipping_address,
-                    shipping_method, shipping_charge, order_total,
+    def place_inquiry(self, inquiry_number, user, basket, shipping_address,
+                    shipping_method, shipping_charge, inquiry_total,
                     billing_address=None, surcharges=None, **kwargs):
         """
-        Writes the order out to the DB including the payment models
+        Writes the inquiry out to the DB including the payment models
         """
         # Create saved shipping address instance from passed in unsaved
         # instance
@@ -125,7 +125,7 @@ class OrderPlacementMixin(CheckoutSessionMixin):
             user, billing_address, shipping_address, **kwargs)
 
         if 'status' not in kwargs:
-            status = self.get_initial_order_status(basket)
+            status = self.get_initial_inquiry_status(basket)
         else:
             status = kwargs.pop('status')
 
@@ -134,30 +134,30 @@ class OrderPlacementMixin(CheckoutSessionMixin):
         else:
             request = kwargs.pop('request')
 
-        order = OrderCreator().place_order(
+        inquiry = InquiryCreator().place_inquiry(
             user=user,
-            order_number=order_number,
+            inquiry_number=inquiry_number,
             basket=basket,
             shipping_address=shipping_address,
             shipping_method=shipping_method,
             shipping_charge=shipping_charge,
-            total=order_total,
+            total=inquiry_total,
             billing_address=billing_address,
             status=status,
             request=request,
             surcharges=surcharges,
             **kwargs)
-        self.save_payment_details(order)
-        return order
+        self.save_payment_details(inquiry)
+        return inquiry
 
     def create_shipping_address(self, user, shipping_address):
         """
-        Create and return the shipping address for the current order.
+        Create and return the shipping address for the current inquiry.
 
         Compared to self.get_shipping_address(), ShippingAddress is saved and
         makes sure that appropriate UserAddress exists.
         """
-        # For an order that only contains items that don't require shipping we
+        # For an inquiry that only contains items that don't require shipping we
         # won't have a shipping address, so we have to check for it.
         if not shipping_address:
             return None
@@ -178,9 +178,9 @@ class OrderPlacementMixin(CheckoutSessionMixin):
             user_addr = UserAddress(user=user)
             addr.populate_alternative_model(user_addr)
         if isinstance(addr, ShippingAddress):
-            user_addr.num_orders_as_shipping_address += 1
+            user_addr.num_inquiries_as_shipping_address += 1
         if isinstance(addr, BillingAddress):
-            user_addr.num_orders_as_billing_address += 1
+            user_addr.num_inquiries_as_billing_address += 1
         user_addr.save()
 
     def create_billing_address(self, user, billing_address=None,
@@ -195,97 +195,97 @@ class OrderPlacementMixin(CheckoutSessionMixin):
             self.update_address_book(user, billing_address)
         return billing_address
 
-    def save_payment_details(self, order):
+    def save_payment_details(self, inquiry):
         """
         Saves all payment-related details. This could include a billing
-        address, payment sources and any order payment events.
+        address, payment sources and any inquiry payment events.
         """
-        self.save_payment_events(order)
-        self.save_payment_sources(order)
+        self.save_payment_events(inquiry)
+        self.save_payment_sources(inquiry)
 
-    def save_payment_events(self, order):
+    def save_payment_events(self, inquiry):
         """
-        Saves any relevant payment events for this order
+        Saves any relevant payment events for this inquiry
         """
         if not self._payment_events:
             return
         for event in self._payment_events:
-            event.order = order
+            event.inquiry = inquiry
             event.save()
-            for line in order.lines.all():
+            for line in inquiry.lines.all():
                 PaymentEventQuantity.objects.create(
                     event=event, line=line, quantity=line.quantity)
 
-    def save_payment_sources(self, order):
+    def save_payment_sources(self, inquiry):
         """
-        Saves any payment sources used in this order.
+        Saves any payment sources used in this inquiry.
 
-        When the payment sources are created, the order model does not exist
+        When the payment sources are created, the inquiry model does not exist
         and so they need to have it set before saving.
         """
         if not self._payment_sources:
             return
         for source in self._payment_sources:
-            source.order = order
+            source.inquiry = inquiry
             source.save()
 
-    def get_initial_order_status(self, basket):
+    def get_initial_inquiry_status(self, basket):
         return None
 
-    # Post-order methods
+    # Post-inquiry methods
     # ------------------
 
-    def handle_successful_order(self, order):
+    def handle_successful_inquiry(self, inquiry):
         """
-        Handle the various steps required after an order has been successfully
+        Handle the various steps required after an inquiry has been successfully
         placed.
 
         Override this view if you want to perform custom actions when an
-        order is submitted.
+        inquiry is submitted.
         """
         # Send confirmation message (normally an email)
-        self.send_order_placed_email(order)
+        self.send_inquiry_placed_email(inquiry)
 
         # Flush all session data
         self.checkout_session.flush()
 
-        # Save order id in session so thank-you page can load it
-        self.request.session['checkout_order_id'] = order.id
+        # Save inquiry id in session so thank-you page can load it
+        self.request.session['checkout_inquiry_id'] = inquiry.id
 
         response = HttpResponseRedirect(self.get_success_url())
-        self.send_signal(self.request, response, order)
+        self.send_signal(self.request, response, inquiry)
         return response
 
-    def send_signal(self, request, response, order):
+    def send_signal(self, request, response, inquiry):
         self.view_signal.send(
-            sender=self, order=order, user=request.user,
+            sender=self, inquiry=inquiry, user=request.user,
             request=request, response=response)
 
     def get_success_url(self):
         return reverse('checkout:thank-you')
 
-    def send_order_placed_email(self, order):
-        extra_context = self.get_message_context(order)
-        dispatcher = OrderDispatcher(logger=logger)
-        dispatcher.send_order_placed_email_for_user(order, extra_context)
+    def send_inquiry_placed_email(self, inquiry):
+        extra_context = self.get_message_context(inquiry)
+        dispatcher = InquiryDispatcher(logger=logger)
+        dispatcher.send_inquiry_placed_email_for_user(inquiry, extra_context)
 
-    def get_message_context(self, order):
+    def get_message_context(self, inquiry):
         ctx = {
             'user': self.request.user,
-            'order': order,
-            'lines': order.lines.all(),
+            'inquiry': inquiry,
+            'lines': inquiry.lines.all(),
             'request': self.request,
         }
 
-        # Attempt to add the order status URL to the email template ctx.
+        # Attempt to add the inquiry status URL to the email template ctx.
         try:
             if self.request.user.is_authenticated:
-                path = reverse('renter:order',
-                               kwargs={'order_number': order.number})
+                path = reverse('renter:inquiry',
+                               kwargs={'inquiry_number': inquiry.number})
             else:
-                path = reverse('renter:anon-order',
-                               kwargs={'order_number': order.number,
-                                       'hash': order.verification_hash()})
+                path = reverse('renter:anon-inquiry',
+                               kwargs={'inquiry_number': inquiry.number,
+                                       'hash': inquiry.verification_hash()})
         except NoReverseMatch:
             # We don't care that much if we can't resolve the URL
             pass

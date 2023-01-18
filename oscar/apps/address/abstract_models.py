@@ -360,7 +360,7 @@ class AbstractAddress(models.Model):
         """
         field_values = self.get_address_field_values(self.hash_fields)
         # Python 2 and 3 generates CRC checksum in different ranges, so
-        # in order to generate platform-independent value we apply
+        # in inquiry to generate platform-independent value we apply
         # `& 0xffffffff` expression.
         return zlib.crc32(', '.join(field_values).upper().encode('UTF8')) & 0xffffffff
 
@@ -415,7 +415,7 @@ class AbstractCountry(models.Model):
     name = models.CharField(_('Official name'), max_length=128)
 
     display_order = models.PositiveSmallIntegerField(
-        _("Display order"), default=0, db_index=True,
+        _("Display inquiry"), default=0, db_index=True,
         help_text=_('Higher the number, higher the country in the list.'))
 
     is_shipping_country = models.BooleanField(
@@ -455,39 +455,39 @@ class AbstractShippingAddress(AbstractAddress):
     """
     A shipping address.
 
-    A shipping address should not be edited once the order has been placed -
+    A shipping address should not be edited once the inquiry has been placed -
     it should be read-only after that.
 
     NOTE:
-    ShippingAddress is a model of the order app. But moving it there is tricky
+    ShippingAddress is a model of the inquiry app. But moving it there is tricky
     due to circular import issues that are amplified by get_model/get_class
     calls pre-Django 1.7 to register receivers. So...
     TODO: Once Django 1.6 support is dropped, move AbstractBillingAddress and
-    AbstractShippingAddress to the order app, and move
+    AbstractShippingAddress to the inquiry app, and move
     PartnerAddress to the partner app.
     """
 
     phone_number = PhoneNumberField(
         _("Phone number"), blank=True,
-        help_text=_("In case we need to call you about your order"))
+        help_text=_("In case we need to call you about your inquiry"))
     notes = models.TextField(
         blank=True, verbose_name=_('Instructions'),
         help_text=_("Tell us anything we should know when delivering "
-                    "your order."))
+                    "your inquiry."))
 
     class Meta:
         abstract = True
-        # ShippingAddress is registered in order/models.py
-        app_label = 'order'
+        # ShippingAddress is registered in inquiry/models.py
+        app_label = 'inquiry'
         verbose_name = _("Shipping address")
         verbose_name_plural = _("Shipping addresses")
 
     @property
-    def order(self):
+    def inquiry(self):
         """
-        Return the order linked to this shipping address
+        Return the inquiry linked to this shipping address
         """
-        return self.order_set.first()
+        return self.inquiry_set.first()
 
 
 class AbstractUserAddress(AbstractShippingAddress):
@@ -497,9 +497,9 @@ class AbstractUserAddress(AbstractShippingAddress):
 
     We use a separate model for shipping and billing (even though there will be
     some data duplication) because we don't want shipping/billing addresses
-    changed or deleted once an order has been placed.  By having a separate
+    changed or deleted once an inquiry has been placed.  By having a separate
     model, we allow users the ability to add/edit/delete from their address
-    book without affecting orders already placed.
+    book without affecting inquiries already placed.
     """
     user = models.ForeignKey(
         AUTH_USER_MODEL,
@@ -518,12 +518,12 @@ class AbstractUserAddress(AbstractShippingAddress):
     #: We keep track of the number of times an address has been used
     #: as a shipping address so we can show the most popular ones
     #: first at the checkout.
-    num_orders_as_shipping_address = models.PositiveIntegerField(
-        _("Number of Orders as Shipping Address"), default=0)
+    num_inquiries_as_shipping_address = models.PositiveIntegerField(
+        _("Number of Inquiries as Shipping Address"), default=0)
 
     #: Same as previous, but for billing address.
-    num_orders_as_billing_address = models.PositiveIntegerField(
-        _("Number of Orders as Billing Address"), default=0)
+    num_inquiries_as_billing_address = models.PositiveIntegerField(
+        _("Number of Inquiries as Billing Address"), default=0)
 
     #: A hash is kept to try and avoid duplicate addresses being added
     #: to the address book.
@@ -559,7 +559,7 @@ class AbstractUserAddress(AbstractShippingAddress):
         app_label = 'address'
         verbose_name = _("User address")
         verbose_name_plural = _("User addresses")
-        ordering = ['-num_orders_as_shipping_address']
+        ordering = ['-num_inquiries_as_shipping_address']
         unique_together = ('user', 'hash')
 
     def validate_unique(self, exclude=None):
@@ -578,17 +578,17 @@ class AbstractUserAddress(AbstractShippingAddress):
 class AbstractBillingAddress(AbstractAddress):
     class Meta:
         abstract = True
-        # BillingAddress is registered in order/models.py
-        app_label = 'order'
+        # BillingAddress is registered in inquiry/models.py
+        app_label = 'inquiry'
         verbose_name = _("Billing address")
         verbose_name_plural = _("Billing addresses")
 
     @property
-    def order(self):
+    def inquiry(self):
         """
-        Return the order linked to this shipping address
+        Return the inquiry linked to this shipping address
         """
-        return self.order_set.first()
+        return self.inquiry_set.first()
 
 
 class AbstractPartnerAddress(AbstractAddress):

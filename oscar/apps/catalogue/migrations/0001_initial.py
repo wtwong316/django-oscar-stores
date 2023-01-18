@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Option',
                 'verbose_name_plural': 'Options',
-                'ordering': ['order', 'name'],
+                'ordering': ['type', 'name'],
                 'abstract': False,
             },
         ),

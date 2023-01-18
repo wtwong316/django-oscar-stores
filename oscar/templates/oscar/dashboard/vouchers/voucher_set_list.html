@@ -37,7 +37,7 @@
         <th>{% trans "Status" %}</th>
         <th>{% trans "Num offers" %}</th>
         <th>{% anchor 'num_basket_additions' _("Num baskets") %}</th>
-        <th>{% anchor 'num_orders' _("Num orders") %}</th>
+        <th>{% anchor 'num_inquiries' _("Num inquiries") %}</th>
         <th>{% anchor 'date_created' _("Date created") %}</th>
         <th></th>
     </tr>
@@ -54,7 +54,7 @@
             </td>
             <td>{{ voucher_set.vouchers.first.offers.count|default:0 }}</td>
             <td>{{ voucher_set.num_basket_additions }}</td>
-            <td>{{ voucher_set.num_orders }}</td>
+            <td>{{ voucher_set.num_inquiries }}</td>
             <td>{{ voucher_set.date_created }}</td>
             <td>
                 <div class="btn-toolbar">

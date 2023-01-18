@@ -15,9 +15,9 @@ class AbstractTransaction(models.Model):
     """
     A transaction for a particular payment source.
 
-    These are similar to the payment events within the order app but model a
+    These are similar to the payment events within the inquiry app but model a
     slightly different aspect of payment.  Crucially, payment sources and
-    transactions have nothing to do with the lines of the order while payment
+    transactions have nothing to do with the lines of the inquiry while payment
     events do.
 
     For example:
@@ -56,21 +56,21 @@ class AbstractTransaction(models.Model):
 
 class AbstractSource(models.Model):
     """
-    A source of payment for an order.
+    A source of payment for an inquiry.
 
-    This is normally a credit card which has been pre-authorised for the order
-    amount, but some applications will allow orders to be paid for using
+    This is normally a credit card which has been pre-authorised for the inquiry
+    amount, but some applications will allow inquiries to be paid for using
     multiple sources such as cheque, credit accounts, gift cards. Each payment
     source will have its own entry.
 
     This source object tracks how much money has been authorised, debited and
     refunded, which is useful when payment takes place in multiple stages.
     """
-    order = models.ForeignKey(
-        'order.Order',
+    inquiry = models.ForeignKey(
+        'inquiry.inquiry',
         on_delete=models.CASCADE,
         related_name='sources',
-        verbose_name=_("Order"))
+        verbose_name=_("inquiry"))
     source_type = models.ForeignKey(
         'payment.SourceType',
         on_delete=models.CASCADE,
@@ -131,7 +131,7 @@ class AbstractSource(models.Model):
         """
         Register the data for a transaction that can't be created yet due to FK
         constraints.  This happens at checkout where create an payment source
-        and a transaction but can't save them until the order model exists.
+        and a transaction but can't save them until the inquiry model exists.
         """
         if self.deferred_txns is None:
             self.deferred_txns = []

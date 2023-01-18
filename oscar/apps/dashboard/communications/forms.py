@@ -6,7 +6,7 @@ from oscar.apps.renter.utils import normalise_email
 from oscar.core.loading import get_model
 
 CommunicationEventType = get_model('communication', 'CommunicationEventType')
-Order = get_model('order', 'Order')
+Inquiry = get_model('inquiry', 'Inquiry')
 
 
 class CommunicationEventTypeForm(forms.ModelForm):
@@ -19,8 +19,8 @@ class CommunicationEventTypeForm(forms.ModelForm):
         label=_("Email body HTML template"), required=True,
         widget=forms.Textarea)
 
-    preview_order_number = forms.CharField(
-        label=_("Order number"), required=False)
+    preview_inquiry_number = forms.CharField(
+        label=_("Inquiry number"), required=False)
     preview_email = forms.EmailField(label=_("Preview email"),
                                      required=False)
 
@@ -53,17 +53,17 @@ class CommunicationEventTypeForm(forms.ModelForm):
         self.validate_template(body)
         return body
 
-    def clean_preview_order_number(self):
-        number = self.cleaned_data['preview_order_number'].strip()
-        if not self.instance.is_order_related():
+    def clean_preview_inquiry_number(self):
+        number = self.cleaned_data['preview_inquiry_number'].strip()
+        if not self.instance.is_inquiry_related():
             return number
         if not self.show_preview and not self.send_preview:
             return number
         try:
-            self.preview_order = Order.objects.get(number=number)
-        except Order.DoesNotExist:
+            self.preview_inquiry = Inquiry.objects.get(number=number)
+        except Inquiry.DoesNotExist:
             raise forms.ValidationError(_(
-                "No order found with this number"))
+                "No inquiry found with this number"))
         return number
 
     def clean_preview_email(self):
@@ -77,13 +77,13 @@ class CommunicationEventTypeForm(forms.ModelForm):
 
     def get_preview_context(self):
         ctx = {}
-        if hasattr(self, 'preview_order'):
-            ctx['order'] = self.preview_order
+        if hasattr(self, 'preview_inquiry'):
+            ctx['inquiry'] = self.preview_inquiry
         return ctx
 
     class Meta:
         model = CommunicationEventType
         fields = [
             'name', 'email_subject_template', 'email_body_template',
-            'email_body_html_template', 'preview_order_number', 'preview_email'
+            'email_body_html_template', 'preview_inquiry_number', 'preview_email'
         ]

@@ -19,11 +19,11 @@ class RenterConfig(OscarConfig):
         from .alerts import receivers  # noqa
 
         self.summary_view = get_class('renter.views', 'AccountSummaryView')
-        self.order_history_view = get_class('renter.views', 'OrderHistoryView')
-        self.order_detail_view = get_class('renter.views', 'OrderDetailView')
-        self.anon_order_detail_view = get_class('renter.views',
-                                                'AnonymousOrderDetailView')
-        self.order_line_view = get_class('renter.views', 'OrderLineView')
+        self.inquiry_history_view = get_class('renter.views', 'InquiryHistoryView')
+        self.inquiry_detail_view = get_class('renter.views', 'InquiryDetailView')
+        self.anon_inquiry_detail_view = get_class('renter.views',
+                                                'AnonymousInquiryDetailView')
+        self.inquiry_line_view = get_class('renter.views', 'InquiryLineView')
 
         self.address_list_view = get_class('renter.views', 'AddressListView')
         self.address_create_view = get_class('renter.views', 'AddressCreateView')
@@ -93,17 +93,17 @@ class RenterConfig(OscarConfig):
             path('profile/edit/', login_required(self.profile_update_view.as_view()), name='profile-update'),
             path('profile/delete/', login_required(self.profile_delete_view.as_view()), name='profile-delete'),
 
-            # Order history
-            path('orders/', login_required(self.order_history_view.as_view()), name='order-list'),
+            # Inquiry history
+            path('inquiries/', login_required(self.inquiry_history_view.as_view()), name='inquiry-list'),
             re_path(
-                r'^order-status/(?P<order_number>[\w-]*)/(?P<hash>[A-z0-9-_=:]+)/$',
-                self.anon_order_detail_view.as_view(), name='anon-order'
+                r'^inquiry-status/(?P<inquiry_number>[\w-]*)/(?P<hash>[A-z0-9-_=:]+)/$',
+                self.anon_inquiry_detail_view.as_view(), name='anon-inquiry'
             ),
-            path('orders/<str:order_number>/', login_required(self.order_detail_view.as_view()), name='order'),
+            path('inquiries/<str:inquiry_number>/', login_required(self.inquiry_detail_view.as_view()), name='inquiry'),
             path(
-                'orders/<str:order_number>/<int:line_id>/',
-                login_required(self.order_line_view.as_view()),
-                name='order-line'),
+                'inquiries/<str:inquiry_number>/<int:line_id>/',
+                login_required(self.inquiry_line_view.as_view()),
+                name='inquiry-line'),
 
             # Address book
             path('addresses/', login_required(self.address_list_view.as_view()), name='address-list'),

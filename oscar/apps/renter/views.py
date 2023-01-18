@@ -23,13 +23,13 @@ from . import signals
 PageTitleMixin, RegisterUserMixin = get_classes(
     'renter.mixins', ['PageTitleMixin', 'RegisterUserMixin'])
 RenterDispatcher = get_class('renter.utils', 'RenterDispatcher')
-EmailAuthenticationForm, EmailUserCreationForm, OrderSearchForm = get_classes(
+EmailAuthenticationForm, EmailUserCreationForm, InquirySearchForm = get_classes(
     'renter.forms', ['EmailAuthenticationForm', 'EmailUserCreationForm',
-                       'OrderSearchForm'])
+                       'InquirySearchForm'])
 ProfileForm, ConfirmPasswordForm = get_classes(
     'renter.forms', ['ProfileForm', 'ConfirmPasswordForm'])
 UserAddressForm = get_class('address.forms', 'UserAddressForm')
-Order = get_model('order', 'Order')
+Inquiry = get_model('inquiry', 'Inquiry')
 UserAddress = get_model('address', 'UserAddress')
 Email = get_model('communication', 'Email')
 
@@ -431,20 +431,20 @@ class EmailDetailView(PageTitleMixin, generic.DetailView):
 
 
 # =============
-# Order history
+# Inquiry history
 # =============
 
-class OrderHistoryView(PageTitleMixin, generic.ListView):
+class InquiryHistoryView(PageTitleMixin, generic.ListView):
     """
-    Renter order history
+    Renter inquiry history
     """
-    context_object_name = "orders"
-    template_name = 'oscar/renter/order/order_list.html'
+    context_object_name = "inquiries"
+    template_name = 'oscar/renter/inquiry/inquiry_list.html'
     paginate_by = settings.OSCAR_ORDERS_PER_PAGE
-    model = Order
-    form_class = OrderSearchForm
-    page_title = _('Order History')
-    active_tab = 'orders'
+    model = Inquiry
+    form_class = InquirySearchForm
+    page_title = _('Inquiry History')
+    active_tab = 'inquiries'
 
     def get(self, request, *args, **kwargs):
         if 'date_from' in request.GET:
@@ -455,25 +455,25 @@ class OrderHistoryView(PageTitleMixin, generic.ListView):
                 return self.render_to_response(ctx)
             data = self.form.cleaned_data
 
-            # If the user has just entered an order number, try and look it up
-            # and redirect immediately to the order detail page.
-            if data['order_number'] and not (data['date_to']
+            # If the user has just entered an inquiry number, try and look it up
+            # and redirect immediately to the inquiry detail page.
+            if data['inquiry_number'] and not (data['date_to']
                                              or data['date_from']):
                 try:
-                    order = Order.objects.get(
-                        number=data['order_number'], user=self.request.user)
-                except Order.DoesNotExist:
+                    inquiry = Inquiry.objects.get(
+                        number=data['inquiry_number'], user=self.request.user)
+                except Inquiry.DoesNotExist:
                     pass
                 else:
                     return redirect(
-                        'renter:order', order_number=order.number)
+                        'renter:inquiry', inquiry_number=inquiry.number)
         else:
             self.form = self.form_class()
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         """
-        Return Queryset of :py:class:`Order <oscar.apps.order.abstract_models.AbstractOrder>`
+        Return Queryset of :py:class:`Inquiry <oscar.apps.inquiry.abstract_models.AbstractInquiry>`
         instances for the currently authenticated user.
         """  # noqa
         qs = self.model._default_manager.filter(user=self.request.user)
@@ -487,35 +487,35 @@ class OrderHistoryView(PageTitleMixin, generic.ListView):
         return ctx
 
 
-class OrderDetailView(PageTitleMixin, PostActionMixin, generic.DetailView):
-    model = Order
-    active_tab = 'orders'
+class InquiryDetailView(PageTitleMixin, PostActionMixin, generic.DetailView):
+    model = Inquiry
+    active_tab = 'inquiries'
 
     def get_template_names(self):
-        return ["oscar/renter/order/order_detail.html"]
+        return ["oscar/renter/inquiry/inquiry_detail.html"]
 
     def get_page_title(self):
         """
-        Order number as page title
+        Inquiry number as page title
         """
-        return '%s #%s' % (_('Order'), self.object.number)
+        return '%s #%s' % (_('Inquiry'), self.object.number)
 
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, user=self.request.user,
-                                 number=self.kwargs['order_number'])
+                                 number=self.kwargs['inquiry_number'])
 
-    def do_reorder(self, order):  # noqa (too complex (10))
+    def do_reinquiry(self, inquiry):  # noqa (too complex (10))
         """
-        'Re-order' a previous order.
+        'Re-inquiry' a previous inquiry.
 
-        This puts the contents of the previous order into your basket
+        This puts the contents of the previous inquiry into your basket
         """
         # Collect lines to be added to the basket and any warnings for lines
         # that are no longer available.
         basket = self.request.basket
         lines_to_add = []
         warnings = []
-        for line in order.lines.all():
+        for line in inquiry.lines.all():
             is_available, reason = line.is_available_to_reorder(
                 basket, self.request.strategy)
             if is_available:
@@ -530,7 +530,7 @@ class OrderDetailView(PageTitleMixin, PostActionMixin, generic.DetailView):
             total_quantity)
         if not is_quantity_allowed:
             messages.warning(self.request, reason)
-            self.response = redirect('renter:order-list')
+            self.response = redirect('renter:inquiry-list')
             return
 
         # Add any warnings
@@ -550,27 +550,27 @@ class OrderDetailView(PageTitleMixin, PostActionMixin, generic.DetailView):
             self.response = redirect('basket:summary')
             messages.info(
                 self.request,
-                _("All available lines from order %(number)s "
-                  "have been added to your basket") % {'number': order.number})
+                _("All available lines from inquiry %(number)s "
+                  "have been added to your basket") % {'number': inquiry.number})
         else:
-            self.response = redirect('renter:order-list')
+            self.response = redirect('renter:inquiry-list')
             messages.warning(
                 self.request,
-                _("It is not possible to re-order order %(number)s "
+                _("It is not possible to re-inquiry inquiry %(number)s "
                   "as none of its lines are available to purchase") %
-                {'number': order.number})
+                {'number': inquiry.number})
 
 
-class OrderLineView(PostActionMixin, generic.DetailView):
-    """Renter order line"""
+class InquiryLineView(PostActionMixin, generic.DetailView):
+    """Renter inquiry line"""
 
     def get_object(self, queryset=None):
-        order = get_object_or_404(Order, user=self.request.user,
-                                  number=self.kwargs['order_number'])
-        return order.lines.get(id=self.kwargs['line_id'])
+        inquiry = get_object_or_404(Inquiry, user=self.request.user,
+                                  number=self.kwargs['inquiry_number'])
+        return inquiry.lines.get(id=self.kwargs['line_id'])
 
     def do_reorder(self, line):
-        self.response = redirect('renter:order', self.kwargs['order_number'])
+        self.response = redirect('renter:inquiry', self.kwargs['inquiry_number'])
         basket = self.request.basket
 
         line_available_to_reorder, reason = line.is_available_to_reorder(
@@ -602,17 +602,17 @@ class OrderLineView(PostActionMixin, generic.DetailView):
         messages.info(self.request, msg)
 
 
-class AnonymousOrderDetailView(generic.DetailView):
-    model = Order
-    template_name = "oscar/renter/anon_order.html"
+class AnonymousInquiryDetailView(generic.DetailView):
+    model = Inquiry
+    template_name = "oscar/renter/anon_inquiry.html"
 
     def get_object(self, queryset=None):
-        # Check URL hash matches that for order to prevent spoof attacks
-        order = get_object_or_404(self.model, user=None,
-                                  number=self.kwargs['order_number'])
-        if not order.check_verification_hash(self.kwargs['hash']):
+        # Check URL hash matches that for inquiry to prevent spoof attacks
+        inquiry = get_object_or_404(self.model, user=None,
+                                  number=self.kwargs['inquiry_number'])
+        if not inquiry.check_verification_hash(self.kwargs['hash']):
             raise http.Http404()
-        return order
+        return inquiry
 
 
 # ------------

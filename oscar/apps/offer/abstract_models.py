@@ -143,7 +143,7 @@ class AbstractConditionalOffer(models.Model):
         related_name='offers',
         verbose_name=_("Benefit"))
 
-    # Some complicated situations require offers to be applied in a set order.
+    # Some complicated situations require offers to be applied in a set inquiry.
     priority = models.IntegerField(
         _("Priority"), default=0, db_index=True,
         help_text=_("The highest priority offers are applied first"))
@@ -163,8 +163,8 @@ class AbstractConditionalOffer(models.Model):
                     "Leave this empty if the offer has no expiry date."))
 
     # Use this field to limit the number of times this offer can be applied in
-    # total.  Note that a single order can apply an offer multiple times so
-    # this is not necessarily the same as the number of orders that can use it.
+    # total.  Note that a single inquiry can apply an offer multiple times so
+    # this is not necessarily the same as the number of inquiries that can use it.
     # Also see max_basket_applications.
     max_global_applications = models.PositiveIntegerField(
         _("Max global applications"),
@@ -180,20 +180,20 @@ class AbstractConditionalOffer(models.Model):
         blank=True, null=True)
 
     # Use this field to limit the number of times this offer can be applied to
-    # a basket (and hence a single order). Often, an offer should only be
-    # usable once per basket/order, so this field will commonly be set to 1.
+    # a basket (and hence a single inquiry). Often, an offer should only be
+    # usable once per basket/inquiry, so this field will commonly be set to 1.
     max_basket_applications = models.PositiveIntegerField(
         _("Max basket applications"),
         blank=True, null=True,
         help_text=_("The number of times this offer can be applied to a "
-                    "basket (and order)"))
+                    "basket (and inquiry)"))
 
     # Use this field to limit the amount of discount an offer can lead to.
     # This can be helpful with budgeting.
     max_discount = models.DecimalField(
         _("Max discount"), decimal_places=2, max_digits=12, null=True,
         blank=True,
-        help_text=_("When an offer has given more discount to orders "
+        help_text=_("When an offer has given more discount to inquiries "
                     "than this threshold, then the offer becomes "
                     "unavailable"))
 
@@ -206,8 +206,8 @@ class AbstractConditionalOffer(models.Model):
         default=D('0.00'))
     num_applications = models.PositiveIntegerField(
         _("Number of applications"), default=0)
-    num_orders = models.PositiveIntegerField(
-        _("Number of Orders"), default=0)
+    num_inquiries = models.PositiveIntegerField(
+        _("Number of Inquiries"), default=0)
 
     redirect_url = fields.ExtendedURLField(
         _("URL redirect (optional)"), blank=True)
@@ -306,12 +306,12 @@ class AbstractConditionalOffer(models.Model):
         return self.benefit.proxy().apply(
             basket, self.condition.proxy(), self)
 
-    def apply_deferred_benefit(self, basket, order, application):
+    def apply_deferred_benefit(self, basket, inquiry, application):
         """
         Applies any deferred benefits.  These are things like adding loyalty
         points to someone's account.
         """
-        return self.benefit.proxy().apply_deferred(basket, order, application)
+        return self.benefit.proxy().apply_deferred(basket, inquiry, application)
 
     def set_voucher(self, voucher):
         self._voucher = voucher
@@ -341,9 +341,9 @@ class AbstractConditionalOffer(models.Model):
         return min(limits)
 
     def get_num_user_applications(self, user):
-        OrderDiscount = get_model('order', 'OrderDiscount')
-        aggregates = OrderDiscount.objects.filter(offer_id=self.id,
-                                                  order__user=user)\
+        InquiryDiscount = get_model('inquiry', 'InquiryDiscount')
+        aggregates = InquiryDiscount.objects.filter(offer_id=self.id,
+                                                  inquiry__user=user)\
             .aggregate(total=models.Sum('frequency'))
         return aggregates['total'] if aggregates['total'] is not None else 0
 
@@ -353,7 +353,7 @@ class AbstractConditionalOffer(models.Model):
     def record_usage(self, discount):
         self.num_applications += discount['freq']
         self.total_discount += discount['discount']
-        self.num_orders += 1
+        self.num_inquiries += 1
         self.save()
     record_usage.alters_data = True
 
@@ -537,7 +537,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
     def apply(self, basket, condition, offer):
         return ZERO_DISCOUNT
 
-    def apply_deferred(self, basket, order, application):
+    def apply_deferred(self, basket, inquiry, application):
         return None
 
     def clean(self):
@@ -791,7 +791,7 @@ class AbstractCondition(BaseOfferMixin, models.Model):
         """
         Determine if the basket partially meets the condition.  This is useful
         for up-selling messages to entice renters to buy something more in
-        order to qualify for an offer.
+        inquiry to qualify for an offer.
         """
         return False
 
@@ -899,11 +899,11 @@ class AbstractRange(models.Model):
         the sdu at the top of the list.
         """
 
-        initial_order = display_order or 0
+        initial_inquiry = display_order or 0
         RangeSdu = self.included_sdus.through
         relation, __ = RangeSdu.objects.get_or_create(
             range=self, sdu=sdu,
-            defaults={'display_order': initial_order})
+            defaults={'display_order': initial_inquiry})
 
         if (display_order is not None
                 and relation.display_order != display_order):
@@ -1009,16 +1009,16 @@ class AbstractRange(models.Model):
         return not self.proxy_class
 
     @property
-    def is_reorderable(self):
+    def is_reinquiryable(self):
         """
-        Test whether sdus for the range can be re-ordered.
+        Test whether sdus for the range can be re-inquiryed.
         """
         return not (self.included_categories.exists() or self.classes.exists())
 
 
 class AbstractRangeSdu(models.Model):
     """
-    Allow ordering sdus inside ranges
+    Allow inquirying sdus inside ranges
     Exists to allow customising.
     """
     range = models.ForeignKey('offer.Range', on_delete=models.CASCADE)

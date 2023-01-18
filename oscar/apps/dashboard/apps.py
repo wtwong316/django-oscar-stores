@@ -22,7 +22,7 @@ class DashboardConfig(OscarDashboardConfig):
 
         self.catalogue_app = apps.get_app_config('catalogue_dashboard')
         self.reports_app = apps.get_app_config('reports_dashboard')
-        self.orders_app = apps.get_app_config('orders_dashboard')
+        self.inquiries_app = apps.get_app_config('inquiries_dashboard')
         self.users_app = apps.get_app_config('users_dashboard')
         self.pages_app = apps.get_app_config('pages_dashboard')
         self.partners_app = apps.get_app_config('partners_dashboard')
@@ -40,7 +40,7 @@ class DashboardConfig(OscarDashboardConfig):
             path('', self.index_view.as_view(), name='index'),
             path('catalogue/', include(self.catalogue_app.urls[0])),
             path('reports/', include(self.reports_app.urls[0])),
-            path('orders/', include(self.orders_app.urls[0])),
+            path('inquiries/', include(self.inquiries_app.urls[0])),
             path('users/', include(self.users_app.urls[0])),
             path('pages/', include(self.pages_app.urls[0])),
             path('partners/', include(self.partners_app.urls[0])),

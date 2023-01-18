@@ -1,16 +1,16 @@
 from oscar.core import prices
 
 
-class OrderTotalCalculator(object):
+class InquiryTotalCalculator(object):
     """
-    Calculator class for calculating the order total.
+    Calculator class for calculating the inquiry total.
     """
 
     def __init__(self, request=None):
         # We store a reference to the request as the total may
         # depend on the user or the other checkout data in the session.
         # Further, it is very likely that it will as shipping method
-        # always changes the order total.
+        # always changes the inquiry total.
         self.request = request
 
     def calculate(self, basket, shipping_charge, surcharges=None, **kwargs):

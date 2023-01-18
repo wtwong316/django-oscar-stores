@@ -88,13 +88,13 @@ class OfferApplications(object):
         return voucher_discounts.values()
 
     @property
-    def post_order_actions(self):
+    def post_inquiry_actions(self):
         """
         Return successful offer applications which didn't lead to a discount
         """
         applications = []
         for application in self.applications.values():
-            if application['result'].affects_post_order:
+            if application['result'].affects_post_inquiry:
                 applications.append(application)
         return applications
 
@@ -116,7 +116,7 @@ class ApplicationResult(object):
     # Offer applications can affect 3 distinct things
     # (a) Give a discount off the BASKET total
     # (b) Give a discount off the SHIPPING total
-    # (a) Trigger a post-order action
+    # (a) Trigger a post-inquiry action
     BASKET, SHIPPING, POST_ORDER = 0, 1, 2
     affects = None
 
@@ -129,7 +129,7 @@ class ApplicationResult(object):
         return self.affects == self.SHIPPING
 
     @property
-    def affects_post_order(self):
+    def affects_post_inquiry(self):
         return self.affects == self.POST_ORDER
 
 
@@ -172,10 +172,10 @@ class ShippingDiscount(ApplicationResult):
 SHIPPING_DISCOUNT = ShippingDiscount()
 
 
-class PostOrderAction(ApplicationResult):
+class PostInquiryAction(ApplicationResult):
     """
     For when an offer condition is met but the benefit is deferred until after
-    the order has been placed. E.g. buy 2 books and get 100 loyalty points.
+    the inquiry has been placed. E.g. buy 2 books and get 100 loyalty points.
     """
     is_final = is_successful = True
     affects = ApplicationResult.POST_ORDER

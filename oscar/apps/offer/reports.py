@@ -10,7 +10,7 @@ ReportCSVFormatter = get_class('dashboard.reports.reports',
 ReportHTMLFormatter = get_class('dashboard.reports.reports',
                                 'ReportHTMLFormatter')
 ConditionalOffer = get_model('offer', 'ConditionalOffer')
-OrderDiscount = get_model('order', 'OrderDiscount')
+InquiryDiscount = get_model('inquiry', 'InquiryDiscount')
 
 
 class OfferReportCSVFormatter(ReportCSVFormatter):
@@ -34,7 +34,7 @@ class OfferReportHTMLFormatter(ReportHTMLFormatter):
 class OfferReportGenerator(ReportGenerator):
     code = 'conditional-offers'
     description = _('Offer performance')
-    model_class = OrderDiscount
+    model_class = InquiryDiscount
 
     formatters = {
         'CSV_formatter': OfferReportCSVFormatter,
@@ -47,12 +47,12 @@ class OfferReportGenerator(ReportGenerator):
             total_discount=Sum("amount"),
             # Used to add a link to the offer in the report template, if the offer still exists.
             offer=Subquery(offers.values("pk")[:1]),
-            # Find the name of the attached offer if it exists, otherwise the offer_name on a matching OrderDiscount
+            # Find the name of the attached offer if it exists, otherwise the offer_name on a matching InquiryDiscount
             # This is used to display the most appropriate name in the report template.
             display_offer_name=Coalesce(
                 Subquery(offers.values("name")[:1]),
                 Subquery(
-                    OrderDiscount.objects.filter(pk=OuterRef("pk")).values("offer_name")[:1]
+                    InquiryDiscount.objects.filter(pk=OuterRef("pk")).values("offer_name")[:1]
                 )
             ),
         ).values("offer_id", "offer", "total_discount", "display_offer_name").order_by("-total_discount")

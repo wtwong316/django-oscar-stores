@@ -787,7 +787,7 @@ class AbstractSduRecommendation(models.Model):
         verbose_name=_("Recommended sdu"))
     ranking = models.PositiveSmallIntegerField(
         _('Ranking'), default=0, db_index=True,
-        help_text=_('Determines order of the sdus. A sdu with a higher'
+        help_text=_('Determines inquiry of the sdus. A sdu with a higher'
                     ' value will appear before one with a lower ranking.'))
 
     class Meta:
@@ -1329,7 +1329,7 @@ class AbstractOption(models.Model):
     class Meta:
         abstract = True
         app_label = 'catalogue'
-        ordering = ['order', 'name']
+        ordering = ['type', 'name']
         verbose_name = _("Option")
         verbose_name_plural = _("Options")
 
@@ -1393,8 +1393,8 @@ class AbstractSduImage(models.Model):
 
     #: Use display_order to determine which is the "primary" image
     display_order = models.PositiveIntegerField(
-        _("Display order"), default=0, db_index=True,
-        help_text=_("An image with a display order of zero will be the primary"
+        _("Display inquiry"), default=0, db_index=True,
+        help_text=_("An image with a display inquiry of zero will be the primary"
                     " image for a sdu"))
     date_created = models.DateTimeField(_("Date created"), auto_now_add=True)
 
@@ -1412,7 +1412,7 @@ class AbstractSduImage(models.Model):
 
     def is_primary(self):
         """
-        Return bool if image display order is 0
+        Return bool if image display inquiry is 0
         """
         return self.display_order == 0
 

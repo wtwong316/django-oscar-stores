@@ -4,8 +4,8 @@
 {% load image_tags %}
 
 {% block title %}
-    {% blocktrans with number=order.number %}
-        Order {{ number }}: confirmation
+    {% blocktrans with number=inquiry.number %}
+        Inquiry {{ number }}: confirmation
     {% endblocktrans %} | {{ block.super }}
 {% endblock title %}
 
@@ -14,18 +14,18 @@
 {% endblock %}
 
 {% block checkout_title %}
-    {% blocktrans with number=order.number %}
-        Order {{ number }}: confirmation
+    {% blocktrans with number=inquiry.number %}
+        Inquiry {{ number }}: confirmation
     {% endblocktrans %}
 {% endblock %}
 
 {% block content %}
     <p class="lead">
-        {% blocktrans with number=order.number %}
-        Your order has been placed and a confirmation email has been sent - your order number is
+        {% blocktrans with number=inquiry.number %}
+        Your inquiry has been placed and a confirmation email has been sent - your inquiry number is
         <strong>{{ number }}</strong>.
         {% endblocktrans %}
-        {% trans "Please make a note of this reference or print this page and quote it in any communication with us regarding your order." %}
+        {% trans "Please make a note of this reference or print this page and quote it in any communication with us regarding your inquiry." %}
     </p>
 
     <div class="row shipping-payment">
@@ -36,26 +36,26 @@
                 </div>
                 <div class="card card-body bg-light">
                     <h3>{% trans "Address" %}</h3>
-                    {% if order.shipping_address %}
+                    {% if inquiry.shipping_address %}
                         <address>
-                            {% for field in order.shipping_address.active_address_fields %}
+                            {% for field in inquiry.shipping_address.active_address_fields %}
                                 {{ field }}<br/>
                             {% endfor %}
                         </address>
 
-                        {% if order.shipping_address.phone_number %}
+                        {% if inquiry.shipping_address.phone_number %}
                             <h4>{% trans "Contact" %}</h4>
                             <p>
-                                {% trans "Phone" %}: {{ order.shipping_address.phone_number }}
-                                {% if order.guest_email %}
-                                    <br/>{% trans "Email" %}: {{ order.guest_email }}
+                                {% trans "Phone" %}: {{ inquiry.shipping_address.phone_number }}
+                                {% if inquiry.guest_email %}
+                                    <br/>{% trans "Email" %}: {{ inquiry.guest_email }}
                                 {% endif %}
                             </p>
                         {% endif %}
 
-                        {% if order.shipping_address.notes %}
+                        {% if inquiry.shipping_address.notes %}
                             <h4>{% trans "Instructions" %}</h4>
-                            <p>{{ order.shipping_address.notes|linebreaks }}</p>
+                            <p>{{ inquiry.shipping_address.notes|linebreaks }}</p>
                         {% endif %}
                     {% else %}
                         <p>{% trans "No shipping address required." %}</p>
@@ -64,7 +64,7 @@
 
                 <div class="card card-body bg-light">
                     <h3>{% trans "Shipping method" %}</h3>
-                    <p>{{ order.shipping_method }}</p>
+                    <p>{{ inquiry.shipping_method }}</p>
                 </div>
             {% endblock %}
         </div>
@@ -76,7 +76,7 @@
                 </div>
                 <div class="card card-body bg-light">
                     <h3>{% trans "Payment" %}</h3>
-                    {% for source in order.sources.all %}
+                    {% for source in inquiry.sources.all %}
                         <p>
                         {% if source.reference %}
                             {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name reference=source.reference %}
@@ -90,14 +90,14 @@
                         </p>
                     {% empty %}
                         <p>
-                        {% trans "No payment was required for this order." %}
+                        {% trans "No payment was required for this inquiry." %}
                         </p>
                     {% endfor %}
 
-                    {% if order.billing_address %}
+                    {% if inquiry.billing_address %}
                         <h4>{% trans "Billing address" %}</h4>
                         <address>
-                            {% for field in order.billing_address.active_address_fields %}
+                            {% for field in inquiry.billing_address.active_address_fields %}
                                 {{ field }}<br/>
                             {% endfor %}
                         </address>
@@ -108,9 +108,9 @@
         </div>
     </div>
 
-    {% block order_contents %}
+    {% block inquiry_contents %}
         <div class="sub-header">
-            <h2>{% trans "Order contents" %}</h2>
+            <h2>{% trans "Inquiry contents" %}</h2>
         </div>
 
         <div class="basket-title">
@@ -121,7 +121,7 @@
             </div>
         </div>
 
-        {% for line in order.lines.all %}
+        {% for line in inquiry.lines.all %}
             <div class="basket-items">
                 <div class="row">
                     <div class="col-sm-2">
@@ -144,9 +144,9 @@
                     <div class="col-sm-2 text-right">
                         <p class="price_color">
                             {% if show_tax_separately %}
-                                {{ line.line_price_before_discounts_excl_tax|currency:order.currency }}
+                                {{ line.line_price_before_discounts_excl_tax|currency:inquiry.currency }}
                             {% else %}
-                                {{ line.line_price_before_discounts_incl_tax|currency:order.currency }}
+                                {{ line.line_price_before_discounts_incl_tax|currency:inquiry.currency }}
                             {% endif %}
                         </p>
                     </div>
@@ -161,25 +161,25 @@
                     <div class="sub-header">
                         <h2>{% trans 'Totals' %}</h2>
                     </div>
-                    {% include 'oscar/order/partials/basket_totals.html' %}
+                    {% include 'oscar/inquiry/partials/basket_totals.html' %}
                 </div>
             </div>
         {% endblock basket_totals %}
 
-    {% endblock order_contents %}
+    {% endblock inquiry_contents %}
 
-    {% block order_tracking %}
-        {% if not order.user %}
+    {% block inquiry_tracking %}
+        {% if not inquiry.user %}
             <div class="sub-header">
-                <h2>{% trans "Tracking your order" %}</h2>
+                <h2>{% trans "Tracking your inquiry" %}</h2>
             </div>
-            <p>{% trans "You can track the status of your order" %}
-                <a class="btn btn-primary" href="{% url 'renter:anon-order' order_number=order.number hash=order.verification_hash %}">{% trans "View order status" %}</a>.</p>
+            <p>{% trans "You can track the status of your inquiry" %}
+                <a class="btn btn-primary" href="{% url 'renter:anon-inquiry' inquiry_number=inquiry.number hash=inquiry.verification_hash %}">{% trans "View inquiry status" %}</a>.</p>
         {% endif %}
     {% endblock %}
 
 
-    {% block order_actions %}
+    {% block inquiry_actions %}
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-4">
@@ -190,7 +190,7 @@
                 </div>
             </div>
         </div>
-    {% endblock order_actions %}
+    {% endblock inquiry_actions %}
 {% endblock content %}
 
 {% block tracking %}

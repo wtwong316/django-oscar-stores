@@ -8,14 +8,14 @@
         <tr>
             <th>{% trans "Voucher code" %}</th>
             <th>{% trans "Added to a basket" %}</th>
-            <th>{% trans "Used in an order" %}</th>
+            <th>{% trans "Used in an inquiry" %}</th>
             <th>{% trans "Total discount" %}</th>
         </tr>
         {% for voucher in objects %}
         <tr>
             <td><a href="{% url 'dashboard:voucher-stats' voucher.id %}">{{ voucher.code }}</a></td>
             <td>{{ voucher.num_basket_additions }}</td>
-            <td>{{ voucher.num_orders }}</td>
+            <td>{{ voucher.num_inquiries }}</td>
             <td>{{ voucher.total_discount|currency }}</td>
         </tr>
         {% endfor %}

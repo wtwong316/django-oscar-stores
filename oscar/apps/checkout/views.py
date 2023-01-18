@@ -22,12 +22,12 @@ RedirectRequired, UnableToTakePayment, PaymentError \
     = get_classes('payment.exceptions', ['RedirectRequired',
                                          'UnableToTakePayment',
                                          'PaymentError'])
-UnableToPlaceOrder = get_class('order.exceptions', 'UnableToPlaceOrder')
-OrderPlacementMixin = get_class('checkout.mixins', 'OrderPlacementMixin')
+UnableToPlaceInquiry = get_class('inquiry.exceptions', 'UnableToPlaceInquiry')
+InquiryPlacementMixin = get_class('checkout.mixins', 'InquiryPlacementMixin')
 CheckoutSessionMixin = get_class('checkout.session', 'CheckoutSessionMixin')
 NoShippingRequired = get_class('shipping.methods', 'NoShippingRequired')
-Order = get_model('order', 'Order')
-ShippingAddress = get_model('order', 'ShippingAddress')
+Inquiry = get_model('inquiry', 'Inquiry')
+ShippingAddress = get_model('inquiry', 'ShippingAddress')
 UserAddress = get_model('address', 'UserAddress')
 Country = get_model('address', 'Country')
 
@@ -109,7 +109,7 @@ class IndexView(CheckoutSessionMixin, generic.FormView):
 
 class ShippingAddressView(CheckoutSessionMixin, generic.FormView):
     """
-    Determine the shipping address for the order.
+    Determine the shipping address for the inquiry.
 
     The default behaviour is to display a list of addresses from the users's
     address book, from which the user can choose one to be their shipping
@@ -119,7 +119,7 @@ class ShippingAddressView(CheckoutSessionMixin, generic.FormView):
 
     Alternatively, the user can enter a SHIPPING address directly which will be
     saved in the session and later saved as ShippingAddress model when the
-    order is successfully submitted.
+    inquiry is successfully submitted.
     """
     template_name = 'oscar/checkout/shipping_address.html'
     form_class = ShippingAddressForm
@@ -359,13 +359,13 @@ class PaymentMethodView(CheckoutSessionMixin, generic.TemplateView):
 
 
 # ================
-# Order submission
+# Inquiry submission
 # ================
 
 
-class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
+class PaymentDetailsView(InquiryPlacementMixin, generic.TemplateView):
     """
-    For taking the details of payment and creating the order.
+    For taking the details of payment and creating the inquiry.
 
     This view class is used by two separate URLs: 'payment-details' and
     'preview'. The `preview` class attribute is used to distinguish which is
@@ -378,7 +378,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
 
     - If the form data is valid, then the preview template can be rendered with
       the payment-details forms re-rendered within a hidden div so they can be
-      re-submitted when the 'place order' button is clicked. This avoids having
+      re-submitted when the 'place inquiry' button is clicked. This avoids having
       to write sensitive data to disk anywhere during the process. This can be
       done by calling `render_preview`, passing in the extra template context
       vars.
@@ -406,7 +406,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
         'check_user_email_is_captured',
         'check_shipping_data_is_captured']
 
-    # If preview=True, then we render a preview template that shows all order
+    # If preview=True, then we render a preview template that shows all inquiry
     # details ready for submission.
     preview = False
 
@@ -430,19 +430,19 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
             return http.HttpResponseBadRequest()
 
         # We use a custom parameter to indicate if this is an attempt to place
-        # an order (normally from the preview page).  Without this, we assume a
+        # an inquiry (normally from the preview page).  Without this, we assume a
         # payment form is being submitted from the payment details view. In
-        # this case, the form needs validating and the order preview shown.
-        if request.POST.get('action', '') == 'place_order':
-            return self.handle_place_order_submission(request)
+        # this case, the form needs validating and the inquiry preview shown.
+        if request.POST.get('action', '') == 'place_inquiry':
+            return self.handle_place_inquiry_submission(request)
         return self.handle_payment_details_submission(request)
 
-    def handle_place_order_submission(self, request):
+    def handle_place_inquiry_submission(self, request):
         """
-        Handle a request to place an order.
+        Handle a request to place an inquiry.
 
         This method is normally called after the renter has clicked "place
-        order" on the preview page. It's responsible for (re-)validating any
+        inquiry" on the preview page. It's responsible for (re-)validating any
         form information then building the submission dict to pass to the
         `submit` method.
 
@@ -473,7 +473,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
 
     def render_preview(self, request, **kwargs):
         """
-        Show a preview of the order.
+        Show a preview of the inquiry.
 
         If sensitive data was submitted on the payment details page, you will
         need to pass it back to the view here so it can be stored in hidden
@@ -512,19 +512,19 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
             return None
 
     def submit(self, user, basket, shipping_address, shipping_method,  # noqa (too complex (10))
-               shipping_charge, billing_address, order_total,
-               payment_kwargs=None, order_kwargs=None, surcharges=None):
+               shipping_charge, billing_address, inquiry_total,
+               payment_kwargs=None, inquiry_kwargs=None, surcharges=None):
         """
-        Submit a basket for order placement.
+        Submit a basket for inquiry placement.
 
         The process runs as follows:
 
-         * Generate an order number
+         * Generate an inquiry number
          * Freeze the basket so it cannot be modified any more (important when
            redirecting the user to another site for payment as it prevents the
            basket being manipulated during the payment process).
-         * Attempt to take payment for the order
-           - If payment is successful, place the order
+         * Attempt to take payment for the inquiry
+           - If payment is successful, place the inquiry
            - If a redirect is required (e.g. PayPal, 3D Secure), redirect
            - If payment is unsuccessful, show an appropriate error message
 
@@ -533,28 +533,28 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
                          method. It normally makes sense to pass form
                          instances (rather than model instances) so that the
                          forms can be re-rendered correctly if payment fails.
-        :order_kwargs: Additional kwargs to pass to the place_order method
+        :inquiry_kwargs: Additional kwargs to pass to the place_inquiry method
         """
         if payment_kwargs is None:
             payment_kwargs = {}
-        if order_kwargs is None:
-            order_kwargs = {}
+        if inquiry_kwargs is None:
+            inquiry_kwargs = {}
 
         # Taxes must be known at this point
         assert basket.is_tax_known, (
-            "Basket tax must be set before a user can place an order")
+            "Basket tax must be set before a user can place an inquiry")
         assert shipping_charge.is_tax_known, (
-            "Shipping charge tax must be set before a user can place an order")
+            "Shipping charge tax must be set before a user can place an inquiry")
 
-        # We generate the order number first as this will be used
-        # in payment requests (ie before the order model has been
+        # We generate the inquiry number first as this will be used
+        # in payment requests (ie before the inquiry model has been
         # created).  We also save it in the session for multi-stage
         # checkouts (e.g. where we redirect to a 3rd party site and place
-        # the order on a different request).
-        order_number = self.generate_order_number(basket)
-        self.checkout_session.set_order_number(order_number)
-        logger.info("Order #%s: beginning submission process for basket #%d",
-                    order_number, basket.id)
+        # the inquiry on a different request).
+        inquiry_number = self.generate_inquiry_number(basket)
+        self.checkout_session.set_inquiry_number(inquiry_number)
+        logger.info("Inquiry #%s: beginning submission process for basket #%d",
+                    inquiry_number, basket.id)
 
         # Freeze the basket so it cannot be manipulated while the renter is
         # completing payment on a 3rd party site.  Also, store a reference to
@@ -567,16 +567,16 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
         # We define a general error message for when an unanticipated payment
         # error occurs.
         error_msg = _("A problem occurred while processing payment for this "
-                      "order - no payment has been taken.  Please "
+                      "inquiry - no payment has been taken.  Please "
                       "contact renter services if this problem persists")
 
         signals.pre_payment.send_robust(sender=self, view=self)
 
         try:
-            self.handle_payment(order_number, order_total, **payment_kwargs)
+            self.handle_payment(inquiry_number, inquiry_total, **payment_kwargs)
         except RedirectRequired as e:
             # Redirect required (e.g. PayPal, 3DS)
-            logger.info("Order #%s: redirecting to %s", order_number, e.url)
+            logger.info("Inquiry #%s: redirecting to %s", inquiry_number, e.url)
             return http.HttpResponseRedirect(e.url)
         except UnableToTakePayment as e:
             # Something went wrong with payment but in an anticipated way.  Eg
@@ -585,8 +585,8 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
             # message that makes sense to the renter.
             msg = str(e)
             logger.warning(
-                "Order #%s: unable to take payment (%s) - restoring basket",
-                order_number, msg)
+                "Inquiry #%s: unable to take payment (%s) - restoring basket",
+                inquiry_number, msg)
             self.restore_frozen_basket()
 
             # We assume that the details submitted on the payment details view
@@ -601,7 +601,7 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
             # mail admins on an error as this issue warrants some further
             # investigation.
             msg = str(e)
-            logger.error("Order #%s: payment error (%s)", order_number, msg,
+            logger.error("Inquiry #%s: payment error (%s)", inquiry_number, msg,
                          exc_info=True)
             self.restore_frozen_basket()
             return self.render_preview(
@@ -610,36 +610,36 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
             # Unhandled exception - hopefully, you will only ever see this in
             # development...
             logger.exception(
-                "Order #%s: unhandled exception while taking payment (%s)",
-                order_number, e)
+                "Inquiry #%s: unhandled exception while taking payment (%s)",
+                inquiry_number, e)
             self.restore_frozen_basket()
             return self.render_preview(
                 self.request, error=error_msg, **payment_kwargs)
 
         signals.post_payment.send_robust(sender=self, view=self)
 
-        # If all is ok with payment, try and place order
-        logger.info("Order #%s: payment successful, placing order",
-                    order_number)
+        # If all is ok with payment, try and place inquiry
+        logger.info("Inquiry #%s: payment successful, placing inquiry",
+                    inquiry_number)
         try:
-            return self.handle_order_placement(
-                order_number, user, basket, shipping_address, shipping_method,
-                shipping_charge, billing_address, order_total, surcharges=surcharges, **order_kwargs)
-        except UnableToPlaceOrder as e:
+            return self.handle_inquiry_placement(
+                inquiry_number, user, basket, shipping_address, shipping_method,
+                shipping_charge, billing_address, inquiry_total, surcharges=surcharges, **inquiry_kwargs)
+        except UnableToPlaceInquiry as e:
             # It's possible that something will go wrong while trying to
-            # actually place an order.  Not a good situation to be in as a
+            # actually place an inquiry.  Not a good situation to be in as a
             # payment transaction may already have taken place, but needs
             # to be handled gracefully.
             msg = str(e)
-            logger.error("Order #%s: unable to place order - %s",
-                         order_number, msg, exc_info=True)
+            logger.error("Inquiry #%s: unable to place inquiry - %s",
+                         inquiry_number, msg, exc_info=True)
             self.restore_frozen_basket()
             return self.render_preview(
                 self.request, error=msg, **payment_kwargs)
         except Exception as e:
             # Hopefully you only ever reach this in development
-            logger.exception("Order #%s: unhandled exception while placing order (%s)", order_number, e)
-            error_msg = _("A problem occurred while placing this order. Please contact renter services.")
+            logger.exception("Inquiry #%s: unhandled exception while placing inquiry (%s)", inquiry_number, e)
+            error_msg = _("A problem occurred while placing this inquiry. Please contact renter services.")
             self.restore_frozen_basket()
             return self.render_preview(self.request, error=error_msg, **payment_kwargs)
 
@@ -655,10 +655,10 @@ class PaymentDetailsView(OrderPlacementMixin, generic.TemplateView):
 
 class ThankYouView(generic.DetailView):
     """
-    Displays the 'thank you' page which summarises the order just submitted.
+    Displays the 'thank you' page which summarises the inquiry just submitted.
     """
     template_name = 'oscar/checkout/thank_you.html'
-    context_object_name = 'order'
+    context_object_name = 'inquiry'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -668,27 +668,27 @@ class ThankYouView(generic.DetailView):
         return self.render_to_response(context)
 
     def get_object(self, queryset=None):
-        # We allow superusers to force an order thank-you page for testing
-        order = None
+        # We allow superusers to force an inquiry thank-you page for testing
+        inquiry = None
         if self.request.user.is_superuser:
             kwargs = {}
-            if 'order_number' in self.request.GET:
-                kwargs['number'] = self.request.GET['order_number']
-            elif 'order_id' in self.request.GET:
-                kwargs['id'] = self.request.GET['order_id']
-            order = Order._default_manager.filter(**kwargs).first()
+            if 'inquiry_number' in self.request.GET:
+                kwargs['number'] = self.request.GET['inquiry_number']
+            elif 'inquiry_id' in self.request.GET:
+                kwargs['id'] = self.request.GET['inquiry_id']
+            inquiry = Inquiry._default_manager.filter(**kwargs).first()
 
-        if not order:
-            if 'checkout_order_id' in self.request.session:
-                order = Order._default_manager.filter(
-                    pk=self.request.session['checkout_order_id']).first()
-        return order
+        if not inquiry:
+            if 'checkout_inquiry_id' in self.request.session:
+                inquiry = Inquiry._default_manager.filter(
+                    pk=self.request.session['checkout_inquiry_id']).first()
+        return inquiry
 
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
         # Remember whether this view has been loaded.
         # Only send tracking information on the first load.
-        key = 'order_{}_thankyou_viewed'.format(ctx['order'].pk)
+        key = 'inquiry_{}_thankyou_viewed'.format(ctx['inquiry'].pk)
         if not self.request.session.get(key, False):
             self.request.session[key] = True
             ctx['send_analytics_event'] = True

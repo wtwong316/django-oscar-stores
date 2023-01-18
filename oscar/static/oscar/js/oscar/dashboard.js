@@ -352,7 +352,7 @@ var oscar = (function(o, $) {
                 });
             }
         },
-        orders: {
+        inquiries: {
             initTabs: function() {
                 if (location.hash) {
                     $('.nav-tabs a[href=' + location.hash + ']').tab('show');
@@ -377,7 +377,7 @@ var oscar = (function(o, $) {
                     handle: '.btn-handle',
                     submit_url: '#'
                 },
-                saveOrder = function(data) {
+                saveInquiry = function(data) {
                 // Get the csrf token, otherwise django will not accept the
                 // POST request.
                     var csrf = o.getCsrfToken();
@@ -401,7 +401,7 @@ var oscar = (function(o, $) {
                         vertical: true,
                         onDrop: function ($item, container, _super) {
                             var data = group.sortable("serialize");
-                            saveOrder(data);
+                            saveInquiry(data);
                             _super($item, container);
                         },
                         placeholder: '<tr class="placeholder"/>',
@@ -419,7 +419,7 @@ var oscar = (function(o, $) {
 
             return {
                 init: init,
-                saveOrder: saveOrder
+                saveInquiry: saveInquiry
             };
         }()),
         filereader: {

@@ -158,7 +158,7 @@ class AbstractBasket(models.Model):
         if max_allowed is not None and qty > max_allowed:
             return False, _(
                 "Due to technical limitations we are not able "
-                "to ship more than %(threshold)d items in one order.") \
+                "to ship more than %(threshold)d items in one inquiry.") \
                 % {'threshold': basket_threshold}
         return True, None
 
@@ -467,11 +467,11 @@ class AbstractBasket(models.Model):
         return self.offer_applications.shipping_discounts
 
     @property
-    def post_order_actions(self):
+    def post_inquiry_actions(self):
         """
         Return discounts from vouchers
         """
-        return self.offer_applications.post_order_actions
+        return self.offer_applications.post_inquiry_actions
 
     @property
     def grouped_voucher_discounts(self):
@@ -603,7 +603,7 @@ class AbstractLine(models.Model):
            mostly does this, but doesn't change the position when you update
            the quantity in the basket view.
            To get this behaviour, change Meta.ordering and optionally do
-           something similar on wishlist lines. Order lines should already
+           something similar on wishlist lines. Inquiry lines should already
            be created in the order of the basket lines, and are sorted by
            their primary key, so no changes should be necessary there.
 

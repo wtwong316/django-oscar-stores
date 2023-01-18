@@ -13,12 +13,12 @@ from . import exceptions
 
 Repository = get_class('shipping.repository', 'Repository')
 SurchargeApplicator = get_class("checkout.applicator", "SurchargeApplicator")
-OrderTotalCalculator = get_class(
-    'checkout.calculators', 'OrderTotalCalculator')
+InquiryTotalCalculator = get_class(
+    'checkout.calculators', 'InquiryTotalCalculator')
 CheckoutSessionData = get_class(
     'checkout.utils', 'CheckoutSessionData')
-ShippingAddress = get_model('order', 'ShippingAddress')
-BillingAddress = get_model('order', 'BillingAddress')
+ShippingAddress = get_model('inquiry', 'ShippingAddress')
+BillingAddress = get_model('inquiry', 'BillingAddress')
 UserAddress = get_model('address', 'UserAddress')
 
 
@@ -30,7 +30,7 @@ class CheckoutSessionMixin(object):
     checkout information is available in the template context.
     """
 
-    # A pre-condition is a condition that MUST be met in order for a view
+    # A pre-condition is a condition that MUST be met in inquiry for a view
     # to be available. If it isn't then the renter should be redirected
     # to a view *earlier* in the chain.
     # pre_conditions is a list of method names that get executed before the
@@ -40,7 +40,7 @@ class CheckoutSessionMixin(object):
 
     pre_conditions = None
 
-    # A *skip* condition is a condition that MUST NOT be met in order for a
+    # A *skip* condition is a condition that MUST NOT be met in inquiry for a
     # view to be available. If the condition is met, this means the view MUST
     # be skipped and the renter should be redirected to a view *later* in
     # the chain.
@@ -116,7 +116,7 @@ class CheckoutSessionMixin(object):
 
     def check_basket_is_valid(self, request):
         """
-        Check that the basket is permitted to be submitted as an order. That
+        Check that the basket is permitted to be submitted as an inquiry. That
         is, all the basket lines are available to buy - nothing has gone out of
         stock since it was added to the basket.
         """
@@ -225,7 +225,7 @@ class CheckoutSessionMixin(object):
             )
 
     def skip_unless_payment_is_required(self, request):
-        # Check to see if payment is actually required for this order.
+        # Check to see if payment is actually required for this inquiry.
         shipping_address = self.get_shipping_address(request.basket)
         shipping_method = self.get_shipping_method(
             request.basket, shipping_address)
@@ -243,7 +243,7 @@ class CheckoutSessionMixin(object):
         surcharges = SurchargeApplicator(request).get_applicable_surcharges(
             basket=request.basket, shipping_charge=shipping_charge
         )
-        total = self.get_order_totals(request.basket, shipping_charge, surcharges)
+        total = self.get_inquiry_totals(request.basket, shipping_charge, surcharges)
         if total.excl_tax == D('0.00'):
             raise exceptions.PassedSkipCondition(
                 url=reverse('checkout:preview')
@@ -253,16 +253,16 @@ class CheckoutSessionMixin(object):
 
     def get_context_data(self, **kwargs):
         # Use the proposed submission as template context data.  Flatten the
-        # order kwargs so they are easily available too.
+        # inquiry kwargs so they are easily available too.
         ctx = super().get_context_data()
         ctx.update(self.build_submission(**kwargs))
         ctx.update(kwargs)
-        ctx.update(ctx['order_kwargs'])
+        ctx.update(ctx['inquiry_kwargs'])
         return ctx
 
     def build_submission(self, **kwargs):
         """
-        Return a dict of data that contains everything required for an order
+        Return a dict of data that contains everything required for an inquiry
         submission.  This includes payment details (if any).
 
         This can be the right place to perform tax lookups and apply them to
@@ -281,7 +281,7 @@ class CheckoutSessionMixin(object):
             'shipping_address': shipping_address,
             'shipping_method': shipping_method,
             'billing_address': billing_address,
-            'order_kwargs': {},
+            'inquiry_kwargs': {},
             'payment_kwargs': {}
         }
 
@@ -292,11 +292,11 @@ class CheckoutSessionMixin(object):
             surcharges = SurchargeApplicator(self.request, submission).get_applicable_surcharges(
                 self.request.basket, shipping_charge=shipping_charge
             )
-            total = self.get_order_totals(
+            total = self.get_inquiry_totals(
                 basket, shipping_charge=shipping_charge, surcharges=surcharges, **kwargs)
 
         submission["shipping_charge"] = shipping_charge
-        submission["order_total"] = total
+        submission["inquiry_total"] = total
         submission['surcharges'] = surcharges
 
         # If there is a billing address, add it to the payment kwargs as calls
@@ -310,13 +310,13 @@ class CheckoutSessionMixin(object):
         # Allow overrides to be passed in
         submission.update(kwargs)
 
-        # Set guest email after overrides as we need to update the order_kwargs
+        # Set guest email after overrides as we need to update the inquiry_kwargs
         # entry.
         user = submission['user']
         if (not user.is_authenticated
-                and 'guest_email' not in submission['order_kwargs']):
+                and 'guest_email' not in submission['inquiry_kwargs']):
             email = self.checkout_session.get_guest_email()
-            submission['order_kwargs']['guest_email'] = email
+            submission['inquiry_kwargs']['guest_email'] = email
         return submission
 
     def get_shipping_address(self, basket):
@@ -331,11 +331,11 @@ class CheckoutSessionMixin(object):
         then we convert the ``UserAddress`` to a ``ShippingAddress``.
 
         The ``ShippingAddress`` instance is not saved as sometimes you need a
-        shipping address instance before the order is placed.  For example, if
+        shipping address instance before the inquiry is placed.  For example, if
         you are submitting fraud information as part of a payment request.
 
-        The ``OrderPlacementMixin.create_shipping_address`` method is
-        responsible for saving a shipping address when an order is placed.
+        The ``InquiryPlacementMixin.create_shipping_address`` method is
+        responsible for saving a shipping address when an inquiry is placed.
         """
         if not basket.is_shipping_required():
             return None
@@ -420,9 +420,9 @@ class CheckoutSessionMixin(object):
                 user_address.populate_alternative_model(billing_address)
                 return billing_address
 
-    def get_order_totals(self, basket, shipping_charge, surcharges=None, **kwargs):
+    def get_inquiry_totals(self, basket, shipping_charge, surcharges=None, **kwargs):
         """
-        Returns the total for the order with and without tax
+        Returns the total for the inquiry with and without tax
         """
-        return OrderTotalCalculator(self.request).calculate(
+        return InquiryTotalCalculator(self.request).calculate(
             basket, shipping_charge, surcharges, **kwargs)

@@ -64,7 +64,7 @@
     <tr>
         <th>{% trans "Code" %}</th>
         <th>{% anchor 'num_basket_additions' _("Num baskets") %}</th>
-        <th>{% anchor 'num_orders' _("Num orders") %}</th>
+        <th>{% anchor 'num_inquiries' _("Num inquiries") %}</th>
         <th>{% anchor 'date_created' _("Date created") %}</th>
         <th></th>
     </tr>
@@ -74,7 +74,7 @@
                 <span class="badge badge-secondary">{{ voucher.code }}</span>
             </td>
             <td>{{ voucher.num_basket_additions }}</td>
-            <td>{{ voucher.num_orders }}</td>
+            <td>{{ voucher.num_inquiries }}</td>
             <td>{{ voucher.date_created }}</td>
             <td>
                 <div class="btn-toolbar">

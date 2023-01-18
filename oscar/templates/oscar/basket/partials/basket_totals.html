@@ -208,17 +208,17 @@
                 {% endif %}
             {% endblock %}
 
-            {% block post_order_action_totals %}
-                {% if basket.post_order_actions %}
+            {% block post_inquiry_action_totals %}
+                {% if basket.post_inquiry_actions %}
                     <tr>
                         <th>&nbsp;</th>
                         <td></td>
                     </tr>
                     <tr>
-                        <th><h3>{% trans "Post order actions" %}</h3><small>{% trans "These will be applied once your order is placed." %}</small></th>
+                        <th><h3>{% trans "Post inquiry actions" %}</h3><small>{% trans "These will be applied once your inquiry is placed." %}</small></th>
                         <td></td>
                     </tr>
-                    {% for discount in basket.post_order_actions %}
+                    {% for discount in basket.post_inquiry_actions %}
                         <tr>
                             <td class="total" colspan="2">
                                 <span class="badge badge-success">{{ discount.name }}</span><br/>
@@ -229,24 +229,24 @@
                 {% endif %}
             {% endblock %}
 
-            {% block order_total %}
+            {% block inquiry_total %}
                 <tr>
                     <th>&nbsp;</th>
                     <td></td>
                 </tr>
                 <tr>
-                    <th class="total"><h3>{% trans "Order total" %}</h3></th>
+                    <th class="total"><h3>{% trans "Inquiry total" %}</h3></th>
                     <td class="total text-right">
                         <h3 class="price_color">
-                            {% if order_total.is_tax_known %}
-                                {{ order_total.incl_tax|currency:basket.currency }}
+                            {% if inquiry_total.is_tax_known %}
+                                {{ inquiry_total.incl_tax|currency:basket.currency }}
                             {% else %}
-                                {{ order_total.excl_tax|currency:basket.currency }}
+                                {{ inquiry_total.excl_tax|currency:basket.currency }}
                             {% endif %}
                         </h3>
                     </td>
                 </tr>
-                {% if not order_total.is_tax_known %}
+                {% if not inquiry_total.is_tax_known %}
                     <tr>
                         <td><small>{% trans "Taxes will be added during checkout." %}</small></td>
                     </tr>
