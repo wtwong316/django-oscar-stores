@@ -161,10 +161,11 @@ OSCAR_DASHBOARD_NAVIGATION = [
                 'label': _('Renters'),
                 'url_name': 'dashboard:users-index',
             },
-            {
-                'label': _('Stock alert requests'),
-                'url_name': 'dashboard:user-alert-list',
-            },
+            #{
+            #    'label': _('Stock alert requests'),
+            #    'url_name': 'dashboard:user-alert-list',
+            #},
+
         ]
     },
     #{
