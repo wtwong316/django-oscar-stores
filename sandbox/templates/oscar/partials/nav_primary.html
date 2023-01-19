@@ -1,6 +1,16 @@
 {% extends "oscar/partials/nav_primary.html" %}
+{% load category_tags %}
+{% load sdu_tags %}
+{% load i18n %}
 
 {% block nav_dropdown_extra_items %}
     {{ block.super }}
-    <a class="dropdown-item" href="{% url 'sdfs:index' %}">Sdf locator</a>
+    {% category_tree depth=1 as tree_categories %}
+    <a class="dropdown-item" href="{% url 'catalogue:index' %}">{% trans "All sdus" %}</a>
+    {% if tree_categories %}
+        <div class="dropdown-divider"></div>
+        {% for tree_category in tree_categories %}
+            <a class="dropdown-item" href="{{ tree_category.get_absolute_url }}">{{ tree_category.name }}</a>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

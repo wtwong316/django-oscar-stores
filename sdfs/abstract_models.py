@@ -66,14 +66,14 @@ class Sdf(models.Model):
     #    blank=True,
     #    help_text=_("A reference number that uniquely identifies this sdf"))
 
-    #image = models.ImageField(
-    #    _("Image"),
-    #    upload_to="uploads/sdf-images",
-    #    blank=True, null=True)
-    #description = models.CharField(
-    #    _("Description"),
-    #    max_length=2000,
-    #    blank=True, null=True)
+    image = models.ImageField(
+        _("Image"),
+        upload_to="uploads/sdf-images",
+        blank=True, null=True)
+    description = models.CharField(
+        _("Description"),
+        max_length=2000,
+        blank=True, null=True)
     location = PointField(
         _("Location"),
         srid=get_geodetic_srid(),

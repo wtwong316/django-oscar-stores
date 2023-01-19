@@ -34,23 +34,15 @@
                     {% block nav_items %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {% block browse_store_text %}{% trans "Browse sdu" %}{% endblock %}
+                                {% block browse_store_text %}{% trans "Operation Menu" %}{% endblock %}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                {% category_tree depth=1 as tree_categories %}
-                                <a class="dropdown-item" href="{% url 'catalogue:index' %}">{% trans "All sdus" %}</a>
-                                {% if tree_categories %}
-                                    <div class="dropdown-divider"></div>
-                                    {% for tree_category in tree_categories %}
-                                        <a class="dropdown-item" href="{{ tree_category.get_absolute_url }}">{{ tree_category.name }}</a>
-                                    {% endfor %}
-                                {% endif %}
-                                <!--
+                                <a class="dropdown-item" href="{% url 'sdfs:index' %}">Sdf locator</a>
+
                                 <div class="dropdown-divider"></div>
                                 {% block nav_dropdown_extra_items %}
-                                    <a class="dropdown-item" href="{% url 'offer:list' %}">{% trans "Offers" %}</a>
+                                    <!--<a class="dropdown-item" href="{% url 'offer:list' %}">{% trans "Offers" %}</a>-->
                                 {% endblock %}
-                                -->
                             </div>
                         </li>
                    {% endblock %}

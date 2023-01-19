@@ -26,6 +26,9 @@ class SdfForm(forms.ModelForm):
         model = Sdf
         fields = [
             'name',
+            'image',
+            'description',
+            'group',
             #'manager_name', 'phone', 'email', 'reference', 'image',
             #'description', 'group', 'is_pickup_sdf', 'is_active',
             'location'
