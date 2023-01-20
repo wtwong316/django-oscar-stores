@@ -98,14 +98,14 @@ class StockRecordForm(forms.ModelForm):
             self.fields['partner'].queryset = self.user.partners.all()
 
         # If not tracking stock, we hide the fields
-        if not sdu_class.track_stock:
-            for field_name in ['num_in_stock', 'low_stock_threshold']:
-                if field_name in self.fields:
-                    del self.fields[field_name]
-        else:
-            for field_name in ['price', 'num_in_stock']:
-                if field_name in self.fields:
-                    self.fields[field_name].required = True
+        #if not sdu_class.track_stock:
+        #    for field_name in ['num_in_stock', 'low_stock_threshold']:
+        #        if field_name in self.fields:
+        #            del self.fields[field_name]
+        #else:
+        #    for field_name in ['price', 'num_in_stock']:
+        #        if field_name in self.fields:
+        #            self.fields[field_name].required = True
 
     class Meta:
         model = StockRecord
@@ -370,7 +370,8 @@ class SduClassForm(forms.ModelForm):
 
     class Meta:
         model = SduClass
-        fields = ['name', 'requires_shipping', 'track_stock', 'options']
+        #fields = ['name', 'requires_shipping', 'track_stock', 'options']
+        fields = ['name', 'options']
 
 
 class SduAttributesForm(forms.ModelForm):

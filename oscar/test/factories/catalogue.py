@@ -15,8 +15,8 @@ __all__ = [
 
 class SduClassFactory(factory.django.DjangoModelFactory):
     name = "Books"
-    requires_shipping = True
-    track_stock = True
+    #requires_shipping = True
+    #track_stock = True
 
     class Meta:
         model = get_model('catalogue', 'SduClass')

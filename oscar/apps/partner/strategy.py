@@ -210,11 +210,11 @@ class StockRequired(object):
     def availability_policy(self, sdu, stockrecord):
         if not stockrecord:
             return Unavailable()
-        if not sdu.get_sdu_class().track_stock:
-            return Available()
-        else:
-            return StockRequiredAvailability(
-                stockrecord.net_stock_level)
+        #if not sdu.get_sdu_class().track_stock:
+        #    return Available()
+        #else:
+        #    return StockRequiredAvailability(
+        #        stockrecord.net_stock_level)
 
     def parent_availability_policy(self, sdu, children_stock):
         # A parent sdu is available if one of its children is

@@ -97,22 +97,22 @@ OSCAR_DASHBOARD_NAVIGATION = [
         'icon': 'fas fa-list',
         'url_name': 'dashboard:index',
     },
-    {
-        'label': _('Catalogue'),
-        'icon': 'fas fa-sitemap',
-        'children': [
-            {
-                'label': _('Sdus'),
-                'url_name': 'dashboard:catalogue-sdu-list',
-            },
-            {
-                'label': _('Sdu Types'),
-                'url_name': 'dashboard:catalogue-class-list',
-            },
-            {
-                'label': _('Categories'),
-                'url_name': 'dashboard:catalogue-category-list',
-            },
+    #{
+        #'label': _('Catalogue'),
+        #'icon': 'fas fa-sitemap',
+        #'children': [
+            #{
+            #    'label': _('Sdus'),
+            #    'url_name': 'dashboard:catalogue-sdu-list',
+            #},
+            #{
+            #    'label': _('Sdu Types'),
+            #    'url_name': 'dashboard:catalogue-class-list',
+            #},
+            #{
+            #    'label': _('Categories'),
+            #    'url_name': 'dashboard:catalogue-category-list',
+            #},
             #{
             #    'label': _('Ranges'),
             #    'url_name': 'dashboard:range-list',
@@ -125,24 +125,24 @@ OSCAR_DASHBOARD_NAVIGATION = [
             #    'label': _('Options'),
             #    'url_name': 'dashboard:catalogue-option-list',
             #},
-        ]
-    },
+        #]
+    #},
     {
         'label': _('Fulfilment'),
         'icon': 'fas fa-building-o',
         'children': [
             {
-                'label': _('Orders'),
+                'label': _('Inquiries'),
                 'url_name': 'dashboard:inquiry-list',
             },
             {
                 'label': _('Statistics'),
                 'url_name': 'dashboard:inquiry-stats',
             },
-            {
-                'label': _('Partners'),
-                'url_name': 'dashboard:partner-list',
-            },
+            #{
+            #    'label': _('Partners'),
+            #    'url_name': 'dashboard:partner-list',
+            #},
             # The shipping method dashboard is disabled by default as it might
             # be confusing. Weight-based shipping methods aren't hooked into
             # the shipping repository by default (as it would make

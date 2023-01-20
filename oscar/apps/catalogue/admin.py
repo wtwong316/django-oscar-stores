@@ -38,7 +38,8 @@ class SduAttributeInline(admin.TabularInline):
 
 
 class SduClassAdmin(admin.ModelAdmin):
-    list_display = ('name', 'requires_shipping', 'track_stock')
+    #list_display = ('name', 'requires_shipping', 'track_stock')
+    list_display = ['name']
     inlines = [SduAttributeInline]
 
 

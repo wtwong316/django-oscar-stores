@@ -165,8 +165,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=128, verbose_name='Name')),
                 ('slug', oscar.models.fields.autoslugfield.AutoSlugField(blank=True, editable=False, max_length=128, populate_from='name', unique=True, verbose_name='Slug')),
-                ('requires_shipping', models.BooleanField(default=True, verbose_name='Requires shipping?')),
-                ('track_stock', models.BooleanField(default=True, verbose_name='Track stock levels?')),
+                #('requires_shipping', models.BooleanField(default=True, verbose_name='Requires shipping?')),
+                #('track_stock', models.BooleanField(default=True, verbose_name='Track stock levels?')),
                 ('options', models.ManyToManyField(blank=True, to='catalogue.Option', verbose_name='Options')),
             ],
             options={

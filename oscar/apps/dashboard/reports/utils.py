@@ -4,11 +4,11 @@ InquiryReportGenerator = get_class('inquiry.reports', 'InquiryReportGenerator')
 SduReportGenerator, UserReportGenerator \
     = get_classes('analytics.reports', ['SduReportGenerator',
                                         'UserReportGenerator'])
-OpenBasketReportGenerator, SubmittedBasketReportGenerator \
-    = get_classes('basket.reports', ['OpenBasketReportGenerator',
-                                     'SubmittedBasketReportGenerator'])
-OfferReportGenerator = get_class('offer.reports', 'OfferReportGenerator')
-VoucherReportGenerator = get_class('voucher.reports', 'VoucherReportGenerator')
+#OpenBasketReportGenerator, SubmittedBasketReportGenerator \
+#    = get_classes('basket.reports', ['OpenBasketReportGenerator',
+#                                     'SubmittedBasketReportGenerator'])
+#OfferReportGenerator = get_class('offer.reports', 'OfferReportGenerator')
+#VoucherReportGenerator = get_class('voucher.reports', 'VoucherReportGenerator')
 
 
 class GeneratorRepository(object):
@@ -16,10 +16,11 @@ class GeneratorRepository(object):
     generators = [InquiryReportGenerator,
                   SduReportGenerator,
                   UserReportGenerator,
-                  OpenBasketReportGenerator,
-                  SubmittedBasketReportGenerator,
-                  VoucherReportGenerator,
-                  OfferReportGenerator]
+                  #OpenBasketReportGenerator,
+                  #SubmittedBasketReportGenerator,
+                  #VoucherReportGenerator,
+                  #OfferReportGenerator
+                ]
 
     def get_report_generators(self):
         return self.generators

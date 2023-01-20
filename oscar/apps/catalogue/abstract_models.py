@@ -85,12 +85,12 @@ class AbstractSduClass(models.Model):
 
     #: Some sdu type don't require shipping (e.g. digital sdus) - we use
     #: this field to take some shortcuts in the checkout.
-    requires_shipping = models.BooleanField(_("Requires shipping?"),
-                                            default=True)
+    #requires_shipping = models.BooleanField(_("Requires shipping?"),
+    #                                        default=True)
 
     #: Digital sdus generally don't require their stock levels to be
     #: tracked.
-    track_stock = models.BooleanField(_("Track stock levels?"), default=True)
+    #track_stock = models.BooleanField(_("Track stock levels?"), default=True)
 
     #: These are the options (set by the user when they add to basket) for this
     #: item class.  For instance, a sdu class of "SMS message" would always
@@ -591,7 +591,8 @@ class AbstractSdu(models.Model):
 
     @property
     def is_shipping_required(self):
-        return self.get_sdu_class().requires_shipping
+        #return self.get_sdu_class().requires_shipping
+        return False
 
     @property
     def has_stockrecords(self):

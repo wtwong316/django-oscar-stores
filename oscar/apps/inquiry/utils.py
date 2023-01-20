@@ -201,8 +201,10 @@ class InquiryCreator(object):
         """
         Update any relevant stock records for this inquiry line
         """
-        if line.sdu.get_sdu_class().track_stock:
-            line.stockrecord.allocate(line.quantity)
+        #if line.sdu.get_sdu_class().track_stock:
+        #    line.stockrecord.allocate(line.quantity)
+        pass
+
 
     def create_additional_line_models(self, inquiry, inquiry_line, basket_line):
         """

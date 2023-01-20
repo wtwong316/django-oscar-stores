@@ -170,7 +170,8 @@ class AbstractStockRecord(models.Model):
     @cached_property
     def can_track_allocations(self):
         """Return True if the Sdu is set for stock tracking."""
-        return self.sdu.get_sdu_class().track_stock
+        #return self.sdu.get_sdu_class().track_stock
+        return False
 
     # 2-stage stock management model
 
