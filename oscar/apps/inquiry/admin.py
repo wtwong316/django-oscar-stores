@@ -35,7 +35,7 @@ class InquiryAdmin(admin.ModelAdmin):
 
 
 class LineAdmin(admin.ModelAdmin):
-    list_display = ('inquiry', 'sdu', 'stockrecord', 'quantity')
+    list_display = ('inquiry', 'product', 'stockrecord', 'quantity')
 
 
 class LinePriceAdmin(admin.ModelAdmin):

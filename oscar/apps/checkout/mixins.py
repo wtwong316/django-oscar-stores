@@ -317,7 +317,7 @@ class InquiryPlacementMixin(CheckoutSessionMixin):
     def restore_frozen_basket(self):
         """
         Restores a frozen basket as the sole OPEN basket.  Note that this also
-        merges in any new sdus that have been added to a basket that has
+        merges in any new products that have been added to a basket that has
         been created while payment.
         """
         try:

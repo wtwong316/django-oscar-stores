@@ -178,7 +178,7 @@ class EventHandler(object):
         Check whether stock records still have enough stock to honour the
         requested allocations.
 
-        Lines whose sdu doesn't track stock are disregarded, which means
+        Lines whose product doesn't track stock are disregarded, which means
         this method will return True if only non-stock-tracking-lines are
         passed.
         This means you can just throw all inquiry lines to this method, without

@@ -68,21 +68,21 @@ class AttributeFilter(dict):
         return qs
 
 
-class SduQuerySet(models.query.QuerySet):
+class ProductQuerySet(models.query.QuerySet):
 
     def filter_by_attributes(self, **filter_kwargs):
         """
         Allows querying by attribute as if the attributes where fields on the
-        sdu::
+        product::
 
-        >>> first_large_shirt = Sdu.objects.filter_by_attributes(size="Large").first()
+        >>> first_large_shirt = Product.objects.filter_by_attributes(size="Large").first()
         >>> first_large_shirt.attr.size
         <AttributeOption: Large>
         """
         attribute_filter = AttributeFilter(filter_kwargs)
 
-        SduAttribute = self.model.attributes.rel.model
-        attribute_types = SduAttribute.objects.values_list("code", "type").filter(
+        ProductAttribute = self.model.attributes.rel.model
+        attribute_types = ProductAttribute.objects.values_list("code", "type").filter(
             code__in=attribute_filter.field_names()
         )
 
@@ -94,30 +94,30 @@ class SduQuerySet(models.query.QuerySet):
         models to save on queries
         """
         Option = get_model('catalogue', 'Option')
-        sdu_class_options = Option.objects.filter(sduclass=OuterRef('sdu_class'))
-        sdu_options = Option.objects.filter(sdu=OuterRef('pk'))
-        return self.select_related('sdu_class')\
-            .prefetch_related('children', 'sdu_options', 'sdu_class__options', 'stockrecords', 'images') \
-            .annotate(has_sdu_class_options=Exists(sdu_class_options),
-                      has_sdu_options=Exists(sdu_options))
+        product_class_options = Option.objects.filter(productclass=OuterRef('product_class'))
+        product_options = Option.objects.filter(product=OuterRef('pk'))
+        return self.select_related('product_class')\
+            .prefetch_related('children', 'product_options', 'product_class__options', 'stockrecords', 'images') \
+            .annotate(has_product_class_options=Exists(product_class_options),
+                      has_product_options=Exists(product_options))
 
     def browsable(self):
         """
-        Excludes non-canonical sdus and non-public sdus
+        Excludes non-canonical products and non-public products
         """
         return self.filter(parent=None, is_public=True)
 
     def public(self):
         """
-        Excludes non-public sdus
+        Excludes non-public products
         """
         return self.filter(is_public=True)
 
     def browsable_dashboard(self):
         """
-        Sdus that should be browsable in the dashboard.
+        Products that should be browsable in the dashboard.
 
-        Excludes non-canonical sdus, but includes non-public sdus.
+        Excludes non-canonical products, but includes non-public products.
         """
         return self.filter(parent=None)
 

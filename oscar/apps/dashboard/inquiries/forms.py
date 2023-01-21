@@ -67,7 +67,7 @@ class InquiryStatsForm(forms.Form):
 class InquirySearchForm(forms.Form):
     inquiry_number = forms.CharField(required=False, label=_("Inquiry number"))
     name = forms.CharField(required=False, label=_("Customer name"))
-    sdu_title = forms.CharField(required=False, label=_("Sdu name"))
+    product_title = forms.CharField(required=False, label=_("Product name"))
     upc = forms.CharField(required=False, label=_("UPC"))
     partner_sku = forms.CharField(required=False, label=_("Partner SKU"))
 

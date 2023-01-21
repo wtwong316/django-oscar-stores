@@ -191,7 +191,7 @@ class SearchHandler(SearchResultsPaginationMixin):
         # something the templates can use.
         # Note that the FacetMunger accesses object_list (unpaginated results),
         # whereas we use the paginated search results to populate the context
-        # with sdus
+        # with products
         munger = self.get_facet_munger()
         facet_data = munger.facet_data()
         has_facets = any([data['results'] for data in facet_data.values()])

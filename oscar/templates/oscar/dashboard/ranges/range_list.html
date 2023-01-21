@@ -29,7 +29,7 @@
             <thead>
                 <tr>
                     <th>{% trans "Name" %}</th>
-                    <th>{% trans "Num sdus" %}</th>
+                    <th>{% trans "Num products" %}</th>
                     <th>{% trans "Is public?" %}</th>
                     <th>{% trans "Date created" %}</th>
                     <th></th>
@@ -45,10 +45,10 @@
                                 {{ range.name }}
                             {% endif %}
                         </td>
-                        {% if range.includes_all_sdus %}
+                        {% if range.includes_all_products %}
                             <td>{% trans 'All' %}</td>
                         {% else %}
-                            <td>{{ range.num_sdus|default:"-" }}</td>
+                            <td>{{ range.num_products|default:"-" }}</td>
                         {% endif %}
 
                         {% if range.is_public %}
@@ -68,9 +68,9 @@
                                             <a class="dropdown-item" href="{% url 'dashboard:range-update' pk=range.id %}">
                                                 {% trans "Edit" %}
                                             </a>
-                                            {% if not range.includes_all_sdus %}
-                                                <a class="dropdown-item" href="{% url 'dashboard:range-sdus' pk=range.id %}">
-                                                    {% trans "Edit sdus" %}
+                                            {% if not range.includes_all_products %}
+                                                <a class="dropdown-item" href="{% url 'dashboard:range-products' pk=range.id %}">
+                                                    {% trans "Edit products" %}
                                                 </a>
                                             {% endif %}
                                         {% endif %}

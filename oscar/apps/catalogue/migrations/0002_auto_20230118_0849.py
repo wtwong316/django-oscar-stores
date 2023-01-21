@@ -11,13 +11,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='sduimage',
+            model_name='productimage',
             name='display_order',
-            field=models.PositiveIntegerField(db_index=True, default=0, help_text='An image with a display inquiry of zero will be the primary image for a sdu', verbose_name='Display inquiry'),
+            field=models.PositiveIntegerField(db_index=True, default=0, help_text='An image with a display inquiry of zero will be the primary image for a product', verbose_name='Display inquiry'),
         ),
         migrations.AlterField(
-            model_name='sdurecommendation',
+            model_name='productrecommendation',
             name='ranking',
-            field=models.PositiveSmallIntegerField(db_index=True, default=0, help_text='Determines inquiry of the sdus. A sdu with a higher value will appear before one with a lower ranking.', verbose_name='Ranking'),
+            field=models.PositiveSmallIntegerField(db_index=True, default=0, help_text='Determines inquiry of the products. A product with a higher value will appear before one with a lower ranking.', verbose_name='Ranking'),
         ),
     ]

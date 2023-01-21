@@ -17,12 +17,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='usersduview',
-            name='sdu',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogue.sdu', verbose_name='Sdu'),
+            model_name='userproductview',
+            name='product',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogue.product', verbose_name='Product'),
         ),
         migrations.AddField(
-            model_name='usersduview',
+            model_name='userproductview',
             name='user',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User'),
         ),
@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
             field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User'),
         ),
         migrations.AddField(
-            model_name='sdurecord',
-            name='sdu',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='stats', to='catalogue.sdu', verbose_name='Sdu'),
+            model_name='productrecord',
+            name='product',
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='stats', to='catalogue.product', verbose_name='Product'),
         ),
     ]

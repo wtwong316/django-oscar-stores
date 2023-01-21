@@ -52,32 +52,32 @@ class RenterConfig(OscarConfig):
                                                   'DetailView')
 
         self.alert_list_view = get_class('renter.alerts.views',
-                                         'SduAlertListView')
+                                         'ProductAlertListView')
         self.alert_create_view = get_class('renter.alerts.views',
-                                           'SduAlertCreateView')
+                                           'ProductAlertCreateView')
         self.alert_confirm_view = get_class('renter.alerts.views',
-                                            'SduAlertConfirmView')
+                                            'ProductAlertConfirmView')
         self.alert_cancel_view = get_class('renter.alerts.views',
-                                           'SduAlertCancelView')
+                                           'ProductAlertCancelView')
 
-        self.wishlists_add_sdu_view = get_class('renter.wishlists.views',
-                                                    'WishListAddSdu')
+        self.wishlists_add_product_view = get_class('renter.wishlists.views',
+                                                    'WishListAddProduct')
         self.wishlists_list_view = get_class('renter.wishlists.views',
                                              'WishListListView')
         self.wishlists_detail_view = get_class('renter.wishlists.views',
                                                'WishListDetailView')
         self.wishlists_create_view = get_class('renter.wishlists.views',
                                                'WishListCreateView')
-        self.wishlists_create_with_sdu_view = get_class('renter.wishlists.views',
+        self.wishlists_create_with_product_view = get_class('renter.wishlists.views',
                                                             'WishListCreateView')
         self.wishlists_update_view = get_class('renter.wishlists.views',
                                                'WishListUpdateView')
         self.wishlists_delete_view = get_class('renter.wishlists.views',
                                                'WishListDeleteView')
-        self.wishlists_remove_sdu_view = get_class('renter.wishlists.views',
-                                                       'WishListRemoveSdu')
-        self.wishlists_move_sdu_to_another_view = get_class(
-            'renter.wishlists.views', 'WishListMoveSduToAnotherWishList')
+        self.wishlists_remove_product_view = get_class('renter.wishlists.views',
+                                                       'WishListRemoveProduct')
+        self.wishlists_move_product_to_another_view = get_class(
+            'renter.wishlists.views', 'WishListMoveProductToAnotherWishList')
 
     def get_urls(self):
         urls = [
@@ -158,21 +158,21 @@ class RenterConfig(OscarConfig):
             # Wishlists
             path('wishlists/', login_required(self.wishlists_list_view.as_view()), name='wishlists-list'),
             path(
-                'wishlists/add/<int:sdu_pk>/',
-                login_required(self.wishlists_add_sdu_view.as_view()),
-                name='wishlists-add-sdu'),
+                'wishlists/add/<int:product_pk>/',
+                login_required(self.wishlists_add_product_view.as_view()),
+                name='wishlists-add-product'),
             path(
-                'wishlists/<str:key>/add/<int:sdu_pk>/',
-                login_required(self.wishlists_add_sdu_view.as_view()),
-                name='wishlists-add-sdu'),
+                'wishlists/<str:key>/add/<int:product_pk>/',
+                login_required(self.wishlists_add_product_view.as_view()),
+                name='wishlists-add-product'),
             path(
                 'wishlists/create/',
                 login_required(self.wishlists_create_view.as_view()),
                 name='wishlists-create'),
             path(
-                'wishlists/create/with-sdu/<int:sdu_pk>/',
+                'wishlists/create/with-product/<int:product_pk>/',
                 login_required(self.wishlists_create_view.as_view()),
-                name='wishlists-create-with-sdu'),
+                name='wishlists-create-with-product'),
             # Wishlists can be publicly shared, no login required
             path('wishlists/<str:key>/', self.wishlists_detail_view.as_view(), name='wishlists-detail'),
             path(
@@ -185,16 +185,16 @@ class RenterConfig(OscarConfig):
                 name='wishlists-delete'),
             path(
                 'wishlists/<str:key>/lines/<int:line_pk>/delete/',
-                login_required(self.wishlists_remove_sdu_view.as_view()),
-                name='wishlists-remove-sdu'),
+                login_required(self.wishlists_remove_product_view.as_view()),
+                name='wishlists-remove-product'),
             path(
-                'wishlists/<str:key>/sdus/<int:sdu_pk>/delete/',
-                login_required(self.wishlists_remove_sdu_view.as_view()),
-                name='wishlists-remove-sdu'),
+                'wishlists/<str:key>/products/<int:product_pk>/delete/',
+                login_required(self.wishlists_remove_product_view.as_view()),
+                name='wishlists-remove-product'),
             path(
                 'wishlists/<str:key>/lines/<int:line_pk>/move-to/<str:to_key>/',
-                login_required(self.wishlists_move_sdu_to_another_view.as_view()),
-                name='wishlists-move-sdu-to-another')
+                login_required(self.wishlists_move_product_to_another_view.as_view()),
+                name='wishlists-move-product-to-another')
         ]
 
         return self.post_process_urls(urls)

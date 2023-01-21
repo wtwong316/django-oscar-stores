@@ -2,13 +2,13 @@
 {% load django_tables2 %}
 
 <p>
-{% with name=sdu.title parent_name=sdu.parent.title %}
-    {% if sdu.is_child %}
+{% with name=product.title parent_name=product.parent.title %}
+    {% if product.is_child %}
 
         {% if creating %}
-            {% if sdu.title %}
+            {% if product.title %}
                 {% blocktrans %}
-                    Created sdu variant '{{ name }}'.
+                    Created product variant '{{ name }}'.
                 {% endblocktrans %}
             {% else %}
                 {% blocktrans %}
@@ -16,9 +16,9 @@
                 {% endblocktrans %}
             {% endif %}
         {% else %}
-            {% if sdu.title %}
+            {% if product.title %}
                 {% blocktrans %}
-                    Updated sdu variant '{{ name }}'.
+                    Updated product variant '{{ name }}'.
                 {% endblocktrans %}
             {% else %}
                 {% blocktrans %}
@@ -31,11 +31,11 @@
 
         {% if creating %}
             {% blocktrans %}
-                Created sdu '{{ name }}'.
+                Created product '{{ name }}'.
             {% endblocktrans %}
         {% else %}
             {% blocktrans %}
-                Updated sdu '{{ name }}'.
+                Updated product '{{ name }}'.
             {% endblocktrans %}
         {% endif %}
 
@@ -45,6 +45,6 @@
 </p>
 
 <p>
-    <a href="{% url 'dashboard:catalogue-sdu' pk=sdu.pk %}{% querystring %}" class="btn btn-success">{% trans "Edit again" %}</a>
-    <a href="{{ sdu.get_absolute_url }}" class="btn btn-success">{% trans "View it on the site" %}</a>
+    <a href="{% url 'dashboard:catalogue-product' pk=product.pk %}{% querystring %}" class="btn btn-success">{% trans "Edit again" %}</a>
+    <a href="{{ product.get_absolute_url }}" class="btn btn-success">{% trans "View it on the site" %}</a>
 </p>

@@ -13,7 +13,7 @@ if settings.OSCAR_DELETE_IMAGE_FILES:
 
     from oscar.core.thumbnails import get_thumbnailer
 
-    SduImage = get_model('catalogue', 'SduImage')
+    ProductImage = get_model('catalogue', 'ProductImage')
 
     def delete_image_files(sender, instance, **kwargs):
         """
@@ -28,7 +28,7 @@ if settings.OSCAR_DELETE_IMAGE_FILES:
                 thumbnailer.delete_thumbnails(field_file)
 
     # Connect for all models with ImageFields - add as needed
-    models_with_images = [SduImage, Category]
+    models_with_images = [ProductImage, Category]
     for sender in models_with_images:
         post_delete.connect(delete_image_files, sender=sender)
 

@@ -7,41 +7,41 @@ ReportCSVFormatter = get_class('dashboard.reports.reports',
                                'ReportCSVFormatter')
 ReportHTMLFormatter = get_class('dashboard.reports.reports',
                                 'ReportHTMLFormatter')
-SduRecord = get_model('analytics', 'SduRecord')
+ProductRecord = get_model('analytics', 'ProductRecord')
 UserRecord = get_model('analytics', 'UserRecord')
 
 
-class SduReportCSVFormatter(ReportCSVFormatter):
+class ProductReportCSVFormatter(ReportCSVFormatter):
     filename_template = 'conditional-offer-performance.csv'
 
-    def generate_csv(self, response, sdus):
+    def generate_csv(self, response, products):
         writer = self.get_csv_writer(response)
-        header_row = [_('Sdu'),
+        header_row = [_('Product'),
                       _('Views'),
                       _('Basket additions'),
                       _('Purchases')]
         writer.writerow(header_row)
 
-        for record in sdus:
-            row = [record.sdu,
+        for record in products:
+            row = [record.product,
                    record.num_views,
                    record.num_basket_additions,
                    record.num_purchases]
             writer.writerow(row)
 
 
-class SduReportHTMLFormatter(ReportHTMLFormatter):
-    filename_template = 'oscar/dashboard/reports/partials/sdu_report.html'
+class ProductReportHTMLFormatter(ReportHTMLFormatter):
+    filename_template = 'oscar/dashboard/reports/partials/product_report.html'
 
 
-class SduReportGenerator(ReportGenerator):
-    code = 'sdu_analytics'
-    description = _('Sdu analytics')
-    model_class = SduRecord
+class ProductReportGenerator(ReportGenerator):
+    code = 'product_analytics'
+    description = _('Product analytics')
+    model_class = ProductRecord
 
     formatters = {
-        'CSV_formatter': SduReportCSVFormatter,
-        'HTML_formatter': SduReportHTMLFormatter}
+        'CSV_formatter': ProductReportCSVFormatter,
+        'HTML_formatter': ProductReportHTMLFormatter}
 
     def report_description(self):
         return self.description
@@ -57,7 +57,7 @@ class UserReportCSVFormatter(ReportCSVFormatter):
         writer = self.get_csv_writer(response)
         header_row = [_('Name'),
                       _('Date registered'),
-                      _('Sdu views'),
+                      _('Product views'),
                       _('Basket additions'),
                       _('Inquiries'),
                       _('Inquiry lines'),
@@ -69,7 +69,7 @@ class UserReportCSVFormatter(ReportCSVFormatter):
         for record in users:
             row = [record.user.get_full_name(),
                    self.format_date(record.user.date_joined),
-                   record.num_sdu_views,
+                   record.num_product_views,
                    record.num_basket_additions,
                    record.num_inquiries,
                    record.num_inquiry_lines,

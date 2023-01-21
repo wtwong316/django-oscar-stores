@@ -7,18 +7,18 @@ from oscar.core.loading import get_class, get_classes, get_model
 from oscar.core.utils import slugify
 from oscar.forms.widgets import DateTimePickerInput, ImageInput
 
-Sdu = get_model('catalogue', 'Sdu')
-SduClass = get_model('catalogue', 'SduClass')
-SduAttribute = get_model('catalogue', 'SduAttribute')
+Product = get_model('catalogue', 'Product')
+ProductClass = get_model('catalogue', 'ProductClass')
+ProductAttribute = get_model('catalogue', 'ProductAttribute')
 Category = get_model('catalogue', 'Category')
 StockRecord = get_model('partner', 'StockRecord')
-SduCategory = get_model('catalogue', 'SduCategory')
-SduImage = get_model('catalogue', 'SduImage')
-SduRecommendation = get_model('catalogue', 'SduRecommendation')
+ProductCategory = get_model('catalogue', 'ProductCategory')
+ProductImage = get_model('catalogue', 'ProductImage')
+ProductRecommendation = get_model('catalogue', 'ProductRecommendation')
 AttributeOptionGroup = get_model('catalogue', 'AttributeOptionGroup')
 AttributeOption = get_model('catalogue', 'AttributeOption')
 Option = get_model('catalogue', 'Option')
-SduSelect = get_class('dashboard.catalogue.widgets', 'SduSelect')
+ProductSelect = get_class('dashboard.catalogue.widgets', 'ProductSelect')
 (RelatedFieldWidgetWrapper,
  RelatedMultipleFieldWidgetWrapper) = get_classes('dashboard.widgets',
                                                   ('RelatedFieldWidgetWrapper',
@@ -53,30 +53,30 @@ class CategoryForm(SEOFormMixin, BaseCategoryForm):
             self.fields['slug'].help_text = _('Leave blank to generate from category name')
 
 
-class SduClassSelectForm(forms.Form):
+class ProductClassSelectForm(forms.Form):
     """
-    Form which is used before creating a sdu to select it's sdu class
+    Form which is used before creating a product to select it's product class
     """
 
-    sdu_class = forms.ModelChoiceField(
-        label=_("Create a new sdu of type"),
+    product_class = forms.ModelChoiceField(
+        label=_("Create a new product of type"),
         empty_label=_("-- Choose type --"),
-        queryset=SduClass.objects.all())
+        queryset=ProductClass.objects.all())
 
     def __init__(self, *args, **kwargs):
         """
-        If there's only one sdu class, pre-select it
+        If there's only one product class, pre-select it
         """
         super().__init__(*args, **kwargs)
-        qs = self.fields['sdu_class'].queryset
+        qs = self.fields['product_class'].queryset
         if not kwargs.get('initial') and len(qs) == 1:
-            self.fields['sdu_class'].initial = qs[0]
+            self.fields['product_class'].initial = qs[0]
 
 
-class SduSearchForm(forms.Form):
+class ProductSearchForm(forms.Form):
     upc = forms.CharField(max_length=64, required=False, label=_('UPC'))
     title = forms.CharField(
-        max_length=255, required=False, label=_('Sdu title'))
+        max_length=255, required=False, label=_('Product title'))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -87,7 +87,7 @@ class SduSearchForm(forms.Form):
 
 class StockRecordForm(forms.ModelForm):
 
-    def __init__(self, sdu_class, user, *args, **kwargs):
+    def __init__(self, product_class, user, *args, **kwargs):
         # The user kwarg is not used by stock StockRecordForm. We pass it
         # anyway in case one wishes to customise the partner queryset
         self.user = user
@@ -98,7 +98,7 @@ class StockRecordForm(forms.ModelForm):
             self.fields['partner'].queryset = self.user.partners.all()
 
         # If not tracking stock, we hide the fields
-        #if not sdu_class.track_stock:
+        #if not product_class.track_stock:
         #    for field_name in ['num_in_stock', 'low_stock_threshold']:
         #        if field_name in self.fields:
         #            del self.fields[field_name]
@@ -169,7 +169,7 @@ def _attr_multi_option_field(attribute):
 
 
 def _attr_entity_field(attribute):
-    # Sdu entities don't have out-of-the-box supported in the SduForm.
+    # Product entities don't have out-of-the-box supported in the ProductForm.
     # There is no ModelChoiceField for generic foreign keys, and there's no
     # good default behaviour anyway; offering a choice of *all* model instances
     # is hardly useful.
@@ -191,7 +191,7 @@ def _attr_image_field(attribute):
         label=attribute.name, required=attribute.required)
 
 
-class SduForm(SEOFormMixin, forms.ModelForm):
+class ProductForm(SEOFormMixin, forms.ModelForm):
     FIELD_FACTORIES = {
         "text": _attr_text_field,
         "richtext": _attr_textarea_field,
@@ -209,7 +209,7 @@ class SduForm(SEOFormMixin, forms.ModelForm):
     }
 
     class Meta:
-        model = Sdu
+        model = Product
         fields = [
             'title', 'upc', 'description', 'is_public', 'is_discountable', 'structure', 'slug', 'meta_title',
             'meta_description']
@@ -218,51 +218,51 @@ class SduForm(SEOFormMixin, forms.ModelForm):
             'meta_description': forms.Textarea(attrs={'class': 'no-widget-init'})
         }
 
-    def __init__(self, sdu_class, data=None, parent=None, *args, **kwargs):
-        self.set_initial(sdu_class, parent, kwargs)
+    def __init__(self, product_class, data=None, parent=None, *args, **kwargs):
+        self.set_initial(product_class, parent, kwargs)
         super().__init__(data, *args, **kwargs)
         if parent:
             self.instance.parent = parent
-            # We need to set the correct sdu structures explicitly to pass
-            # attribute validation and child sdu validation. Note that
+            # We need to set the correct product structures explicitly to pass
+            # attribute validation and child product validation. Note that
             # those changes are not persisted.
-            self.instance.structure = Sdu.CHILD
-            self.instance.parent.structure = Sdu.PARENT
+            self.instance.structure = Product.CHILD
+            self.instance.parent.structure = Product.PARENT
 
             self.delete_non_child_fields()
         else:
-            # Only set sdu class for non-child sdus
-            self.instance.sdu_class = sdu_class
-        self.add_attribute_fields(sdu_class, self.instance.is_parent)
+            # Only set product class for non-child products
+            self.instance.product_class = product_class
+        self.add_attribute_fields(product_class, self.instance.is_parent)
 
         if 'slug' in self.fields:
             self.fields['slug'].required = False
-            self.fields['slug'].help_text = _('Leave blank to generate from sdu title')
+            self.fields['slug'].help_text = _('Leave blank to generate from product title')
         if 'title' in self.fields:
             self.fields['title'].widget = forms.TextInput(
                 attrs={'autocomplete': 'off'})
 
-    def set_initial(self, sdu_class, parent, kwargs):
+    def set_initial(self, product_class, parent, kwargs):
         """
-        Set initial data for the form. Sets the correct sdu structure
+        Set initial data for the form. Sets the correct product structure
         and fetches initial values for the dynamically constructed attribute
         fields.
         """
         if 'initial' not in kwargs:
             kwargs['initial'] = {}
-        self.set_initial_attribute_values(sdu_class, kwargs)
+        self.set_initial_attribute_values(product_class, kwargs)
         if parent:
-            kwargs['initial']['structure'] = Sdu.CHILD
+            kwargs['initial']['structure'] = Product.CHILD
 
-    def set_initial_attribute_values(self, sdu_class, kwargs):
+    def set_initial_attribute_values(self, product_class, kwargs):
         """
         Update the kwargs['initial'] value to have the initial values based on
-        the sdu instance's attributes
+        the product instance's attributes
         """
         instance = kwargs.get('instance')
         if instance is None:
             return
-        for attribute in sdu_class.attributes.all():
+        for attribute in product_class.attributes.all():
             try:
                 value = instance.attribute_values.get(
                     attribute=attribute).value
@@ -271,16 +271,16 @@ class SduForm(SEOFormMixin, forms.ModelForm):
             else:
                 kwargs['initial']['attr_%s' % attribute.code] = value
 
-    def add_attribute_fields(self, sdu_class, is_parent=False):
+    def add_attribute_fields(self, product_class, is_parent=False):
         """
-        For each attribute specified by the sdu class, this method
-        dynamically adds form fields to the sdu form.
+        For each attribute specified by the product class, this method
+        dynamically adds form fields to the product form.
         """
-        for attribute in sdu_class.attributes.all():
+        for attribute in product_class.attributes.all():
             field = self.get_attribute_field(attribute)
             if field:
                 self.fields['attr_%s' % attribute.code] = field
-                # Attributes are not required for a parent sdu
+                # Attributes are not required for a parent product
                 if is_parent:
                     self.fields['attr_%s' % attribute.code].required = False
 
@@ -292,7 +292,7 @@ class SduForm(SEOFormMixin, forms.ModelForm):
 
     def delete_non_child_fields(self):
         """
-        Deletes any fields not needed for child sdus. Override this if
+        Deletes any fields not needed for child products. Override this if
         you want to e.g. keep the description field.
         """
         for field_name in ['description', 'is_discountable']:
@@ -301,7 +301,7 @@ class SduForm(SEOFormMixin, forms.ModelForm):
 
     def _post_clean(self):
         """
-        Set attributes before ModelForm calls the sdu's clean method
+        Set attributes before ModelForm calls the product's clean method
         (which it does in _post_clean), which in turn validates attributes.
         """
         for attribute in self.instance.attr.get_all_attributes():
@@ -317,18 +317,18 @@ class StockAlertSearchForm(forms.Form):
     status = forms.CharField(label=_('Status'))
 
 
-class SduCategoryForm(forms.ModelForm):
+class ProductCategoryForm(forms.ModelForm):
 
     class Meta:
-        model = SduCategory
+        model = ProductCategory
         fields = ('category', )
 
 
-class SduImageForm(forms.ModelForm):
+class ProductImageForm(forms.ModelForm):
 
     class Meta:
-        model = SduImage
-        fields = ['sdu', 'original', 'caption', 'display_order']
+        model = ProductImage
+        fields = ['product', 'original', 'caption', 'display_order']
         # use ImageInput widget to create HTML displaying the
         # actual uploaded image and providing the upload dialog
         # when clicking on the actual image.
@@ -350,17 +350,17 @@ class SduImageForm(forms.ModelForm):
         return int(self.prefix.split('-').pop())
 
 
-class SduRecommendationForm(forms.ModelForm):
+class ProductRecommendationForm(forms.ModelForm):
 
     class Meta:
-        model = SduRecommendation
+        model = ProductRecommendation
         fields = ['primary', 'recommendation', 'ranking']
         widgets = {
-            'recommendation': SduSelect,
+            'recommendation': ProductSelect,
         }
 
 
-class SduClassForm(forms.ModelForm):
+class ProductClassForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -369,12 +369,12 @@ class SduClassForm(forms.ModelForm):
             self.fields["options"].widget, remote_field)
 
     class Meta:
-        model = SduClass
+        model = ProductClass
         #fields = ['name', 'requires_shipping', 'track_stock', 'options']
         fields = ['name', 'options']
 
 
-class SduAttributesForm(forms.ModelForm):
+class ProductAttributesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -401,11 +401,11 @@ class SduAttributesForm(forms.ModelForm):
     def clean(self):
         attr_type = self.cleaned_data.get('type')
         option_group = self.cleaned_data.get('option_group')
-        if attr_type in [SduAttribute.OPTION, SduAttribute.MULTI_OPTION] and not option_group:
+        if attr_type in [ProductAttribute.OPTION, ProductAttribute.MULTI_OPTION] and not option_group:
             self.add_error('option_group', _('An option group is required'))
 
     class Meta:
-        model = SduAttribute
+        model = ProductAttribute
         fields = ["name", "code", "type", "option_group", "required"]
 
 

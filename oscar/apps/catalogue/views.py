@@ -7,51 +7,51 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, TemplateView
 
-from oscar.apps.catalogue.signals import sdu_viewed
+from oscar.apps.catalogue.signals import product_viewed
 from oscar.core.loading import get_class, get_model
 
-Sdu = get_model('catalogue', 'sdu')
+Product = get_model('catalogue', 'product')
 Category = get_model('catalogue', 'category')
-SduAlert = get_model('renter', 'SduAlert')
-SduAlertForm = get_class('renter.forms', 'SduAlertForm')
-get_sdu_search_handler_class = get_class(
-    'catalogue.search_handlers', 'get_sdu_search_handler_class')
+ProductAlert = get_model('renter', 'ProductAlert')
+ProductAlertForm = get_class('renter.forms', 'ProductAlertForm')
+get_product_search_handler_class = get_class(
+    'catalogue.search_handlers', 'get_product_search_handler_class')
 
 
-class SduDetailView(DetailView):
-    context_object_name = 'sdu'
-    model = Sdu
-    view_signal = sdu_viewed
+class ProductDetailView(DetailView):
+    context_object_name = 'product'
+    model = Product
+    view_signal = product_viewed
     template_folder = "catalogue"
 
     # Whether to redirect to the URL with the right path
     enforce_paths = True
 
-    # Whether to redirect child sdus to their parent's URL. If it's disabled,
-    # we display variant sdu details on the separate page. Otherwise, details
-    # displayed on parent sdu page.
+    # Whether to redirect child products to their parent's URL. If it's disabled,
+    # we display variant product details on the separate page. Otherwise, details
+    # displayed on parent product page.
     enforce_parent = False
 
     def get(self, request, **kwargs):
         """
         Ensures that the correct URL is used before rendering a response
         """
-        self.object = sdu = self.get_object()
+        self.object = product = self.get_object()
 
-        redirect = self.redirect_if_necessary(request.path, sdu)
+        redirect = self.redirect_if_necessary(request.path, product)
         if redirect is not None:
             return redirect
 
         # Do allow staff members so they can test layout etc.
-        if not self.is_viewable(sdu, request):
+        if not self.is_viewable(product, request):
             raise Http404()
 
         response = super().get(request, **kwargs)
-        self.send_signal(request, response, sdu)
+        self.send_signal(request, response, product)
         return response
 
-    def is_viewable(self, sdu, request):
-        return sdu.is_public or request.user.is_staff
+    def is_viewable(self, product, request):
+        return product.is_public or request.user.is_staff
 
     def get_object(self, queryset=None):
         # Check if self.object is already set to prevent unnecessary DB calls
@@ -60,13 +60,13 @@ class SduDetailView(DetailView):
         else:
             return super().get_object(queryset)
 
-    def redirect_if_necessary(self, current_path, sdu):
-        if self.enforce_parent and sdu.is_child:
+    def redirect_if_necessary(self, current_path, product):
+        if self.enforce_parent and product.is_child:
             return HttpResponsePermanentRedirect(
-                sdu.parent.get_absolute_url())
+                product.parent.get_absolute_url())
 
         if self.enforce_paths:
-            expected_path = sdu.get_absolute_url()
+            expected_path = product.get_absolute_url()
             if expected_path != quote(current_path):
                 return HttpResponsePermanentRedirect(expected_path)
 
@@ -77,22 +77,22 @@ class SduDetailView(DetailView):
         return ctx
 
     def get_alert_status(self):
-        # Check if this user already have an alert for this sdu
+        # Check if this user already have an alert for this product
         has_alert = False
         if self.request.user.is_authenticated:
-            alerts = SduAlert.objects.filter(
-                sdu=self.object, user=self.request.user,
-                status=SduAlert.ACTIVE)
+            alerts = ProductAlert.objects.filter(
+                product=self.object, user=self.request.user,
+                status=ProductAlert.ACTIVE)
             has_alert = alerts.exists()
         return has_alert
 
     def get_alert_form(self):
-        return SduAlertForm(
-            user=self.request.user, sdu=self.object)
+        return ProductAlertForm(
+            user=self.request.user, product=self.object)
 
-    def send_signal(self, request, response, sdu):
+    def send_signal(self, request, response, product):
         self.view_signal.send(
-            sender=self, sdu=sdu, user=request.user, request=request,
+            sender=self, product=product, user=request.user, request=request,
             response=response)
 
     def get_template_names(self):
@@ -105,7 +105,7 @@ class SduDetailView(DetailView):
             1. :file:`detail-for-upc-{upc}.html`
             2. :file:`detail-for-class-{classname}.html`
 
-        This allows alternative templates to be provided for a per-sdu
+        This allows alternative templates to be provided for a per-product
         and a per-item-class basis.
         """
         if self.template_name:
@@ -115,15 +115,15 @@ class SduDetailView(DetailView):
             'oscar/%s/detail-for-upc-%s.html' % (
                 self.template_folder, self.object.upc),
             'oscar/%s/detail-for-class-%s.html' % (
-                self.template_folder, self.object.get_sdu_class().slug),
+                self.template_folder, self.object.get_product_class().slug),
             'oscar/%s/detail.html' % self.template_folder]
 
 
 class CatalogueView(TemplateView):
     """
-    Browse all sdus in the catalogue
+    Browse all products in the catalogue
     """
-    context_object_name = "sdus"
+    context_object_name = "products"
     template_name = 'oscar/catalogue/browse.html'
 
     def get(self, request, *args, **kwargs):
@@ -138,22 +138,22 @@ class CatalogueView(TemplateView):
         return response
 
     def get_search_handler(self, *args, **kwargs):
-        return get_sdu_search_handler_class()(*args, **kwargs)
+        return get_product_search_handler_class()(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         ctx = {}
-        ctx['summary'] = _("All sdus")
+        ctx['summary'] = _("All products")
         search_context = self.search_handler.get_search_context_data(
             self.context_object_name)
         ctx.update(search_context)
         return ctx
 
 
-class SduCategoryView(TemplateView):
+class ProductCategoryView(TemplateView):
     """
-    Browse sdus in a given category
+    Browse products in a given category
     """
-    context_object_name = "sdus"
+    context_object_name = "products"
     template_name = 'oscar/catalogue/category.html'
     enforce_paths = True
 
@@ -195,7 +195,7 @@ class SduCategoryView(TemplateView):
                 return HttpResponsePermanentRedirect(expected_path)
 
     def get_search_handler(self, *args, **kwargs):
-        return get_sdu_search_handler_class()(*args, **kwargs)
+        return get_product_search_handler_class()(*args, **kwargs)
 
     def get_categories(self):
         """

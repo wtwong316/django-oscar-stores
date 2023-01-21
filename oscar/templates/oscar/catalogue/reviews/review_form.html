@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load reviews_tags %}
 
-{% block sdu_review %}
+{% block product_review %}
     <div id="addreview" class="review_add card card-body bg-light">
         <form id="add_review_form" method="post" action="#addreview">
             <fieldset>
-                <legend>{% trans "Leave a sdu review" %}</legend>
+                <legend>{% trans "Leave a product review" %}</legend>
                 {% csrf_token %}
 
                 {% include 'oscar/partials/form_field.html' with field=form.title %}
@@ -46,7 +46,7 @@
 
                 <button type="submit" class="btn btn-primary btn-lg" data-loading-text="{% trans 'Saving...' %}">{% trans "Save review" %}</button>
                 {% trans "or" %}
-                <a href="{{ sdu.get_absolute_url }}">{% trans "cancel" %}</a>
+                <a href="{{ product.get_absolute_url }}">{% trans "cancel" %}</a>
             </fieldset>
         </form>
     </div>

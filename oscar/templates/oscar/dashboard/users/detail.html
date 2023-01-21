@@ -59,8 +59,8 @@
                     {% if renter.userrecord %}
                         {% with record=renter.userrecord %}
                             <tr>
-                                <th>{% trans "Sdus viewed" %}</th>
-                                <td>{{ record.num_sdu_views|default:0 }}</td>
+                                <th>{% trans "Products viewed" %}</th>
+                                <td>{{ record.num_product_views|default:0 }}</td>
                             </tr>
                             <tr>
                                 <th>{% trans "Number of inquiries" %}</th>
@@ -176,15 +176,15 @@
                                 <caption>{% trans "Reviews" %}</caption>
                                 {% if renter.reviews.count %}
                                     <tr>
-                                        <th>{% trans "Sdu ID" %}</th>
+                                        <th>{% trans "Product ID" %}</th>
                                         <th>{% trans "Score" %}</th>
-                                        <th>{% trans "Title" context "Sdu review title" %}</th>
+                                        <th>{% trans "Title" context "Product review title" %}</th>
                                         <th>{% trans "Body" %}</th>
                                         <th>{% trans "Date created" %}</th>
                                     </tr>
                                     {% for review in renter.reviews.all %}
                                         <tr>
-                                            <td>{{ review.sdu_id }}</td>
+                                            <td>{{ review.product_id }}</td>
                                             <td>{{ review.score }}</td>
                                             <td>{{ review.title }}</td>
                                             <td>{{ review.body }}</td>

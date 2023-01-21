@@ -28,7 +28,7 @@
             <label><span><i class="fas fa-building-o"></i>{{ total_inquiries_last_day }}</span>{% trans "Total Inquiries" %}</label>
             <label><span><i class="fas fa-hand-point-right"></i>{{ total_renters_last_day }}</span>{% trans "New Renters" %}</label>
             <label><span><i class="fas fa-users"></i>{{ total_renters }}</span>{% trans "Total Renters" %}</label>
-            <label><span><i class="fas fa-briefcase"></i>{{ total_sdus }}</span>{% trans "Total Sdus" %}</label>
+            <label><span><i class="fas fa-briefcase"></i>{{ total_products }}</span>{% trans "Total Products" %}</label>
         </aside>
         <div class="col-md-9">
             <div id="order_graph">
@@ -131,7 +131,7 @@
             <caption>
                 <div class="btn-toolbar float-right">
                     <div class="btn-group">
-                        <a href="{% url 'dashboard:catalogue-sdu-list' %}" class="btn btn-secondary">
+                        <a href="{% url 'dashboard:catalogue-product-list' %}" class="btn btn-secondary">
                             <i class="fas fa-sitemap"></i> {% trans "Manage" %}
                         </a>
                     </div>
@@ -146,8 +146,8 @@
                 <i class="fas fa-sitemap"></i> {% trans "Catalogue" %}
             </caption>
             <tr>
-                <th class="col-md-10">{% trans "Total sdus" %}</th>
-                    <td class="col-md-2" >{{ total_sdus }}</td>
+                <th class="col-md-10">{% trans "Total products" %}</th>
+                    <td class="col-md-2" >{{ total_products }}</td>
             </tr>
             <!--
             <tr>

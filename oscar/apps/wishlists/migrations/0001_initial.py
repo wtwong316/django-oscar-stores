@@ -49,14 +49,14 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.PositiveIntegerField(default=1, verbose_name='Quantity')),
                 ('title', models.CharField(max_length=255, verbose_name='Title')),
-                ('sdu', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='wishlists_lines', to='catalogue.sdu', verbose_name='Sdu')),
+                ('product', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='wishlists_lines', to='catalogue.product', verbose_name='Product')),
                 ('wishlist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines', to='wishlists.wishlist', verbose_name='Wish List')),
             ],
             options={
                 'verbose_name': 'Wish list line',
                 'ordering': ['pk'],
                 'abstract': False,
-                'unique_together': {('wishlist', 'sdu')},
+                'unique_together': {('wishlist', 'product')},
             },
         ),
     ]

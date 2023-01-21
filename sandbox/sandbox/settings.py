@@ -211,7 +211,7 @@ GOOGLE_MAPS_API_KEY = 'AIzaSyB1Y2sRZh6K4PgxqEnUD5Bt-TtOc5x5aA0'
 
 from django.contrib.gis.measure import D
 # Maximal distance of 150 kilometers
-STORES_MAX_SEARCH_DISTANCE = D(km=150)
+STORES_MAX_SEARCH_DISTANCE = D(km=5)
 
 LOCALE_PATHS = (
     os.path.join(PROJECT_DIR, 'locale/'),

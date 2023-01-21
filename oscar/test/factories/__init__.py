@@ -34,11 +34,11 @@ Default = get_class('partner.strategy', 'Default')
 StockRequired = get_class('partner.availability', 'StockRequired')
 FixedPrice = get_class('partner.prices', 'FixedPrice')
 
-Sdu = get_model('catalogue', 'Sdu')
-SduClass = get_model('catalogue', 'SduClass')
-SduAttribute = get_model('catalogue', 'SduAttribute')
-SduAttributeValue = get_model('catalogue', 'SduAttributeValue')
-SduImage = get_model('catalogue', 'SduImage')
+Product = get_model('catalogue', 'Product')
+ProductClass = get_model('catalogue', 'ProductClass')
+ProductAttribute = get_model('catalogue', 'ProductAttribute')
+ProductAttributeValue = get_model('catalogue', 'ProductAttributeValue')
+ProductImage = get_model('catalogue', 'ProductImage')
 
 WeightBand = get_model('shipping', 'WeightBand')
 WeightBased = get_model('shipping', 'WeightBased')
@@ -49,12 +49,12 @@ Benefit = get_model('offer', 'Benefit')
 ConditionalOffer = get_model('offer', 'ConditionalOffer')
 
 
-def create_stockrecord(sdu=None, price=None, partner_sku=None,
+def create_stockrecord(product=None, price=None, partner_sku=None,
                        num_in_stock=None, partner_name=None,
                        currency=settings.OSCAR_DEFAULT_CURRENCY,
                        partner_users=None):
-    if sdu is None:
-        sdu = create_sdu()
+    if product is None:
+        product = create_product()
     partner, __ = Partner.objects.get_or_create(name=partner_name or '')
     if partner_users:
         for user in partner_users:
@@ -62,8 +62,8 @@ def create_stockrecord(sdu=None, price=None, partner_sku=None,
     if price is None:
         price = D('9.99')
     if partner_sku is None:
-        partner_sku = 'sku_%d_%d' % (sdu.id, random.randint(0, 10000))
-    return sdu.stockrecords.create(
+        partner_sku = 'sku_%d_%d' % (product.id, random.randint(0, 10000))
+    return product.stockrecords.create(
         partner=partner, partner_sku=partner_sku,
         price_currency=currency,
         price=price, num_in_stock=num_in_stock)
@@ -82,68 +82,68 @@ def create_purchase_info(record):
     )
 
 
-def create_sdu(upc=None, title="Dùｍϻϒ title",
-                   sdu_class="Dùｍϻϒ item class",
+def create_product(upc=None, title="Dùｍϻϒ title",
+                   product_class="Dùｍϻϒ item class",
                    partner_name=None, partner_sku=None, price=None,
                    num_in_stock=None, attributes=None,
                    partner_users=None, **kwargs):
     """
-    Helper method for creating sdus that are used in tests.
+    Helper method for creating products that are used in tests.
     """
-    sdu_class, __ = SduClass._default_manager.get_or_create(
-        name=sdu_class)
-    sdu = sdu_class.sdus.model(
-        sdu_class=sdu_class,
+    product_class, __ = ProductClass._default_manager.get_or_create(
+        name=product_class)
+    product = product_class.products.model(
+        product_class=product_class,
         title=title, upc=upc, **kwargs)
     if kwargs.get('parent') and 'structure' not in kwargs:
-        sdu.structure = 'child'
+        product.structure = 'child'
     if attributes:
         for code, value in attributes.items():
-            # Ensure sdu attribute exists
-            sdu_class.attributes.get_or_create(name=code, code=code)
-            setattr(sdu.attr, code, value)
-    sdu.save()
+            # Ensure product attribute exists
+            product_class.attributes.get_or_create(name=code, code=code)
+            setattr(product.attr, code, value)
+    product.save()
 
     # Shortcut for creating stockrecord
     stockrecord_fields = [
         price, partner_sku, partner_name, num_in_stock, partner_users]
     if any([field is not None for field in stockrecord_fields]):
         create_stockrecord(
-            sdu, price=price, num_in_stock=num_in_stock,
+            product, price=price, num_in_stock=num_in_stock,
             partner_users=partner_users, partner_sku=partner_sku,
             partner_name=partner_name)
-    return sdu
+    return product
 
 
-def create_sdu_image(sdu=None,
+def create_product_image(product=None,
                          original=None,
                          caption='Dummy Caption',
                          display_order=None,
                          ):
-    if not sdu:
-        sdu = create_sdu()
+    if not product:
+        product = create_product()
     if not display_order:
-        if not sdu.images.all():
+        if not product.images.all():
             display_order = 0
         else:
             display_order = max(
-                [i.display_order for i in sdu.images.all()]) + 1
+                [i.display_order for i in product.images.all()]) + 1
 
-    kwargs = {'sdu_id': sdu.id,
+    kwargs = {'product_id': product.id,
               'original': original,
               'display_order': display_order,
               'caption': caption, }
 
-    return SduImage.objects.create(**kwargs)
+    return ProductImage.objects.create(**kwargs)
 
 
 def create_basket(empty=False):
     basket = Basket.objects.create()
     basket.strategy = Default()
     if not empty:
-        sdu = create_sdu()
-        create_stockrecord(sdu, num_in_stock=2)
-        basket.add_sdu(sdu)
+        product = create_product()
+        create_stockrecord(product, num_in_stock=2)
+        basket.add_product(product)
     return basket
 
 
@@ -156,9 +156,9 @@ def create_inquiry(number=None, basket=None, user=None, shipping_address=None,
     if not basket:
         basket = Basket.objects.create()
         basket.strategy = Default()
-        sdu = create_sdu()
-        create_stockrecord(sdu, num_in_stock=10, price=D('10.00'))
-        basket.add_sdu(sdu)
+        product = create_product()
+        create_stockrecord(product, num_in_stock=10, price=D('10.00'))
+        basket.add_product(product)
     if not basket.id:
         basket.save()
     if shipping_method is None:
@@ -190,7 +190,7 @@ def create_offer(name="Dùｍϻϒ offer", offer_type="Site",
     """
     if range is None:
         range, __ = Range.objects.get_or_create(
-            name="All sdus räñgë", includes_all_sdus=True)
+            name="All products räñgë", includes_all_products=True)
     if condition is None:
         condition, __ = Condition.objects.get_or_create(
             range=range, type=Condition.COUNT, value=1)

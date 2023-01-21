@@ -38,7 +38,7 @@ class WishListView(DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        wishlist_lines = self.object.lines.filter(sdu__isnull=False)
+        wishlist_lines = self.object.lines.filter(product__isnull=False)
         paginator = Paginator(wishlist_lines, settings.OSCAR_PRODUCTS_PER_PAGE)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)

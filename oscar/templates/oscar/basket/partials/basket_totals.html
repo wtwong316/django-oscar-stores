@@ -74,7 +74,7 @@
                     {% else %}
                         {# No discounts to basket #}
                         <tr>
-                            <th class="total">{% trans "Selected SDU %}</th>
+                            <th class="total">{% trans "Selected PRDOUCT %}</th>
                             <th class="total text-right">
                                 {% if not show_tax_separately and basket.is_tax_known %}
                                     {{ basket.total_incl_tax|currency:basket.currency }}

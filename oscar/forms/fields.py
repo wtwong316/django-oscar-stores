@@ -6,7 +6,7 @@ from oscar.core import validators
 class ExtendedURLField(fields.URLField):
     """
     Custom field similar to URLField type field, however also accepting and
-    validating local relative URLs, ie. '/sdu/'
+    validating local relative URLs, ie. '/product/'
     """
     default_validators = []
     # Django 1.6 renders URLInput as <input type=url>, which causes some

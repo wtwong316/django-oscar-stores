@@ -10,18 +10,18 @@ from oscar.core import validators
 from oscar.core.compat import AUTH_USER_MODEL
 from oscar.core.loading import get_class
 
-SduReviewQuerySet = get_class('catalogue.reviews.managers', 'SduReviewQuerySet')
+ProductReviewQuerySet = get_class('catalogue.reviews.managers', 'ProductReviewQuerySet')
 
 
-class AbstractSduReview(models.Model):
+class AbstractProductReview(models.Model):
     """
-    A review of a sdu
+    A review of a product
 
     Reviews can belong to a user or be anonymous.
     """
 
-    sdu = models.ForeignKey(
-        'catalogue.Sdu', related_name='reviews', null=True,
+    product = models.ForeignKey(
+        'catalogue.Product', related_name='reviews', null=True,
         on_delete=models.CASCADE)
 
     # Scores are between 0 and 5
@@ -29,7 +29,7 @@ class AbstractSduReview(models.Model):
     score = models.SmallIntegerField(_("Score"), choices=SCORE_CHOICES)
 
     title = models.CharField(
-        verbose_name=pgettext_lazy("Sdu review title", "Title"),
+        verbose_name=pgettext_lazy("Product review title", "Title"),
         max_length=255, validators=[validators.non_whitespace])
 
     body = models.TextField(_("Body"))
@@ -68,20 +68,20 @@ class AbstractSduReview(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     # Managers
-    objects = SduReviewQuerySet.as_manager()
+    objects = ProductReviewQuerySet.as_manager()
 
     class Meta:
         abstract = True
         app_label = 'reviews'
         ordering = ['-delta_votes', 'id']
-        unique_together = (('sdu', 'user'),)
-        verbose_name = _('Sdu review')
-        verbose_name_plural = _('Sdu reviews')
+        unique_together = (('product', 'user'),)
+        verbose_name = _('Product review')
+        verbose_name_plural = _('Product reviews')
 
     def get_absolute_url(self):
         kwargs = {
-            'sdu_slug': self.sdu.slug,
-            'sdu_pk': self.sdu.id,
+            'product_slug': self.product.slug,
+            'product_pk': self.product.id,
             'pk': self.id
         }
         return reverse('catalogue:reviews-detail', kwargs=kwargs)
@@ -104,12 +104,12 @@ class AbstractSduReview(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.sdu.update_rating()
+        self.product.update_rating()
 
     def delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
-        if self.sdu is not None:
-            self.sdu.update_rating()
+        if self.product is not None:
+            self.product.update_rating()
 
     # Properties
 
@@ -186,7 +186,7 @@ class AbstractVote(models.Model):
     * Each user can vote only once.
     """
     review = models.ForeignKey(
-        'reviews.SduReview',
+        'reviews.ProductReview',
         on_delete=models.CASCADE,
         related_name='votes')
     user = models.ForeignKey(

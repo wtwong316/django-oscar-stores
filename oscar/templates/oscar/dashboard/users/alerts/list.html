@@ -5,25 +5,25 @@
 {% block body_class %}{{ block.super }} users{% endblock %}
 
 {% block title %}
-    {% trans "Sdu alerts" %} | {{ block.super }}
+    {% trans "Product alerts" %} | {{ block.super }}
 {% endblock %}
 
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{% trans "Sdu alerts" %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Product alerts" %}</li>
         </ol>
     </nav>
 {% endblock %}
 
 {% block headertext %}
-    {% trans "Sdu alerts" %}
+    {% trans "Product alerts" %}
 {% endblock %}
 
 {% block dashboard_content %}
     <div class="table-header">
-        <h3><i class="fas fa-search"></i> {% trans "Search sdu alerts" %}</h3>
+        <h3><i class="fas fa-search"></i> {% trans "Search product alerts" %}</h3>
     </div>
     <div class="card card-body">
         <form method="get" class="form-inline">
@@ -41,7 +41,7 @@
     {% if alerts %}
         <table class="table table-striped table-bordered table-hover">
             <tr>
-                <th>{% trans "Sdu" %}</th>
+                <th>{% trans "Product" %}</th>
                 <th>{% trans "User" %}</th>
                 <th>{% trans "Status" %}</th>
                 <th>{% trans "Date created" %}</th>
@@ -51,7 +51,7 @@
             {% for alert in alerts %}
                 <tr>
                     <td>
-                        <a href="{{ alert.sdu.get_absolute_url }}">{{ alert.sdu }}</a>
+                        <a href="{{ alert.product.get_absolute_url }}">{{ alert.product }}</a>
                     </td>
                     <td>
                         {% if alert.user %}

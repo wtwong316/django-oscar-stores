@@ -1,17 +1,17 @@
 """
-Vanilla sdu models
+Vanilla product models
 """
 from oscar.apps.catalogue.abstract_models import *  # noqa
 from oscar.core.loading import is_model_registered
 
-__all__ = ['SduAttributesContainer']
+__all__ = ['ProductAttributesContainer']
 
 
-if not is_model_registered('catalogue', 'SduClass'):
-    class SduClass(AbstractSduClass):
+if not is_model_registered('catalogue', 'ProductClass'):
+    class ProductClass(AbstractProductClass):
         pass
 
-    __all__.append('SduClass')
+    __all__.append('ProductClass')
 
 
 if not is_model_registered('catalogue', 'Category'):
@@ -21,39 +21,39 @@ if not is_model_registered('catalogue', 'Category'):
     __all__.append('Category')
 
 
-if not is_model_registered('catalogue', 'SduCategory'):
-    class SduCategory(AbstractSduCategory):
+if not is_model_registered('catalogue', 'ProductCategory'):
+    class ProductCategory(AbstractProductCategory):
         pass
 
-    __all__.append('SduCategory')
+    __all__.append('ProductCategory')
 
 
-if not is_model_registered('catalogue', 'Sdu'):
-    class Sdu(AbstractSdu):
+if not is_model_registered('catalogue', 'Product'):
+    class Product(AbstractProduct):
         pass
 
-    __all__.append('Sdu')
+    __all__.append('Product')
 
 
-if not is_model_registered('catalogue', 'SduRecommendation'):
-    class SduRecommendation(AbstractSduRecommendation):
+if not is_model_registered('catalogue', 'ProductRecommendation'):
+    class ProductRecommendation(AbstractProductRecommendation):
         pass
 
-    __all__.append('SduRecommendation')
+    __all__.append('ProductRecommendation')
 
 
-if not is_model_registered('catalogue', 'SduAttribute'):
-    class SduAttribute(AbstractSduAttribute):
+if not is_model_registered('catalogue', 'ProductAttribute'):
+    class ProductAttribute(AbstractProductAttribute):
         pass
 
-    __all__.append('SduAttribute')
+    __all__.append('ProductAttribute')
 
 
-if not is_model_registered('catalogue', 'SduAttributeValue'):
-    class SduAttributeValue(AbstractSduAttributeValue):
+if not is_model_registered('catalogue', 'ProductAttributeValue'):
+    class ProductAttributeValue(AbstractProductAttributeValue):
         pass
 
-    __all__.append('SduAttributeValue')
+    __all__.append('ProductAttributeValue')
 
 
 if not is_model_registered('catalogue', 'AttributeOptionGroup'):
@@ -77,8 +77,8 @@ if not is_model_registered('catalogue', 'Option'):
     __all__.append('Option')
 
 
-if not is_model_registered('catalogue', 'SduImage'):
-    class SduImage(AbstractSduImage):
+if not is_model_registered('catalogue', 'ProductImage'):
+    class ProductImage(AbstractProductImage):
         pass
 
-    __all__.append('SduImage')
+    __all__.append('ProductImage')

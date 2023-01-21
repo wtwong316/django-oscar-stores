@@ -311,19 +311,19 @@ class BasketAddView(FormView):
     a templatetag from :py:mod:`oscar.templatetags.basket_tags`.
     """
     form_class = AddToBasketForm
-    sdu_model = get_model('catalogue', 'sdu')
+    product_model = get_model('catalogue', 'product')
     add_signal = basket_addition
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
-        self.sdu = shortcuts.get_object_or_404(
-            self.sdu_model, pk=kwargs['pk'])
+        self.product = shortcuts.get_object_or_404(
+            self.product_model, pk=kwargs['pk'])
         return super().post(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['basket'] = self.request.basket
-        kwargs['sdu'] = self.sdu
+        kwargs['product'] = self.product
         return kwargs
 
     def form_invalid(self, form):
@@ -338,15 +338,15 @@ class BasketAddView(FormView):
         # if the SESSION_SERIALIZER has been configured to 'django.contrib.sessions.serializers.PickleSerializer'.
         # see: https://docs.djangoproject.com/en/3.2/topics/http/sessions/#cookie-session-backend
         serialized_data = JSONSerializer().dumps(self.request.POST)
-        self.request.session["add_to_basket_form_post_data_%s" % self.sdu.pk] = serialized_data.decode("latin-1")
+        self.request.session["add_to_basket_form_post_data_%s" % self.product.pk] = serialized_data.decode("latin-1")
 
         return redirect_to_referrer(self.request, 'basket:summary')
 
     def form_valid(self, form):
         offers_before = self.request.basket.applied_offers()
 
-        self.request.basket.add_sdu(
-            form.sdu, form.cleaned_data['quantity'],
+        self.request.basket.add_product(
+            form.product, form.cleaned_data['quantity'],
             form.cleaned_options())
 
         messages.success(self.request, self.get_success_message(form),
@@ -357,7 +357,7 @@ class BasketAddView(FormView):
 
         # Send signal for basket addition
         self.add_signal.send(
-            sender=self, sdu=form.sdu, user=self.request.user,
+            sender=self, product=form.product, user=self.request.user,
             request=self.request)
 
         return super().form_valid(form)
@@ -365,7 +365,7 @@ class BasketAddView(FormView):
     def get_success_message(self, form):
         return render_to_string(
             'oscar/basket/messages/addition.html',
-            {'sdu': form.sdu,
+            {'product': form.product,
              'quantity': form.cleaned_data['quantity']})
 
     def get_success_url(self):

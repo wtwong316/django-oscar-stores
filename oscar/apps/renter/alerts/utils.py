@@ -5,8 +5,8 @@ from django.template import loader
 
 from oscar.core.loading import get_class, get_model
 
-SduAlert = get_model('renter', 'SduAlert')
-Sdu = get_model('catalogue', 'Sdu')
+ProductAlert = get_model('renter', 'ProductAlert')
+Product = get_model('catalogue', 'Product')
 Dispatcher = get_class('communication.utils', 'Dispatcher')
 Selector = get_class('partner.strategy', 'Selector')
 
@@ -15,7 +15,7 @@ alerts_logger = logging.getLogger('oscar.alerts')
 
 class AlertsDispatcher:
     """
-    Dispatcher to send concrete sdu alerts related emails
+    Dispatcher to send concrete product alerts related emails
     and notifications.
     """
 
@@ -30,34 +30,34 @@ class AlertsDispatcher:
         )
 
     def get_queryset(self):
-        return Sdu.objects.browsable().filter(sdualert__status=SduAlert.ACTIVE).distinct()
+        return Product.objects.browsable().filter(productalert__status=ProductAlert.ACTIVE).distinct()
 
     def send_alerts(self):
         """
-        Check all sdus with active sdu alerts for
-        availability and send out email alerts when a sdu is
+        Check all products with active product alerts for
+        availability and send out email alerts when a product is
         available to buy.
         """
-        sdus = self.get_queryset()
-        self.dispatcher.logger.info("Found %d sdus with active alerts", sdus.count())
-        for sdu in sdus:
-            self.send_sdu_alert_email_for_user(sdu)
+        products = self.get_queryset()
+        self.dispatcher.logger.info("Found %d products with active alerts", products.count())
+        for product in products:
+            self.send_product_alert_email_for_user(product)
 
-    def send_sdu_alert_email_for_user(self, sdu):  # noqa: C901 too complex
+    def send_product_alert_email_for_user(self, product):  # noqa: C901 too complex
         """
-        Check for notifications for this sdu and send email to users
-        if the sdu is back in stock. Add a little 'hurry' note if the
+        Check for notifications for this product and send email to users
+        if the product is back in stock. Add a little 'hurry' note if the
         amount of in-stock items is less then the number of notifications.
         """
-        stockrecords = sdu.stockrecords.all()
+        stockrecords = product.stockrecords.all()
         num_stockrecords = len(stockrecords)
         if not num_stockrecords:
             return
 
-        self.dispatcher.logger.info("Sending alerts for '%s'", sdu)
-        alerts = SduAlert.objects.filter(
-            sdu_id__in=(sdu.id, sdu.parent_id),
-            status=SduAlert.ACTIVE,
+        self.dispatcher.logger.info("Sending alerts for '%s'", product)
+        alerts = ProductAlert.objects.filter(
+            product_id__in=(product.id, product.parent_id),
+            status=ProductAlert.ACTIVE,
         )
 
         # Determine 'hurry mode'
@@ -75,9 +75,9 @@ class AlertsDispatcher:
         num_notifications = 0
         selector = Selector()
         for alert in alerts:
-            # Check if the sdu is available to this user
+            # Check if the product is available to this user
             strategy = selector.strategy(user=alert.user)
-            data = strategy.fetch_for_sdu(sdu)
+            data = strategy.fetch_for_product(product)
             if not data.availability.is_available_to_buy:
                 continue
 
@@ -88,7 +88,7 @@ class AlertsDispatcher:
             if alert.user:
                 # Send a site notification
                 num_notifications += 1
-                self.notify_user_about_sdu_alert(alert.user, extra_context)
+                self.notify_user_about_product_alert(alert.user, extra_context)
 
             messages = self.dispatcher.get_messages(self.PRODUCT_ALERT_EVENT_CODE, extra_context)
 
@@ -110,7 +110,7 @@ class AlertsDispatcher:
             num_notifications, len(messages_to_send) + len(user_messages_to_send)
         )
 
-    def send_sdu_alert_confirmation_email_for_user(self, alert, extra_context=None):
+    def send_product_alert_confirmation_email_for_user(self, alert, extra_context=None):
         """
         Send an alert confirmation email.
         """
@@ -119,7 +119,7 @@ class AlertsDispatcher:
         messages = self.dispatcher.get_messages(self.PRODUCT_ALERT_CONFIRMATION_EVENT_CODE, extra_context)
         self.dispatcher.dispatch_direct_messages(alert.email, messages)
 
-    def notify_user_about_sdu_alert(self, user, context):
+    def notify_user_about_product_alert(self, user, context):
         subj_tpl = loader.get_template('oscar/renter/alerts/message_subject.html')
         message_tpl = loader.get_template('oscar/renter/alerts/message.html')
         self.dispatcher.notify_user(

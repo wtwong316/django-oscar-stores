@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date created')),
                 ('date_updated', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date updated')),
                 ('partner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stockrecords', to='partner.partner', verbose_name='Partner')),
-                ('sdu', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stockrecords', to='catalogue.sdu', verbose_name='Sdu')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stockrecords', to='catalogue.product', verbose_name='Product')),
             ],
             options={
                 'verbose_name': 'Stock record',

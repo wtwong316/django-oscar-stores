@@ -9,10 +9,10 @@ SearchHandler, SearchResultsPaginationMixin = get_classes(
     'search.search_handlers', ('SearchHandler', 'SearchResultsPaginationMixin'))
 is_solr_supported = get_class('search.features', 'is_solr_supported')
 is_elasticsearch_supported = get_class('search.features', 'is_elasticsearch_supported')
-Sdu = get_model('catalogue', 'Sdu')
+Product = get_model('catalogue', 'Product')
 
 
-def get_sdu_search_handler_class():
+def get_product_search_handler_class():
     """
     Determine the search handler to use.
 
@@ -23,23 +23,23 @@ def get_sdu_search_handler_class():
     if settings.OSCAR_PRODUCT_SEARCH_HANDLER is not None:
         return import_string(settings.OSCAR_PRODUCT_SEARCH_HANDLER)
     if is_solr_supported():
-        return get_class('catalogue.search_handlers', 'SolrSduSearchHandler')
+        return get_class('catalogue.search_handlers', 'SolrProductSearchHandler')
     elif is_elasticsearch_supported():
         return get_class(
-            'catalogue.search_handlers', 'ESSduSearchHandler',
+            'catalogue.search_handlers', 'ESProductSearchHandler',
         )
     else:
         return get_class(
-            'catalogue.search_handlers', 'SimpleSduSearchHandler')
+            'catalogue.search_handlers', 'SimpleProductSearchHandler')
 
 
-class SolrSduSearchHandler(SearchHandler):
+class SolrProductSearchHandler(SearchHandler):
     """
-    Search handler specialised for searching sdus.  Comes with optional
+    Search handler specialised for searching products.  Comes with optional
     category filtering. To be used with a Solr search backend.
     """
     form_class = BrowseCategoryForm
-    model_whitelist = [Sdu]
+    model_whitelist = [Product]
     paginate_by = settings.OSCAR_PRODUCTS_PER_PAGE
 
     def __init__(self, request_data, full_path, categories=None):
@@ -57,13 +57,13 @@ class SolrSduSearchHandler(SearchHandler):
         return sqs
 
 
-class ESSduSearchHandler(SearchHandler):
+class ESProductSearchHandler(SearchHandler):
     """
-    Search handler specialised for searching sdus.  Comes with optional
+    Search handler specialised for searching products.  Comes with optional
     category filtering. To be used with an ElasticSearch search backend.
     """
     form_class = BrowseCategoryForm
-    model_whitelist = [Sdu]
+    model_whitelist = [Product]
     paginate_by = settings.OSCAR_PRODUCTS_PER_PAGE
 
     def __init__(self, request_data, full_path, categories=None):
@@ -78,7 +78,7 @@ class ESSduSearchHandler(SearchHandler):
         return sqs
 
 
-class SimpleSduSearchHandler(SearchResultsPaginationMixin, MultipleObjectMixin):
+class SimpleProductSearchHandler(SearchResultsPaginationMixin, MultipleObjectMixin):
     """
     A basic implementation of the full-featured SearchHandler that has no
     faceting support, but doesn't require a Haystack backend. It only
@@ -96,7 +96,7 @@ class SimpleSduSearchHandler(SearchResultsPaginationMixin, MultipleObjectMixin):
         self.object_list = self.get_queryset()
 
     def get_queryset(self):
-        qs = Sdu.objects.browsable().base_queryset()
+        qs = Product.objects.browsable().base_queryset()
         if self.categories:
             qs = qs.filter(categories__in=self.categories).distinct()
         return qs

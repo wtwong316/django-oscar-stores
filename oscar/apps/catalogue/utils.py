@@ -15,8 +15,8 @@ from oscar.apps.catalogue.exceptions import (
     IdenticalImageError, ImageImportError, InvalidImageArchive)
 from oscar.core.loading import get_model
 
-Sdu = get_model('catalogue', 'sdu')
-SduImage = get_model('catalogue', 'sduimage')
+Product = get_model('catalogue', 'product')
+ProductImage = get_model('catalogue', 'productimage')
 
 
 # This is an old class only really intended to be used by the internal sandbox
@@ -43,12 +43,12 @@ class Importer(object):
                         = self._get_lookup_value_from_filename(filename)
                     self._process_image(image_dir, filename, lookup_value)
                     stats['num_processed'] += 1
-                except Sdu.MultipleObjectsReturned:
-                    self.logger.warning("Multiple sdus matching %s='%s',"
+                except Product.MultipleObjectsReturned:
+                    self.logger.warning("Multiple products matching %s='%s',"
                                         " skipping"
                                         % (self._field, lookup_value))
                     stats['num_skipped'] += 1
-                except Sdu.DoesNotExist:
+                except Product.DoesNotExist:
                     self.logger.warning("No item matching %s='%s'"
                                         % (self._field, lookup_value))
                     stats['num_skipped'] += 1
@@ -123,7 +123,7 @@ class Importer(object):
         trial_image.verify()
 
         kwargs = {self._field: lookup_value}
-        item = Sdu._default_manager.get(**kwargs)
+        item = Product._default_manager.get(**kwargs)
 
         new_data = open(file_path, 'rb').read()
         next_index = 0
@@ -137,14 +137,14 @@ class Importer(object):
                 existing.delete()
 
         new_file = File(open(file_path, 'rb'))
-        im = SduImage(sdu=item, display_order=next_index)
+        im = ProductImage(product=item, display_order=next_index)
         im.original.save(filename, new_file, save=False)
         im.save()
         self.logger.debug('Image added to "%s"' % item)
 
     def _fetch_item(self, filename):
         kwargs = {self._field: self._get_lookup_value_from_filename(filename)}
-        return Sdu._default_manager.get(**kwargs)
+        return Product._default_manager.get(**kwargs)
 
     def _get_lookup_value_from_filename(self, filename):
         return os.path.splitext(filename)[0]

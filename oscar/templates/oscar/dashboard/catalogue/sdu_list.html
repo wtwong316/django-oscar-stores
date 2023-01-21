@@ -5,7 +5,7 @@
 {% block body_class %}{{ block.super }} catalogue{% endblock %}
 
 {% block title %}
-    {% trans "Sdus" %} | {{ block.super }}
+    {% trans "Products" %} | {{ block.super }}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -15,7 +15,7 @@
                 <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                {% trans "Sdus" %}
+                {% trans "Products" %}
             </li>
         </ol>
     </nav>
@@ -23,28 +23,28 @@
 
 {% block header %}
     <div class="page-header">
-        <h1>{% trans "Sdus" %}</h1>
+        <h1>{% trans "Products" %}</h1>
     </div>
 {% endblock header %}
 
 {% block dashboard_content %}
-    {% block create_sdu %}
+    {% block create_product %}
         <div class="table-header">
-            <h3><i class="fas fa-sitemap"></i> {% trans "Create new sdu" %}</h3>
+            <h3><i class="fas fa-sitemap"></i> {% trans "Create new product" %}</h3>
         </div>
         <div class="card card-body">
-            <form action="{% url 'dashboard:catalogue-sdu-create' %}" method="get" class="form-inline">
-                {% include "oscar/dashboard/partials/form_fields_inline.html" with form=sdu_class_form %}
+            <form action="{% url 'dashboard:catalogue-product-create' %}" method="get" class="form-inline">
+                {% include "oscar/dashboard/partials/form_fields_inline.html" with form=product_class_form %}
                 <button class="btn btn-primary" type="submit" data-loading-text="{% trans 'Submitting...' %}">
-                    <i class="fas fa-plus-circle"></i> {% trans "New SDU" %}
+                    <i class="fas fa-plus-circle"></i> {% trans "New PRDOUCT" %}
                 </button>
             </form>
         </div>
     {% endblock %}
 
-    {% block search_sdus %}
+    {% block search_products %}
         <div class="table-header">
-            <h3><i class="fas fa-search"></i> {% trans "Search Sdus" %}</h3>
+            <h3><i class="fas fa-search"></i> {% trans "Search Products" %}</h3>
         </div>
         <div class="card card-body">
             <form method="get" class="form-inline">
@@ -64,13 +64,13 @@
         </div>
     {% endblock %}
 
-    {% if sdus %}
-        {% block sdu_list %}
+    {% if products %}
+        {% block product_list %}
             <form method="post">
                 {% csrf_token %}
-                {% render_table sdus %}
+                {% render_table products %}
             </form>
-            <div class="modal fade" id="sdu-image-modal" tabindex="-1" role="dialog">
+            <div class="modal fade" id="product-image-modal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -83,14 +83,14 @@
                     </div>
                 </div>
             </div>
-        {% endblock sdu_list %}
+        {% endblock product_list %}
     {% else %}
-        <p>{% trans "No sdus found." %}</p>
+        <p>{% trans "No products found." %}</p>
     {% endif %}
 
 {% endblock dashboard_content %}
 
 {% block onbodyload %}
     {{ block.super }}
-    oscar.dashboard.sdu_lists.init();
+    oscar.dashboard.product_lists.init();
 {% endblock onbodyload %}

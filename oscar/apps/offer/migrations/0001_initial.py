@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             name='Benefit',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', models.CharField(blank=True, choices=[('Percentage', "Discount is a percentage off of the sdu's value"), ('Absolute', "Discount is a fixed amount off of the sdu's value"), ('Multibuy', 'Discount is to give the cheapest sdu for free'), ('Fixed price', 'Get the sdus that meet the condition for a fixed price'), ('Shipping absolute', 'Discount is a fixed amount of the shipping cost'), ('Shipping fixed price', 'Get shipping for a fixed price'), ('Shipping percentage', 'Discount is a percentage off of the shipping cost')], max_length=128, verbose_name='Type')),
+                ('type', models.CharField(blank=True, choices=[('Percentage', "Discount is a percentage off of the product's value"), ('Absolute', "Discount is a fixed amount off of the product's value"), ('Multibuy', 'Discount is to give the cheapest product for free'), ('Fixed price', 'Get the products that meet the condition for a fixed price'), ('Shipping absolute', 'Discount is a fixed amount of the shipping cost'), ('Shipping fixed price', 'Get shipping for a fixed price'), ('Shipping percentage', 'Discount is a percentage off of the shipping cost')], max_length=128, verbose_name='Type')),
                 ('value', oscar.models.fields.PositiveDecimalField(blank=True, decimal_places=2, max_digits=12, null=True, verbose_name='Value')),
                 ('max_affected_items', models.PositiveIntegerField(blank=True, help_text='Set this to prevent the discount consuming all items within the range that are in the basket.', null=True, verbose_name='Max Affected Items')),
                 ('proxy_class', oscar.models.fields.NullCharField(default=None, max_length=255, verbose_name='Custom class')),
@@ -55,11 +55,11 @@ class Migration(migrations.Migration):
                 ('slug', oscar.models.fields.autoslugfield.AutoSlugField(blank=True, editable=False, max_length=128, populate_from='name', unique=True, verbose_name='Slug')),
                 ('description', models.TextField(blank=True)),
                 ('is_public', models.BooleanField(default=False, help_text='Public ranges have a renter-facing page', verbose_name='Is public?')),
-                ('includes_all_sdus', models.BooleanField(default=False, verbose_name='Includes all sdus?')),
+                ('includes_all_products', models.BooleanField(default=False, verbose_name='Includes all products?')),
                 ('proxy_class', oscar.models.fields.NullCharField(default=None, max_length=255, unique=True, verbose_name='Custom class')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date Created')),
-                ('classes', models.ManyToManyField(blank=True, related_name='classes', to='catalogue.SduClass', verbose_name='Sdu Types')),
-                ('excluded_sdus', models.ManyToManyField(blank=True, related_name='excludes', to='catalogue.Sdu', verbose_name='Excluded Sdus')),
+                ('classes', models.ManyToManyField(blank=True, related_name='classes', to='catalogue.ProductClass', verbose_name='Product Types')),
+                ('excluded_products', models.ManyToManyField(blank=True, related_name='excludes', to='catalogue.Product', verbose_name='Excluded Products')),
                 ('included_categories', models.ManyToManyField(blank=True, related_name='includes', to='catalogue.Category', verbose_name='Included Categories')),
             ],
             options={
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='RangeSduFileUpload',
+            name='RangeProductFileUpload',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('filepath', models.CharField(max_length=255, verbose_name='File Path')),
@@ -86,29 +86,29 @@ class Migration(migrations.Migration):
                 ('uploaded_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Uploaded By')),
             ],
             options={
-                'verbose_name': 'Range Sdu Uploaded File',
-                'verbose_name_plural': 'Range Sdu Uploaded Files',
+                'verbose_name': 'Range Product Uploaded File',
+                'verbose_name_plural': 'Range Product Uploaded Files',
                 'ordering': ('-date_uploaded',),
                 'abstract': False,
             },
         ),
         migrations.CreateModel(
-            name='RangeSdu',
+            name='RangeProduct',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('display_order', models.IntegerField(default=0)),
                 ('range', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='offer.range')),
-                ('sdu', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogue.sdu')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogue.product')),
             ],
             options={
                 'abstract': False,
-                'unique_together': {('range', 'sdu')},
+                'unique_together': {('range', 'product')},
             },
         ),
         migrations.AddField(
             model_name='range',
-            name='included_sdus',
-            field=models.ManyToManyField(blank=True, related_name='includes', through='offer.RangeSdu', to='catalogue.Sdu', verbose_name='Included Sdus'),
+            name='included_products',
+            field=models.ManyToManyField(blank=True, related_name='includes', through='offer.RangeProduct', to='catalogue.Product', verbose_name='Included Products'),
         ),
         migrations.CreateModel(
             name='ConditionalOffer',

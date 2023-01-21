@@ -71,8 +71,8 @@ class CountCondition(Condition):
         delta = self.value - num_matches
         if delta > 0:
             return ngettext(
-                'Buy %(delta)d more sdu from %(range)s',
-                'Buy %(delta)d more sdus from %(range)s',
+                'Buy %(delta)d more product from %(range)s',
+                'Buy %(delta)d more products from %(range)s',
                 int(delta)
             ) % {'delta': delta, 'range': self.range}
 
@@ -135,60 +135,60 @@ class CoverageCondition(Condition):
         for line in basket.all_lines():
             if not line.is_available_for_offer_discount(offer):
                 continue
-            sdu = line.sdu
-            if (self.can_apply_condition(line) and sdu.id not in
+            product = line.product
+            if (self.can_apply_condition(line) and product.id not in
                     covered_ids):
-                covered_ids.append(sdu.id)
+                covered_ids.append(product.id)
             if len(covered_ids) >= self.value:
                 return True
         return False
 
-    def _get_num_covered_sdus(self, basket, offer):
+    def _get_num_covered_products(self, basket, offer):
         covered_ids = set()
         for line in basket.all_lines():
-            sdu = line.sdu
+            product = line.product
             if self.can_apply_condition(line) and line.quantity_available_for_offer(offer) > 0:
-                covered_ids.add(sdu.id)
+                covered_ids.add(product.id)
         return len(covered_ids)
 
     def get_upsell_message(self, offer, basket):
-        delta = self.value - self._get_num_covered_sdus(basket, offer)
+        delta = self.value - self._get_num_covered_products(basket, offer)
         if delta > 0:
             return ngettext(
-                'Buy %(delta)d more sdu from %(range)s',
-                'Buy %(delta)d more sdus from %(range)s',
+                'Buy %(delta)d more product from %(range)s',
+                'Buy %(delta)d more products from %(range)s',
                 int(delta)
             ) % {'delta': delta, 'range': self.range}
 
     def is_partially_satisfied(self, offer, basket):
-        return 0 < self._get_num_covered_sdus(basket, offer) < self.value
+        return 0 < self._get_num_covered_products(basket, offer) < self.value
 
     def consume_items(self, offer, basket, affected_lines):
         """
         Marks items within the basket lines as consumed so they
         can't be reused in other offers.
         """
-        # Determine sdus that have already been consumed by applying the
+        # Determine products that have already been consumed by applying the
         # benefit
-        consumed_sdus = []
+        consumed_products = []
         for line, __, quantity in affected_lines:
-            consumed_sdus.append(line.sdu)
+            consumed_products.append(line.product)
 
-        to_consume = max(0, self.value - len(consumed_sdus))
+        to_consume = max(0, self.value - len(consumed_products))
         if to_consume == 0:
             return
 
         for line in basket.all_lines():
-            sdu = line.sdu
+            product = line.product
             if not self.can_apply_condition(line):
                 continue
-            if sdu in consumed_sdus:
+            if product in consumed_products:
                 continue
             if not line.is_available_for_offer_discount(offer):
                 continue
             # Only consume a quantity of 1 from each line
             line.consume(1, offer=offer)
-            consumed_sdus.append(sdu)
+            consumed_products.append(product)
             to_consume -= 1
             if to_consume == 0:
                 break
@@ -197,9 +197,9 @@ class CoverageCondition(Condition):
         covered_ids = []
         value = D('0.00')
         for line in basket.all_lines():
-            if (self.can_apply_condition(line) and line.sdu.id not in
+            if (self.can_apply_condition(line) and line.product.id not in
                     covered_ids):
-                covered_ids.append(line.sdu.id)
+                covered_ids.append(line.product.id)
                 value += unit_price(offer, line)
             if len(covered_ids) >= self.value:
                 return value

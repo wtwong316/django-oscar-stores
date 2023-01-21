@@ -4,11 +4,11 @@ register = template.Library()
 
 
 @register.simple_tag
-def purchase_info_for_sdu(request, sdu):
-    if sdu.is_parent:
-        return request.strategy.fetch_for_parent(sdu)
+def purchase_info_for_product(request, product):
+    if product.is_parent:
+        return request.strategy.fetch_for_parent(product)
 
-    return request.strategy.fetch_for_sdu(sdu)
+    return request.strategy.fetch_for_product(product)
 
 
 @register.simple_tag

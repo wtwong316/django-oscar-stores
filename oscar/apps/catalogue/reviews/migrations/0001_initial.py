@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SduReview',
+            name='ProductReview',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('score', models.SmallIntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], verbose_name='Score')),
@@ -31,15 +31,15 @@ class Migration(migrations.Migration):
                 ('total_votes', models.IntegerField(default=0, verbose_name='Total Votes')),
                 ('delta_votes', models.IntegerField(db_index=True, default=0, verbose_name='Delta Votes')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('sdu', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='catalogue.sdu')),
+                ('product', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='catalogue.product')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'Sdu review',
-                'verbose_name_plural': 'Sdu reviews',
+                'verbose_name': 'Product review',
+                'verbose_name_plural': 'Product reviews',
                 'ordering': ['-delta_votes', 'id'],
                 'abstract': False,
-                'unique_together': {('sdu', 'user')},
+                'unique_together': {('product', 'user')},
             },
         ),
         migrations.CreateModel(
@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('delta', models.SmallIntegerField(choices=[(1, 'Up'), (-1, 'Down')], verbose_name='Delta')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('review', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='votes', to='reviews.sdureview')),
+                ('review', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='votes', to='reviews.productreview')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_votes', to=settings.AUTH_USER_MODEL)),
             ],
             options={

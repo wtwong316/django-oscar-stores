@@ -3,26 +3,26 @@ from django.utils.translation import gettext_lazy as _
 
 from oscar.core.loading import get_class, get_model
 
-SduReview = get_model('reviews', 'sdureview')
+ProductReview = get_model('reviews', 'productreview')
 DatePickerInput = get_class('oscar.forms.widgets', 'DatePickerInput')
 
 
-class DashboardSduReviewForm(forms.ModelForm):
+class DashboardProductReviewForm(forms.ModelForm):
     choices = (
-        (SduReview.APPROVED, _('Approved')),
-        (SduReview.REJECTED, _('Rejected')),
+        (ProductReview.APPROVED, _('Approved')),
+        (ProductReview.REJECTED, _('Rejected')),
     )
     status = forms.ChoiceField(choices=choices, label=_("Status"))
 
     class Meta:
-        model = SduReview
+        model = ProductReview
         fields = ('title', 'body', 'score', 'status')
 
 
-class SduReviewSearchForm(forms.Form):
+class ProductReviewSearchForm(forms.Form):
     STATUS_CHOICES = (
         ('', '------------'),
-    ) + SduReview.STATUS_CHOICES
+    ) + ProductReview.STATUS_CHOICES
     keyword = forms.CharField(required=False, label=_("Keyword"))
     status = forms.ChoiceField(required=False, choices=STATUS_CHOICES,
                                label=_("Status"))

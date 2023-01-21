@@ -12,36 +12,36 @@ class CatalogueDashboardConfig(OscarDashboardConfig):
 
     default_permissions = ['is_staff', ]
     permissions_map = _map = {
-        'catalogue-sdu': (['is_staff'], ['partner.dashboard_access']),
-        'catalogue-sdu-create': (['is_staff'],
+        'catalogue-product': (['is_staff'], ['partner.dashboard_access']),
+        'catalogue-product-create': (['is_staff'],
                                      ['partner.dashboard_access']),
-        'catalogue-sdu-list': (['is_staff'], ['partner.dashboard_access']),
-        'catalogue-sdu-delete': (['is_staff'],
+        'catalogue-product-list': (['is_staff'], ['partner.dashboard_access']),
+        'catalogue-product-delete': (['is_staff'],
                                      ['partner.dashboard_access']),
-        'catalogue-sdu-lookup': (['is_staff'],
+        'catalogue-product-lookup': (['is_staff'],
                                      ['partner.dashboard_access']),
     }
 
     def ready(self):
-        self.sdu_list_view = get_class('dashboard.catalogue.views',
-                                           'SduListView')
-        self.sdu_lookup_view = get_class('dashboard.catalogue.views',
-                                             'SduLookupView')
-        self.sdu_create_redirect_view = get_class('dashboard.catalogue.views',
-                                                      'SduCreateRedirectView')
-        self.sdu_createupdate_view = get_class('dashboard.catalogue.views',
-                                                   'SduCreateUpdateView')
-        self.sdu_delete_view = get_class('dashboard.catalogue.views',
-                                             'SduDeleteView')
+        self.product_list_view = get_class('dashboard.catalogue.views',
+                                           'ProductListView')
+        self.product_lookup_view = get_class('dashboard.catalogue.views',
+                                             'ProductLookupView')
+        self.product_create_redirect_view = get_class('dashboard.catalogue.views',
+                                                      'ProductCreateRedirectView')
+        self.product_createupdate_view = get_class('dashboard.catalogue.views',
+                                                   'ProductCreateUpdateView')
+        self.product_delete_view = get_class('dashboard.catalogue.views',
+                                             'ProductDeleteView')
 
-        self.sdu_class_create_view = get_class('dashboard.catalogue.views',
-                                                   'SduClassCreateView')
-        self.sdu_class_update_view = get_class('dashboard.catalogue.views',
-                                                   'SduClassUpdateView')
-        self.sdu_class_list_view = get_class('dashboard.catalogue.views',
-                                                 'SduClassListView')
-        self.sdu_class_delete_view = get_class('dashboard.catalogue.views',
-                                                   'SduClassDeleteView')
+        self.product_class_create_view = get_class('dashboard.catalogue.views',
+                                                   'ProductClassCreateView')
+        self.product_class_update_view = get_class('dashboard.catalogue.views',
+                                                   'ProductClassUpdateView')
+        self.product_class_list_view = get_class('dashboard.catalogue.views',
+                                                 'ProductClassListView')
+        self.product_class_delete_view = get_class('dashboard.catalogue.views',
+                                                   'ProductClassDeleteView')
 
         self.category_list_view = get_class('dashboard.catalogue.views',
                                             'CategoryListView')
@@ -73,20 +73,20 @@ class CatalogueDashboardConfig(OscarDashboardConfig):
 
     def get_urls(self):
         urls = [
-            path('sdus/<int:pk>/', self.sdu_createupdate_view.as_view(), name='catalogue-sdu'),
-            path('sdus/create/', self.sdu_create_redirect_view.as_view(), name='catalogue-sdu-create'),
+            path('products/<int:pk>/', self.product_createupdate_view.as_view(), name='catalogue-product'),
+            path('products/create/', self.product_create_redirect_view.as_view(), name='catalogue-product-create'),
             path(
-                'sdus/create/<slug:sdu_class_slug>/',
-                self.sdu_createupdate_view.as_view(),
-                name='catalogue-sdu-create'),
+                'products/create/<slug:product_class_slug>/',
+                self.product_createupdate_view.as_view(),
+                name='catalogue-product-create'),
             path(
-                'sdus/<int:parent_pk>/create-variant/',
-                self.sdu_createupdate_view.as_view(),
-                name='catalogue-sdu-create-child'),
-            path('sdus/<int:pk>/delete/', self.sdu_delete_view.as_view(), name='catalogue-sdu-delete'),
-            path('', self.sdu_list_view.as_view(), name='catalogue-sdu-list'),
+                'products/<int:parent_pk>/create-variant/',
+                self.product_createupdate_view.as_view(),
+                name='catalogue-product-create-child'),
+            path('products/<int:pk>/delete/', self.product_delete_view.as_view(), name='catalogue-product-delete'),
+            path('', self.product_list_view.as_view(), name='catalogue-product-list'),
             path('stock-alerts/', self.stock_alert_view.as_view(), name='stock-alert-list'),
-            path('sdu-lookup/', self.sdu_lookup_view.as_view(), name='catalogue-sdu-lookup'),
+            path('product-lookup/', self.product_lookup_view.as_view(), name='catalogue-product-lookup'),
             path('categories/', self.category_list_view.as_view(), name='catalogue-category-list'),
             path(
                 'categories/<int:pk>/',
@@ -108,20 +108,20 @@ class CatalogueDashboardConfig(OscarDashboardConfig):
                 self.category_delete_view.as_view(),
                 name='catalogue-category-delete'),
             path(
-                'sdu-type/create/',
-                self.sdu_class_create_view.as_view(),
+                'product-type/create/',
+                self.product_class_create_view.as_view(),
                 name='catalogue-class-create'),
             path(
-                'sdu-types/',
-                self.sdu_class_list_view.as_view(),
+                'product-types/',
+                self.product_class_list_view.as_view(),
                 name='catalogue-class-list'),
             path(
-                'sdu-type/<int:pk>/update/',
-                self.sdu_class_update_view.as_view(),
+                'product-type/<int:pk>/update/',
+                self.product_class_update_view.as_view(),
                 name='catalogue-class-update'),
             path(
-                'sdu-type/<int:pk>/delete/',
-                self.sdu_class_delete_view.as_view(),
+                'product-type/<int:pk>/delete/',
+                self.product_class_delete_view.as_view(),
                 name='catalogue-class-delete'),
             path(
                 'attribute-option-group/create/',

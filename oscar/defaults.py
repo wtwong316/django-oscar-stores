@@ -14,7 +14,7 @@ OSCAR_BASKET_COOKIE_OPEN = 'oscar_open_basket'
 OSCAR_BASKET_COOKIE_SECURE = False
 OSCAR_MAX_BASKET_QUANTITY_THRESHOLD = 10000
 
-# Recently-viewed sdus
+# Recently-viewed products
 OSCAR_RECENTLY_VIEWED_COOKIE_LIFETIME = 7 * 24 * 60 * 60
 OSCAR_RECENTLY_VIEWED_COOKIE_NAME = 'oscar_history'
 OSCAR_RECENTLY_VIEWED_COOKIE_SECURE = False
@@ -24,7 +24,7 @@ OSCAR_RECENTLY_VIEWED_PRODUCTS = 20
 OSCAR_DEFAULT_CURRENCY = 'GBP'
 
 # Paths
-OSCAR_IMAGE_FOLDER = 'images/sdus/%Y/%m/'
+OSCAR_IMAGE_FOLDER = 'images/products/%Y/%m/'
 OSCAR_DELETE_IMAGE_FILES = True
 
 # Copy this image from oscar/static/img to your MEDIA_ROOT folder.
@@ -57,7 +57,7 @@ OSCAR_MODERATE_REVIEWS = False
 # Accounts
 OSCAR_ACCOUNTS_REDIRECT_URL = 'renter:profile-view'
 
-# This enables sending alert notifications/emails instantly when sdus get
+# This enables sending alert notifications/emails instantly when products get
 # back in stock by listening to stock record update signals.
 # This might impact performance for large numbers of stock record updates.
 # Alternatively, the management command ``oscar_send_alerts`` can be used to
@@ -76,7 +76,7 @@ OSCAR_SLUG_BLACKLIST = []
 OSCAR_SLUG_ALLOW_UNICODE = False
 
 # Cookies
-OSCAR_COOKIES_DELETE_ON_LOGOUT = ['oscar_recently_viewed_sdus', ]
+OSCAR_COOKIES_DELETE_ON_LOGOUT = ['oscar_recently_viewed_products', ]
 
 # Offers
 OSCAR_OFFERS_INCL_TAX = False
@@ -102,11 +102,11 @@ OSCAR_DASHBOARD_NAVIGATION = [
         #'icon': 'fas fa-sitemap',
         #'children': [
             #{
-            #    'label': _('Sdus'),
-            #    'url_name': 'dashboard:catalogue-sdu-list',
+            #    'label': _('Products'),
+            #    'url_name': 'dashboard:catalogue-product-list',
             #},
             #{
-            #    'label': _('Sdu Types'),
+            #    'label': _('Product Types'),
             #    'url_name': 'dashboard:catalogue-class-list',
             #},
             #{
@@ -218,7 +218,7 @@ OSCAR_SEARCH_FACETS = {
     'fields': {
         # The key for these dicts will be used when passing facet data
         # to the template. Same for the 'queries' dict below.
-        'sdu_class': {'name': _('Type'), 'field': 'sdu_class'},
+        'product_class': {'name': _('Type'), 'field': 'product_class'},
         'rating': {'name': _('Rating'), 'field': 'rating'},
         # You can specify an 'options' element that will be passed to the
         # SearchQuerySet.facet() call.

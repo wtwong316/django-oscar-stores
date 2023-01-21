@@ -18,14 +18,14 @@ class RangeFactory(factory.django.DjangoModelFactory):
         model = get_model('offer', 'Range')
 
     @factory.post_generation
-    def sdus(self, create, extracted, **kwargs):
+    def products(self, create, extracted, **kwargs):
         if not create or not extracted:
             return
 
-        RangeSdu = get_model('offer', 'RangeSdu')
+        RangeProduct = get_model('offer', 'RangeProduct')
 
-        for sdu in extracted:
-            RangeSdu.objects.create(sdu=sdu, range=self)
+        for product in extracted:
+            RangeProduct.objects.create(product=product, range=self)
 
 
 class BenefitFactory(factory.django.DjangoModelFactory):

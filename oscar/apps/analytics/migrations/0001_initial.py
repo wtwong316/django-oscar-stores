@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SduRecord',
+            name='ProductRecord',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('num_views', models.PositiveIntegerField(default=0, verbose_name='Views')),
@@ -25,8 +25,8 @@ class Migration(migrations.Migration):
                 ('score', models.FloatField(default=0.0, verbose_name='Score')),
             ],
             options={
-                'verbose_name': 'Sdu record',
-                'verbose_name_plural': 'Sdu records',
+                'verbose_name': 'Product record',
+                'verbose_name_plural': 'Product records',
                 'ordering': ['-num_purchases'],
                 'abstract': False,
             },
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             name='UserRecord',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('num_sdu_views', models.PositiveIntegerField(default=0, verbose_name='Sdu Views')),
+                ('num_product_views', models.PositiveIntegerField(default=0, verbose_name='Product Views')),
                 ('num_basket_additions', models.PositiveIntegerField(default=0, verbose_name='Basket Additions')),
                 ('num_inquiries', models.PositiveIntegerField(db_index=True, default=0, verbose_name='Inquirys')),
                 ('num_inquiry_lines', models.PositiveIntegerField(db_index=True, default=0, verbose_name='Inquiry Lines')),
@@ -50,14 +50,14 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='UserSduView',
+            name='UserProductView',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date Created')),
             ],
             options={
-                'verbose_name': 'User sdu view',
-                'verbose_name_plural': 'User sdu views',
+                'verbose_name': 'User product view',
+                'verbose_name_plural': 'User product views',
                 'ordering': ['-pk'],
                 'abstract': False,
             },

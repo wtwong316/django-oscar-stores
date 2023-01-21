@@ -20,7 +20,7 @@ ConditionalOffer = get_model('offer', 'ConditionalOffer')
 Voucher = get_model('voucher', 'Voucher')
 Basket = get_model('basket', 'Basket')
 StockAlert = get_model('partner', 'StockAlert')
-Sdu = get_model('catalogue', 'Sdu')
+Product = get_model('catalogue', 'Product')
 Inquiry = get_model('inquiry', 'Inquiry')
 Line = get_model('inquiry', 'Line')
 User = get_user_model()
@@ -116,7 +116,7 @@ class IndexView(TemplateView):
         baskets = Basket.objects.filter(status=Basket.OPEN)
         renters = User.objects.filter(inquiries__isnull=False).distinct()
         lines = Line.objects.filter()
-        sdus = Sdu.objects.all()
+        products = Product.objects.all()
 
         user = self.request.user
         if not user.is_staff:
@@ -132,7 +132,7 @@ class IndexView(TemplateView):
                 inquiries__lines__partner_id__in=partners_ids
             ).distinct()
             lines = lines.filter(partner_id__in=partners_ids)
-            sdus = sdus.filter(stockrecords__partner_id__in=partners_ids)
+            products = products.filter(stockrecords__partner_id__in=partners_ids)
 
         inquiries_last_day = inquiries.filter(date_placed__gt=datetime_24hrs_ago)
 
@@ -161,7 +161,7 @@ class IndexView(TemplateView):
                 date_created__gt=datetime_24hrs_ago
             ).count(),
 
-            'total_sdus': sdus.count(),
+            'total_products': products.count(),
             'total_open_stock_alerts': open_alerts.count(),
             'total_closed_stock_alerts': closed_alerts.count(),
 

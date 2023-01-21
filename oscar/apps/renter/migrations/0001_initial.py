@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SduAlert',
+            name='ProductAlert',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('email', models.EmailField(blank=True, db_index=True, max_length=254, verbose_name='Email')),
@@ -26,12 +26,12 @@ class Migration(migrations.Migration):
                 ('date_confirmed', models.DateTimeField(blank=True, null=True, verbose_name='Date confirmed')),
                 ('date_cancelled', models.DateTimeField(blank=True, null=True, verbose_name='Date cancelled')),
                 ('date_closed', models.DateTimeField(blank=True, null=True, verbose_name='Date closed')),
-                ('sdu', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogue.sdu')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogue.product')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='alerts', to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             options={
-                'verbose_name': 'Sdu alert',
-                'verbose_name_plural': 'Sdu alerts',
+                'verbose_name': 'Product alert',
+                'verbose_name_plural': 'Product alerts',
                 'ordering': ['-date_created'],
                 'abstract': False,
             },

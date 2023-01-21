@@ -5,13 +5,13 @@ from django.db.models import F
 from django.dispatch import receiver
 
 from oscar.apps.basket.signals import basket_addition
-from oscar.apps.catalogue.signals import sdu_viewed
+from oscar.apps.catalogue.signals import product_viewed
 from oscar.apps.inquiry.signals import inquiry_placed
 from oscar.apps.search.signals import user_search
 from oscar.core.loading import get_model
 
-SduRecord = get_model('analytics', 'SduRecord')
-UserSduView = get_model('analytics', 'UserSduView')
+ProductRecord = get_model('analytics', 'ProductRecord')
+UserProductView = get_model('analytics', 'UserProductView')
 UserRecord = get_model('analytics', 'UserRecord')
 UserSearch = get_model('analytics', 'UserSearch')
 
@@ -45,12 +45,12 @@ def _update_counter(model, field_name, filter_kwargs, increment=1):
             "IntegrityError when updating analytics counter for %s", model)
 
 
-def _record_sdus_in_inquiry(inquiry):
+def _record_products_in_inquiry(inquiry):
     # surely there's a way to do this without causing a query for each line?
     for line in inquiry.lines.all():
         _update_counter(
-            SduRecord, 'num_purchases',
-            {'sdu': line.sdu}, line.quantity)
+            ProductRecord, 'num_purchases',
+            {'product': line.product}, line.quantity)
 
 
 def _record_user_inquiry(user, inquiry):
@@ -75,28 +75,28 @@ def _record_user_inquiry(user, inquiry):
 
 # Receivers
 
-@receiver(sdu_viewed)
-def receive_sdu_view(sender, sdu, user, **kwargs):
+@receiver(product_viewed)
+def receive_product_view(sender, product, user, **kwargs):
     if kwargs.get('raw', False):
         return
-    _update_counter(SduRecord, 'num_views', {'sdu': sdu})
+    _update_counter(ProductRecord, 'num_views', {'product': product})
     if user and user.is_authenticated:
-        _update_counter(UserRecord, 'num_sdu_views', {'user': user})
-        UserSduView.objects.create(sdu=sdu, user=user)
+        _update_counter(UserRecord, 'num_product_views', {'user': user})
+        UserProductView.objects.create(product=product, user=user)
 
 
 @receiver(user_search)
-def receive_sdu_search(sender, query, user, **kwargs):
+def receive_product_search(sender, query, user, **kwargs):
     if user and user.is_authenticated and not kwargs.get('raw', False):
         UserSearch._default_manager.create(user=user, query=query)
 
 
 @receiver(basket_addition)
-def receive_basket_addition(sender, sdu, user, **kwargs):
+def receive_basket_addition(sender, product, user, **kwargs):
     if kwargs.get('raw', False):
         return
     _update_counter(
-        SduRecord, 'num_basket_additions', {'sdu': sdu})
+        ProductRecord, 'num_basket_additions', {'product': product})
     if user and user.is_authenticated:
         _update_counter(UserRecord, 'num_basket_additions', {'user': user})
 
@@ -105,6 +105,6 @@ def receive_basket_addition(sender, sdu, user, **kwargs):
 def receive_inquiry_placed(sender, inquiry, user, **kwargs):
     if kwargs.get('raw', False):
         return
-    _record_sdus_in_inquiry(inquiry)
+    _record_products_in_inquiry(inquiry)
     if user and user.is_authenticated:
         _record_user_inquiry(user, inquiry)

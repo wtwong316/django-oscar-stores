@@ -12,16 +12,16 @@ AlertsDispatcher = get_class('renter.alerts.utils', 'AlertsDispatcher')
 
 class Command(BaseCommand):
     """
-    Check stock records of sdus for availability and send out alerts
+    Check stock records of products for availability and send out alerts
     to renters that have registered for an alert.
     """
-    help = _("Check for sdus that are back in "
+    help = _("Check for products that are back in "
              "stock and send out alerts")
 
     def handle(self, **options):
         """
-        Check all sdus with active sdu alerts for
-        availability and send out email alerts when a sdu is
+        Check all products with active product alerts for
+        availability and send out email alerts when a product is
         available to buy.
         """
         AlertsDispatcher().send_alerts()

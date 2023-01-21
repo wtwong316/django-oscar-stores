@@ -7,45 +7,45 @@ from django_tables2 import A, Column, LinkColumn, TemplateColumn
 from oscar.core.loading import get_class, get_model
 
 DashboardTable = get_class('dashboard.tables', 'DashboardTable')
-Sdu = get_model('catalogue', 'Sdu')
+Product = get_model('catalogue', 'Product')
 Category = get_model('catalogue', 'Category')
 AttributeOptionGroup = get_model('catalogue', 'AttributeOptionGroup')
 Option = get_model('catalogue', 'Option')
 
 
-class SduTable(DashboardTable):
+class ProductTable(DashboardTable):
     title = TemplateColumn(
         verbose_name=_('Title'),
-        template_name='oscar/dashboard/catalogue/sdu_row_title.html',
+        template_name='oscar/dashboard/catalogue/product_row_title.html',
         order_by='title', accessor=A('title'))
     image = TemplateColumn(
         verbose_name=_('Image'),
-        template_name='oscar/dashboard/catalogue/sdu_row_image.html',
+        template_name='oscar/dashboard/catalogue/product_row_image.html',
         orderable=False)
-    sdu_class = Column(
-        verbose_name=_('Sdu type'),
-        accessor=A('sdu_class'),
-        order_by='sdu_class__name')
+    product_class = Column(
+        verbose_name=_('Product type'),
+        accessor=A('product_class'),
+        order_by='product_class__name')
     variants = TemplateColumn(
         verbose_name=_("Variants"),
-        template_name='oscar/dashboard/catalogue/sdu_row_variants.html',
+        template_name='oscar/dashboard/catalogue/product_row_variants.html',
         orderable=False
     )
     stock_records = TemplateColumn(
         verbose_name=_('Stock records'),
-        template_name='oscar/dashboard/catalogue/sdu_row_stockrecords.html',
+        template_name='oscar/dashboard/catalogue/product_row_stockrecords.html',
         orderable=False)
     actions = TemplateColumn(
         verbose_name=_('Actions'),
-        template_name='oscar/dashboard/catalogue/sdu_row_actions.html',
+        template_name='oscar/dashboard/catalogue/product_row_actions.html',
         orderable=False)
 
     icon = 'fas fa-sitemap'
 
     class Meta(DashboardTable.Meta):
-        model = Sdu
+        model = Product
         fields = ('upc', 'is_public', 'date_updated')
-        sequence = ('title', 'upc', 'image', 'sdu_class', 'variants',
+        sequence = ('title', 'upc', 'image', 'product_class', 'variants',
                     'stock_records', '...', 'is_public', 'date_updated', 'actions')
         order_by = '-date_updated'
 

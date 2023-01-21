@@ -6,9 +6,9 @@ from oscar.test import factories
 Default = get_class('partner.strategy', 'Default')
 
 
-def add_sdu(basket, price=None, quantity=1, sdu=None):
+def add_product(basket, price=None, quantity=1, product=None):
     """
-    Helper to add a sdu to the basket.
+    Helper to add a product to the basket.
     """
     has_strategy = False
     try:
@@ -19,18 +19,18 @@ def add_sdu(basket, price=None, quantity=1, sdu=None):
         basket.strategy = Default()
     if price is None:
         price = D('1')
-    if sdu and sdu.has_stockrecords:
-        record = sdu.stockrecords.first()
+    if product and product.has_stockrecords:
+        record = product.stockrecords.first()
     else:
         record = factories.create_stockrecord(
-            sdu=sdu, price=price,
+            product=product, price=price,
             num_in_stock=quantity + 1)
-    basket.add_sdu(record.sdu, quantity)
+    basket.add_product(record.product, quantity)
 
 
-def add_sdus(basket, args):
+def add_products(basket, args):
     """
-    Helper to add a series of sdus to the passed basket
+    Helper to add a series of products to the passed basket
     """
     for price, quantity in args:
-        add_sdu(basket, price, quantity)
+        add_product(basket, price, quantity)

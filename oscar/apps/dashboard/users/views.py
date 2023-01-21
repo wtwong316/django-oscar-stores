@@ -14,12 +14,12 @@ from oscar.core.compat import get_user_model
 from oscar.core.loading import get_class, get_classes, get_model
 from oscar.views.generic import BulkEditMixin
 
-UserSearchForm, SduAlertSearchForm, SduAlertUpdateForm = get_classes(
-    'dashboard.users.forms', ('UserSearchForm', 'SduAlertSearchForm',
-                              'SduAlertUpdateForm'))
+UserSearchForm, ProductAlertSearchForm, ProductAlertUpdateForm = get_classes(
+    'dashboard.users.forms', ('UserSearchForm', 'ProductAlertSearchForm',
+                              'ProductAlertUpdateForm'))
 PasswordResetForm = get_class('renter.forms', 'PasswordResetForm')
 UserTable = get_class('dashboard.users.tables', 'UserTable')
-SduAlert = get_model('renter', 'SduAlert')
+ProductAlert = get_model('renter', 'ProductAlert')
 User = get_user_model()
 
 
@@ -152,9 +152,9 @@ class PasswordResetView(SingleObjectMixin, FormView):
         )
 
 
-class SduAlertListView(ListView):
-    model = SduAlert
-    form_class = SduAlertSearchForm
+class ProductAlertListView(ListView):
+    model = ProductAlert
+    form_class = ProductAlertSearchForm
     context_object_name = 'alerts'
     template_name = 'oscar/dashboard/users/alerts/list.html'
     paginate_by = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
@@ -210,22 +210,22 @@ class SduAlertListView(ListView):
         return context
 
 
-class SduAlertUpdateView(UpdateView):
+class ProductAlertUpdateView(UpdateView):
     template_name = 'oscar/dashboard/users/alerts/update.html'
-    model = SduAlert
-    form_class = SduAlertUpdateForm
+    model = ProductAlert
+    form_class = ProductAlertUpdateForm
     context_object_name = 'alert'
 
     def get_success_url(self):
-        messages.success(self.request, _("Sdu alert saved"))
+        messages.success(self.request, _("Product alert saved"))
         return reverse('dashboard:user-alert-list')
 
 
-class SduAlertDeleteView(DeleteView):
-    model = SduAlert
+class ProductAlertDeleteView(DeleteView):
+    model = ProductAlert
     template_name = 'oscar/dashboard/users/alerts/delete.html'
     context_object_name = 'alert'
 
     def get_success_url(self):
-        messages.warning(self.request, _("Sdu alert deleted"))
+        messages.warning(self.request, _("Product alert deleted"))
         return reverse('dashboard:user-alert-list')

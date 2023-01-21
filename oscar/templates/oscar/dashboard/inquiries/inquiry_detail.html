@@ -124,7 +124,7 @@
                                     <th></th>
                                     <th>{% trans "Line ID" %}</th>
                                     <th>{% trans "Quantity" %}</th>
-                                    <th>{% trans "Sdu" %}</th>
+                                    <th>{% trans "Product" %}</th>
                                     <th>{% trans "UPC" %}</th>
                                     <th>{% trans "Status" %}</th>
                                     <th>{% trans "Supplier" %}</th>
@@ -146,8 +146,8 @@
                                         <td><a href="{% url 'dashboard:inquiry-line-detail' number=inquiry.number line_id=line.id %}">#{{ line.id }}</a></td>
                                         <td>{{ line.quantity }}</td>
                                         <td>
-                                            {% if line.sdu %}
-                                                <a href="{% url 'dashboard:catalogue-sdu' pk=line.sdu.id %}">{{ line.title }}</a>
+                                            {% if line.product %}
+                                                <a href="{% url 'dashboard:catalogue-product' pk=line.product.id %}">{{ line.title }}</a>
                                             {% else %}
                                                 {{ line.title }}
                                             {% endif %}
@@ -208,7 +208,7 @@
                                     {% else %}
                                         <tr>
                                             <td colspan="8"></td>
-                                            <th>{% trans "Selected SDU" %}</th>
+                                            <th>{% trans "Selected PRODUCT" %}</th>
                                             <th class="text-right">{{ inquiry.basket_total_excl_tax|currency:inquiry.currency }}</th>
                                             <th class="text-right">{{ inquiry.basket_total_incl_tax|currency:inquiry.currency }}</th>
                                             <td></td>
@@ -475,7 +475,7 @@
                                                 <td >{{ event.amount|currency:inquiry.currency }}</td>
                                                 <td>
                                                     {% for line_qty in event.line_quantities.all %}
-                                                        {% trans "Sdu:" %} {{ line_qty.line.title }} - {% trans "quantity" %} {{ line_qty.quantity }}</br>
+                                                        {% trans "Product:" %} {{ line_qty.line.title }} - {% trans "quantity" %} {{ line_qty.quantity }}</br>
                                                     {% endfor %}
                                                 </td>
                                                 <td >{{ event.reference|default:"-" }}</td>

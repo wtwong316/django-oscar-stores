@@ -478,7 +478,7 @@ class AbstractLine(models.Model):
     # PARTNER INFORMATION
     # -------------------
     # We store the partner and various detail their SKU and the title for cases
-    # where the sdu has been deleted from the catalogue (but we still need
+    # where the product has been deleted from the catalogue (but we still need
     # the data for reporting).  We also store the partner name in case the
     # partner gets deleted at a later date.
 
@@ -507,14 +507,14 @@ class AbstractLine(models.Model):
     # PRODUCT INFORMATION
     # -------------------
 
-    # We don't want any hard links between inquiries and the sdus table so we
+    # We don't want any hard links between inquiries and the products table so we
     # allow this link to be NULLable.
-    sdu = models.ForeignKey(
-        'catalogue.Sdu', on_delete=models.SET_NULL, blank=True, null=True,
-        verbose_name=_("Sdu"))
+    product = models.ForeignKey(
+        'catalogue.Product', on_delete=models.SET_NULL, blank=True, null=True,
+        verbose_name=_("Product"))
     title = models.CharField(
-        pgettext_lazy("Sdu title", "Title"), max_length=255)
-    # UPC can be null because it's usually set as the sdu's UPC, and that
+        pgettext_lazy("Product title", "Title"), max_length=255)
+    # UPC can be null because it's usually set as the product's UPC, and that
     # can be null as well
     upc = models.CharField(_("UPC"), max_length=128, blank=True, null=True)
 
@@ -564,11 +564,11 @@ class AbstractLine(models.Model):
         verbose_name_plural = _("Inquiry Lines")
 
     def __str__(self):
-        if self.sdu:
-            title = self.sdu.title
+        if self.product:
+            title = self.product.title
         else:
-            title = _('<missing sdu>')
-        return _("Sdu '%(name)s', quantity '%(qty)s'") % {
+            title = _('<missing product>')
+        return _("Product '%(name)s', quantity '%(qty)s'") % {
             'name': title, 'qty': self.quantity}
 
     @classmethod
@@ -762,26 +762,26 @@ class AbstractLine(models.Model):
             return result['quantity__sum']
 
     @property
-    def is_sdu_deleted(self):
-        return self.sdu is None
+    def is_product_deleted(self):
+        return self.product is None
 
     def is_available_to_reinquiry(self, basket, strategy):
         """
         Test if this line can be re-inquiryed using the passed strategy and
         basket
         """
-        if not self.sdu:
+        if not self.product:
             return False, (_("'%(title)s' is no longer available") %
                            {'title': self.title})
 
         try:
-            basket_line = basket.lines.get(sdu=self.sdu)
+            basket_line = basket.lines.get(product=self.product)
         except basket.lines.model.DoesNotExist:
             desired_qty = self.quantity
         else:
             desired_qty = basket_line.quantity + self.quantity
 
-        result = strategy.fetch_for_sdu(self.sdu)
+        result = strategy.fetch_for_product(self.product)
         is_available, reason = result.availability.is_purchase_permitted(
             quantity=desired_qty)
         if not is_available:
@@ -819,7 +819,7 @@ class AbstractLinePrice(models.Model):
     For tracking the prices paid for each unit within a line.
 
     This is necessary as offers can lead to units within a line
-    having different prices.  For example, one sdu may be sold at
+    having different prices.  For example, one product may be sold at
     50% off as it's part of an offer while the remainder are full price.
     """
     inquiry = models.ForeignKey(
@@ -1032,8 +1032,8 @@ class ShippingEventQuantity(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return _("%(sdu)s - quantity %(qty)d") % {
-            'sdu': self.line.sdu,
+        return _("%(product)s - quantity %(qty)d") % {
+            'product': self.line.product,
             'qty': self.quantity}
 
 

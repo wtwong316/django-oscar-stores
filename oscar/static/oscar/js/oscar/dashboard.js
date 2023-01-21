@@ -25,8 +25,8 @@ var oscar = (function(o, $) {
 
         // Do not create extra image form if number of maximum allowed forms has reached.
         if (numExisting < numMax) {
-            var $newImg = o.dashboard._extraSduImg.clone();
-            var sduId = $('#images-0-sdu').val();
+            var $newImg = o.dashboard._extraProductImg.clone();
+            var productId = $('#images-0-product').val();
             $newImg.insertAfter($extraImg);
             // update attrs on cloned el
             $newImg.find("[id^='id_images-']," +
@@ -44,7 +44,7 @@ var oscar = (function(o, $) {
                 });
             });
             $newImg.find('#id_images-' + numExisting + '-display_order').val(numExisting);
-            $newImg.find('#id_images-' + numExisting + '-sdu').val(sduId);
+            $newImg.find('#id_images-' + numExisting + '-product').val(productId);
 
             var $newFile = $newImg.find('input[type="file"]');
             $newFile.change(onFileChange);
@@ -120,10 +120,10 @@ var oscar = (function(o, $) {
                 return false;
             });
 
-            // Adds error icon if there are errors in the sdu update form
+            // Adds error icon if there are errors in the product update form
             $('[data-behaviour="tab-nav-errors"] .tab-pane').each(function(){
-                var sduErrorListener = $(this).find('[class*="error"]:not(:empty)').closest('.tab-pane').attr('id');
-                $('.tab-nav a[href="#' + sduErrorListener + '"]').append('<i class="fas fa-info-circle float-right"></i>');
+                var productErrorListener = $(this).find('[class*="error"]:not(:empty)').closest('.tab-pane').attr('id');
+                $('.tab-nav a[href="#' + productErrorListener + '"]').append('<i class="fas fa-info-circle float-right"></i>');
             });
 
             o.dashboard.filereader.init();
@@ -144,7 +144,7 @@ var oscar = (function(o, $) {
             o.dashboard.initMasks(el);
             o.dashboard.initWYSIWYG(el);
             o.dashboard.initSelects(el);
-            o.dashboard.initSduImages(el);
+            o.dashboard.initProductImages(el);
         },
         initMasks: function(el) {
             $(el).find(':input').inputmask();
@@ -277,14 +277,14 @@ var oscar = (function(o, $) {
                 }
             });
         },
-        initSduImages: function() {
+        initProductImages: function() {
             // convert last 'extra' form into a multi-upload
             // (assumes `extra=1` in django formset)
-            var $sduImages = $('#sdu_images');
-            var $extraImg = $sduImages.find('.upload-image li').last();
-            o.dashboard._extraSduImg = $extraImg.clone();
+            var $productImages = $('#product_images');
+            var $extraImg = $productImages.find('.upload-image li').last();
+            o.dashboard._extraProductImg = $extraImg.clone();
 
-            $sduImages.find('a:disabled').parents('sortable-handle').sortable('disable');
+            $productImages.find('a:disabled').parents('sortable-handle').sortable('disable');
 
             $('ol.upload-image').sortable({
                 vertical: false,
@@ -317,16 +317,16 @@ var oscar = (function(o, $) {
                 }
             }
         },
-        sdu_attributes: {
+        product_attributes: {
             init: function(){
                 var type_selects = $("select[name$=type]");
 
                 type_selects.each(function(){
-                    o.dashboard.sdu_attributes.toggleOptionGroup($(this));
+                    o.dashboard.product_attributes.toggleOptionGroup($(this));
                 });
 
                 type_selects.change(function(){
-                    o.dashboard.sdu_attributes.toggleOptionGroup($(this));
+                    o.dashboard.product_attributes.toggleOptionGroup($(this));
                 });
             },
 
@@ -433,9 +433,9 @@ var oscar = (function(o, $) {
                 }
             },
         },
-        sdu_lists: {
+        product_lists: {
             init: function() {
-                var imageModal = $("#sdu-image-modal"),
+                var imageModal = $("#product-image-modal"),
                     thumbnails = $('.sub-image');
                 thumbnails.click(function(e){
                     e.preventDefault();

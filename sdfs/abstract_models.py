@@ -169,10 +169,10 @@ class SdfStock(models.Model):
         verbose_name=_("Sdf"),
         related_name='stock'
     )
-    sdu = models.ForeignKey(
-        'catalogue.Sdu',
+    product = models.ForeignKey(
+        'catalogue.Product',
         models.CASCADE,
-        verbose_name=_("Sdu"),
+        verbose_name=_("Product"),
         related_name="sdf_stock"
     )
 
@@ -209,14 +209,14 @@ class SdfStock(models.Model):
         abstract = True
         verbose_name = _("Sdf stock record")
         verbose_name_plural = _("Sdf stock records")
-        unique_together = ("sdf", "sdu")
+        unique_together = ("sdf", "product")
         app_label = 'sdfs'
 
     objects = Manager()
 
     def __str__(self):
-        if self.sdf and self.sdu:
-            return "%s @ %s" % (self.sdu.title, self.sdf.name)
+        if self.sdf and self.product:
+            return "%s @ %s" % (self.product.title, self.sdf.name)
         return "Sdf Stock"
 
     @property

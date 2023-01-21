@@ -1,16 +1,16 @@
 from oscar.apps.analytics.abstract_models import (
-    AbstractSduRecord, AbstractUserSduView,
+    AbstractProductRecord, AbstractUserProductView,
     AbstractUserRecord, AbstractUserSearch)
 from oscar.core.loading import is_model_registered
 
 __all__ = []
 
 
-if not is_model_registered('analytics', 'SduRecord'):
-    class SduRecord(AbstractSduRecord):
+if not is_model_registered('analytics', 'ProductRecord'):
+    class ProductRecord(AbstractProductRecord):
         pass
 
-    __all__.append('SduRecord')
+    __all__.append('ProductRecord')
 
 
 if not is_model_registered('analytics', 'UserRecord'):
@@ -20,11 +20,11 @@ if not is_model_registered('analytics', 'UserRecord'):
     __all__.append('UserRecord')
 
 
-if not is_model_registered('analytics', 'UserSduView'):
-    class UserSduView(AbstractUserSduView):
+if not is_model_registered('analytics', 'UserProductView'):
+    class UserProductView(AbstractUserProductView):
         pass
 
-    __all__.append('UserSduView')
+    __all__.append('UserProductView')
 
 
 if not is_model_registered('analytics', 'UserSearch'):

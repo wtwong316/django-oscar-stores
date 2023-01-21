@@ -18,7 +18,7 @@ from oscar.views import sort_queryset
 ConditionalOffer = get_model('offer', 'ConditionalOffer')
 Condition = get_model('offer', 'Condition')
 Range = get_model('offer', 'Range')
-Sdu = get_model('catalogue', 'Sdu')
+Product = get_model('catalogue', 'Product')
 InquiryDiscount = get_model('inquiry', 'InquiryDiscount')
 Benefit = get_model('offer', 'Benefit')
 MetaDataForm, ConditionForm, BenefitForm, RestrictionsForm, OfferSearchForm \
@@ -129,9 +129,9 @@ class OfferWizardStepView(FormView):
 
         # Adjust kwargs to avoid trying to save the range instance
         form_data = form.cleaned_data.copy()
-        sdu_range = form_data.get('range')
-        if sdu_range is not None:
-            form_data['range'] = sdu_range.id
+        product_range = form_data.get('range')
+        if product_range is not None:
+            form_data['range'] = product_range.id
 
         combinations = form_data.get('combinations')
         if combinations is not None:

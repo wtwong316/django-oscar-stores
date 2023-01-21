@@ -16,9 +16,9 @@ from sorl.thumbnail.conf import settings as sorl_settings
 
 from oscar.core.loading import get_class, get_model
 from oscar.core.thumbnails import get_thumbnailer
-from oscar.test.factories import SduImageFactory, UserFactory
+from oscar.test.factories import ProductImageFactory, UserFactory
 
-OSCAR_IMAGE_FOLDER_FORMATTED = 'images/sdus/{0}/{1:02d}/'.format(date.today().year, date.today().month)
+OSCAR_IMAGE_FOLDER_FORMATTED = 'images/products/{0}/{1:02d}/'.format(date.today().year, date.today().month)
 FULL_PATH_TO_IMAGES_FOLDER = os.path.join(settings.MEDIA_ROOT, OSCAR_IMAGE_FOLDER_FORMATTED)
 FULL_PATH_TO_SORL_THUMBNAILS_FOLDER = os.path.join(settings.MEDIA_ROOT, sorl_settings.THUMBNAIL_PREFIX)
 EASY_THUMBNAIL_BASEDIR = 'thumbnails'
@@ -61,13 +61,13 @@ class ThumbnailMixin:
         # Remove created images folders after each test.
         remove_image_folders()
 
-    def create_sdu_images(self, qty=2, sdu=None):
+    def create_product_images(self, qty=2, product=None):
         self._test_images_folder_is_empty()
 
         kwargs = {}
-        if sdu is not None:
-            kwargs['sdu'] = sdu
-        self.images = SduImageFactory.create_batch(qty, **kwargs)
+        if product is not None:
+            kwargs['product'] = product
+        self.images = ProductImageFactory.create_batch(qty, **kwargs)
 
         file_names = os.listdir(FULL_PATH_TO_IMAGES_FOLDER)
         assert len(file_names) == qty  # New images added.

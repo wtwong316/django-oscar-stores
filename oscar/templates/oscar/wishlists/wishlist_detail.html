@@ -1,6 +1,6 @@
 {% extends "oscar/layout.html" %}
 
-{% load i18n sdu_tags %}
+{% load i18n product_tags %}
 
 {% block title %}
     {{ wishlist_title }} | {{ block.super }}
@@ -26,9 +26,9 @@
                 <div>
                     <ol class="row list-unstyled ml-0 pl-0">
                         {% for line in page_obj %}
-                            {% if line.sdu %}
+                            {% if line.product %}
                                 <li class="col-sm-6 col-md-4 col-lg-3">
-                                    {% render_sdu line.sdu %}
+                                    {% render_product line.product %}
                                 </li>
                             {% endif %}
                         {% endfor %}

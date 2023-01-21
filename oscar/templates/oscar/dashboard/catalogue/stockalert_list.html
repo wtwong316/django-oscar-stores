@@ -44,7 +44,7 @@
 <table class="table table-striped table-bordered table-hover">
     {% if alerts %}
     <tr>
-        <th>{% trans "Sdu" %}</th>
+        <th>{% trans "Product" %}</th>
         <th>{% trans "Partner" %}</th>
         <th>{% trans "Low stock threshold" %}</th>
         <th>{% trans "Current available stock" %}</th>
@@ -55,8 +55,8 @@
     {% for alert in alerts %}
     <tr>
         <td>
-            <a href="{% url 'dashboard:catalogue-sdu' alert.stockrecord.sdu.id %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">
-                {{ alert.stockrecord.sdu.get_title }}
+            <a href="{% url 'dashboard:catalogue-product' alert.stockrecord.product.id %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">
+                {{ alert.stockrecord.product.get_title }}
             </a>
         </td>
         <td>{{ alert.stockrecord.partner.display_name }}</td>
@@ -65,7 +65,7 @@
         <td>{{ alert.date_created }}</td>
         <td>{{ alert.status }}</td>
         <td>
-            <a class="btn btn-info" href="{% url 'dashboard:catalogue-sdu' pk=alert.stockrecord.sdu.id %}">{% trans "Update" %}</a>
+            <a class="btn btn-info" href="{% url 'dashboard:catalogue-product' pk=alert.stockrecord.product.id %}">{% trans "Update" %}</a>
         </td>
     </tr>
     {% endfor %}

@@ -88,20 +88,20 @@ class InquiryFactory(factory.django.DjangoModelFactory):
             return
         if extracted:
             if not obj.basket.all_lines().exists():
-                sdu = factories.SduFactory(stockrecords=None)
-                factories.StockRecordFactory(sdu=sdu, price_currency=settings.OSCAR_DEFAULT_CURRENCY)
-                obj.basket.add_sdu(sdu)
+                product = factories.ProductFactory(stockrecords=None)
+                factories.StockRecordFactory(product=product, price_currency=settings.OSCAR_DEFAULT_CURRENCY)
+                obj.basket.add_product(product)
             for line in obj.basket.all_lines():
                 InquiryCreator().create_line_models(obj, line)
 
 
 class InquiryLineFactory(factory.django.DjangoModelFactory):
     inquiry = factory.SubFactory(InquiryFactory)
-    sdu = factory.SubFactory(
-        'oscar.test.factories.SduFactory')
-    partner_sku = factory.LazyAttribute(lambda l: l.sdu.upc)
+    product = factory.SubFactory(
+        'oscar.test.factories.ProductFactory')
+    partner_sku = factory.LazyAttribute(lambda l: l.product.upc)
     stockrecord = factory.LazyAttribute(
-        lambda l: l.sdu.stockrecords.first())
+        lambda l: l.product.stockrecords.first())
     quantity = 1
 
     line_price_incl_tax = factory.LazyAttribute(lambda obj: tax_add(obj.stockrecord.price) * obj.quantity)

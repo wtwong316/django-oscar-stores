@@ -26,12 +26,12 @@
 
 {% block dashboard_content %}
     {% if attribute_option_groups %}
-        {% block sdu_list %}
+        {% block product_list %}
             <form method="post">
                 {% csrf_token %}
                 {% render_table attribute_option_groups %}
             </form>
-        {% endblock sdu_list %}
+        {% endblock product_list %}
     {% else %}
         <p>{% trans "No Attribute Option Groups found." %}</p>
     {% endif %}

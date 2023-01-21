@@ -6,16 +6,16 @@ from django.utils.translation import gettext_lazy as _
 from oscar.core.compat import AUTH_USER_MODEL
 
 
-class AbstractSduRecord(models.Model):
+class AbstractProductRecord(models.Model):
     """
-    A record of a how popular a sdu is.
+    A record of a how popular a product is.
 
     This used be auto-merchandising to display the most popular
-    sdus.
+    products.
     """
 
-    sdu = models.OneToOneField(
-        'catalogue.Sdu', verbose_name=_("Sdu"),
+    product = models.OneToOneField(
+        'catalogue.Product', verbose_name=_("Product"),
         related_name='stats', on_delete=models.CASCADE)
 
     # Data used for generating a score
@@ -25,18 +25,18 @@ class AbstractSduRecord(models.Model):
     num_purchases = models.PositiveIntegerField(
         _('Purchases'), default=0, db_index=True)
 
-    # Sdu score - used within search
+    # Product score - used within search
     score = models.FloatField(_('Score'), default=0.00)
 
     class Meta:
         abstract = True
         app_label = 'analytics'
         ordering = ['-num_purchases']
-        verbose_name = _('Sdu record')
-        verbose_name_plural = _('Sdu records')
+        verbose_name = _('Product record')
+        verbose_name_plural = _('Product records')
 
     def __str__(self):
-        return _("Record for '%s'") % self.sdu
+        return _("Record for '%s'") % self.product
 
 
 class AbstractUserRecord(models.Model):
@@ -48,8 +48,8 @@ class AbstractUserRecord(models.Model):
                                 on_delete=models.CASCADE)
 
     # Browsing stats
-    num_sdu_views = models.PositiveIntegerField(
-        _('Sdu Views'), default=0)
+    num_product_views = models.PositiveIntegerField(
+        _('Product Views'), default=0)
     num_basket_additions = models.PositiveIntegerField(
         _('Basket Additions'), default=0)
 
@@ -72,27 +72,27 @@ class AbstractUserRecord(models.Model):
         verbose_name_plural = _('User records')
 
 
-class AbstractUserSduView(models.Model):
+class AbstractUserProductView(models.Model):
 
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_("User"),
         on_delete=models.CASCADE)
-    sdu = models.ForeignKey(
-        'catalogue.Sdu',
+    product = models.ForeignKey(
+        'catalogue.Product',
         on_delete=models.CASCADE,
-        verbose_name=_("Sdu"))
+        verbose_name=_("Product"))
     date_created = models.DateTimeField(_("Date Created"), auto_now_add=True)
 
     class Meta:
         abstract = True
         app_label = 'analytics'
         ordering = ['-pk']
-        verbose_name = _('User sdu view')
-        verbose_name_plural = _('User sdu views')
+        verbose_name = _('User product view')
+        verbose_name_plural = _('User product views')
 
     def __str__(self):
-        return _("%(user)s viewed '%(sdu)s'") % {
-            'user': self.user, 'sdu': self.sdu}
+        return _("%(user)s viewed '%(product)s'") % {
+            'user': self.user, 'product': self.product}
 
 
 class AbstractUserSearch(models.Model):

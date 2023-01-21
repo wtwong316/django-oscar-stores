@@ -12,9 +12,9 @@
     </p>
 
     <p>
-        {% absolute_url site.domain alert.sdu.get_absolute_url as url %}
-        {% blocktrans with title=alert.sdu.get_title|safe url=url %}
-            We are happy to inform you that our sdu '{{ title }}' is back in stock:
+        {% absolute_url site.domain alert.product.get_absolute_url as url %}
+        {% blocktrans with title=alert.product.get_title|safe url=url %}
+            We are happy to inform you that our product '{{ title }}' is back in stock:
             {{ url }}
         {% endblocktrans %}
     </p>
@@ -30,7 +30,7 @@
     <p>
         {% blocktrans %}
             With this email we have disabled your alert automatically and you will not
-            receive any further email regarding this sdu.
+            receive any further email regarding this product.
         {% endblocktrans %}
     </p>
 {% endblock %}

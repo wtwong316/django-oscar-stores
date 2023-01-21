@@ -4,37 +4,37 @@ import factory
 from oscar.core.loading import get_model
 
 __all__ = [
-    'SduClassFactory', 'SduFactory',
-    'CategoryFactory', 'SduCategoryFactory',
-    'SduAttributeFactory', 'AttributeOptionGroupFactory',
+    'ProductClassFactory', 'ProductFactory',
+    'CategoryFactory', 'ProductCategoryFactory',
+    'ProductAttributeFactory', 'AttributeOptionGroupFactory',
     'OptionFactory', 'AttributeOptionFactory',
-    'SduAttributeValueFactory', 'SduReviewFactory',
-    'SduImageFactory'
+    'ProductAttributeValueFactory', 'ProductReviewFactory',
+    'ProductImageFactory'
 ]
 
 
-class SduClassFactory(factory.django.DjangoModelFactory):
+class ProductClassFactory(factory.django.DjangoModelFactory):
     name = "Books"
     #requires_shipping = True
     #track_stock = True
 
     class Meta:
-        model = get_model('catalogue', 'SduClass')
+        model = get_model('catalogue', 'ProductClass')
 
 
-class SduFactory(factory.django.DjangoModelFactory):
+class ProductFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = get_model('catalogue', 'Sdu')
+        model = get_model('catalogue', 'Product')
 
     structure = Meta.model.STANDALONE
     upc = factory.Sequence(lambda n: '978080213020%d' % n)
     title = "A confederacy of dunces"
-    sdu_class = factory.SubFactory(SduClassFactory)
+    product_class = factory.SubFactory(ProductClassFactory)
 
     stockrecords = factory.RelatedFactory(
-        'oscar.test.factories.StockRecordFactory', 'sdu')
+        'oscar.test.factories.StockRecordFactory', 'product')
     categories = factory.RelatedFactory(
-        'oscar.test.factories.SduCategoryFactory', 'sdu')
+        'oscar.test.factories.ProductCategoryFactory', 'product')
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -48,20 +48,20 @@ class CategoryFactory(factory.django.DjangoModelFactory):
         model = get_model('catalogue', 'Category')
 
 
-class SduCategoryFactory(factory.django.DjangoModelFactory):
+class ProductCategoryFactory(factory.django.DjangoModelFactory):
     category = factory.SubFactory(CategoryFactory)
 
     class Meta:
-        model = get_model('catalogue', 'SduCategory')
+        model = get_model('catalogue', 'ProductCategory')
 
 
-class SduAttributeFactory(factory.django.DjangoModelFactory):
+class ProductAttributeFactory(factory.django.DjangoModelFactory):
     code = name = 'weight'
-    sdu_class = factory.SubFactory(SduClassFactory)
+    product_class = factory.SubFactory(ProductClassFactory)
     type = "float"
 
     class Meta:
-        model = get_model('catalogue', 'SduAttribute')
+        model = get_model('catalogue', 'ProductAttribute')
 
 
 class OptionFactory(factory.django.DjangoModelFactory):
@@ -92,25 +92,25 @@ class AttributeOptionGroupFactory(factory.django.DjangoModelFactory):
         model = get_model('catalogue', 'AttributeOptionGroup')
 
 
-class SduAttributeValueFactory(factory.django.DjangoModelFactory):
-    attribute = factory.SubFactory(SduAttributeFactory)
-    sdu = factory.SubFactory(SduFactory)
+class ProductAttributeValueFactory(factory.django.DjangoModelFactory):
+    attribute = factory.SubFactory(ProductAttributeFactory)
+    product = factory.SubFactory(ProductFactory)
 
     class Meta:
-        model = get_model('catalogue', 'SduAttributeValue')
+        model = get_model('catalogue', 'ProductAttributeValue')
 
 
-class SduReviewFactory(factory.django.DjangoModelFactory):
+class ProductReviewFactory(factory.django.DjangoModelFactory):
     score = 5
-    sdu = factory.SubFactory(SduFactory, stockrecords=[])
+    product = factory.SubFactory(ProductFactory, stockrecords=[])
 
     class Meta:
-        model = get_model('reviews', 'SduReview')
+        model = get_model('reviews', 'ProductReview')
 
 
-class SduImageFactory(factory.django.DjangoModelFactory):
-    sdu = factory.SubFactory(SduFactory, stockrecords=[])
+class ProductImageFactory(factory.django.DjangoModelFactory):
+    product = factory.SubFactory(ProductFactory, stockrecords=[])
     original = factory.django.ImageField(width=100, height=200, filename='test_image.jpg')
 
     class Meta:
-        model = get_model('catalogue', 'SduImage')
+        model = get_model('catalogue', 'ProductImage')

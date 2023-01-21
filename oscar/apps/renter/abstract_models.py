@@ -99,26 +99,26 @@ class AbstractUser(auth_models.AbstractBaseUser,
         Transfer any active alerts linked to a user's email address to the
         newly registered user.
         """
-        SduAlert = self.alerts.model
-        alerts = SduAlert.objects.filter(
-            email=self.email, status=SduAlert.ACTIVE)
+        ProductAlert = self.alerts.model
+        alerts = ProductAlert.objects.filter(
+            email=self.email, status=ProductAlert.ACTIVE)
         alerts.update(user=self, key='', email='')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # Migrate any "anonymous" sdu alerts to the registered user
+        # Migrate any "anonymous" product alerts to the registered user
         # Ideally, this would be done via a post-save signal. But we can't
         # use get_user_model to wire up signals to custom user models
         # see Oscar ticket #1127, Django ticket #19218
         self._migrate_alerts_to_user()
 
 
-class AbstractSduAlert(models.Model):
+class AbstractProductAlert(models.Model):
     """
-    An alert for when a sdu comes back in stock
+    An alert for when a product comes back in stock
     """
-    sdu = models.ForeignKey(
-        'catalogue.Sdu',
+    product = models.ForeignKey(
+        'catalogue.Product',
         on_delete=models.CASCADE)
 
     # A user is only required if the notification is created by a
@@ -164,8 +164,8 @@ class AbstractSduAlert(models.Model):
         abstract = True
         app_label = 'renter'
         ordering = ['-date_created']
-        verbose_name = _('Sdu alert')
-        verbose_name_plural = _('Sdu alerts')
+        verbose_name = _('Product alert')
+        verbose_name_plural = _('Product alerts')
 
     @property
     def is_anonymous(self):

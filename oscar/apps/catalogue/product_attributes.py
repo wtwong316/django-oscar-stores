@@ -2,35 +2,35 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
-class SduAttributesContainer:
+class ProductAttributesContainer:
     """
-    Stolen liberally from django-eav, but simplified to be sdu-specific
+    Stolen liberally from django-eav, but simplified to be product-specific
 
-    To set attributes on a sdu, use the `attr` attribute:
+    To set attributes on a product, use the `attr` attribute:
 
-        sdu.attr.weight = 125
+        product.attr.weight = 125
 
     To refetch the attribute values from the database:
 
-        sdu.attr.refresh()
+        product.attr.refresh()
     """
 
     def __setstate__(self, state):
-        self.__dict__.setdefault("_sdu", None)
+        self.__dict__.setdefault("_product", None)
         self.__dict__.setdefault("_initialized", False)
         self.__dict__.setdefault("_dirty", set())
         self.__dict__ = state
 
-    def __init__(self, sdu):
+    def __init__(self, product):
         # use __dict__ directly to avoid triggering __setattr__, which would
         # cause a recursion error on _initialized.
         self.__dict__.update(
-            {"_sdu": sdu, "_initialized": False, "_dirty": set()}
+            {"_product": product, "_initialized": False, "_dirty": set()}
         )
 
     @property
-    def sdu(self):
-        return self._sdu
+    def product(self):
+        return self._product
 
     @property
     def initialized(self):
@@ -67,7 +67,7 @@ class SduAttributesContainer:
     def __getattr__(self, name):
         raise AttributeError(
             _("%(obj)s has no attribute named '%(attr)s'")
-            % {"obj": self.sdu.get_sdu_class(), "attr": name}
+            % {"obj": self.product.get_product_class(), "attr": name}
         )
 
     def __setattr__(self, name, value):
@@ -93,13 +93,13 @@ class SduAttributesContainer:
                     )
 
     def get_values(self):
-        return self.sdu.get_attribute_values()
+        return self.product.get_attribute_values()
 
     def get_value_by_attribute(self, attribute):
         return self.get_values().get(attribute=attribute)
 
     def get_all_attributes(self):
-        return self.sdu.get_sdu_class().attributes.all()
+        return self.product.get_product_class().attributes.all()
 
     def get_attribute_by_code(self, code):
         return self.get_all_attributes().get(code=code)
@@ -112,7 +112,7 @@ class SduAttributesContainer:
             if hasattr(self, attribute.code):
                 value = getattr(self, attribute.code)
                 if attribute.code not in self._dirty:
-                    # Make sure that if a value comes from a parent sdu, it is not
+                    # Make sure that if a value comes from a parent product, it is not
                     # copied to the child, we do this by checking if a value has been
                     # changed, which would not be the case if the value comes from the
                     # parent.
@@ -125,4 +125,4 @@ class SduAttributesContainer:
                     except ObjectDoesNotExist:
                         pass  # there is no existing value, so a value needs to be saved.
 
-                attribute.save_value(self.sdu, value)
+                attribute.save_value(self.product, value)

@@ -12,39 +12,39 @@ from django_tables2 import SingleTableMixin, SingleTableView
 from oscar.core.loading import get_class, get_classes, get_model
 from oscar.views.generic import ObjectLookupView
 
-(SduForm,
- SduClassSelectForm,
- SduSearchForm,
- SduClassForm,
+(ProductForm,
+ ProductClassSelectForm,
+ ProductSearchForm,
+ ProductClassForm,
  CategoryForm,
  StockAlertSearchForm,
  AttributeOptionGroupForm,
  OptionForm) \
     = get_classes('dashboard.catalogue.forms',
-                  ('SduForm',
-                   'SduClassSelectForm',
-                   'SduSearchForm',
-                   'SduClassForm',
+                  ('ProductForm',
+                   'ProductClassSelectForm',
+                   'ProductSearchForm',
+                   'ProductClassForm',
                    'CategoryForm',
                    'StockAlertSearchForm',
                    'AttributeOptionGroupForm',
                    'OptionForm'))
 (StockRecordFormSet,
- SduCategoryFormSet,
- SduImageFormSet,
- SduRecommendationFormSet,
- SduAttributesFormSet,
+ ProductCategoryFormSet,
+ ProductImageFormSet,
+ ProductRecommendationFormSet,
+ ProductAttributesFormSet,
  AttributeOptionFormSet) \
     = get_classes('dashboard.catalogue.formsets',
                   ('StockRecordFormSet',
-                   'SduCategoryFormSet',
-                   'SduImageFormSet',
-                   'SduRecommendationFormSet',
-                   'SduAttributesFormSet',
+                   'ProductCategoryFormSet',
+                   'ProductImageFormSet',
+                   'ProductRecommendationFormSet',
+                   'ProductAttributesFormSet',
                    'AttributeOptionFormSet'))
-SduTable, CategoryTable, AttributeOptionGroupTable, OptionTable \
+ProductTable, CategoryTable, AttributeOptionGroupTable, OptionTable \
     = get_classes('dashboard.catalogue.tables',
-                  ('SduTable', 'CategoryTable',
+                  ('ProductTable', 'CategoryTable',
                    'AttributeOptionGroupTable', 'OptionTable'))
 (PopUpWindowCreateMixin,
  PopUpWindowUpdateMixin,
@@ -53,12 +53,12 @@ SduTable, CategoryTable, AttributeOptionGroupTable, OptionTable \
                   ('PopUpWindowCreateMixin',
                    'PopUpWindowUpdateMixin',
                    'PopUpWindowDeleteMixin'))
-PartnerSduFilterMixin = get_class('dashboard.catalogue.mixins', 'PartnerSduFilterMixin')
-Sdu = get_model('catalogue', 'Sdu')
+PartnerProductFilterMixin = get_class('dashboard.catalogue.mixins', 'PartnerProductFilterMixin')
+Product = get_model('catalogue', 'Product')
 Category = get_model('catalogue', 'Category')
-SduImage = get_model('catalogue', 'SduImage')
-SduCategory = get_model('catalogue', 'SduCategory')
-SduClass = get_model('catalogue', 'SduClass')
+ProductImage = get_model('catalogue', 'ProductImage')
+ProductCategory = get_model('catalogue', 'ProductCategory')
+ProductClass = get_model('catalogue', 'ProductClass')
 StockRecord = get_model('partner', 'StockRecord')
 StockAlert = get_model('partner', 'StockAlert')
 Partner = get_model('partner', 'Partner')
@@ -66,29 +66,29 @@ AttributeOptionGroup = get_model('catalogue', 'AttributeOptionGroup')
 Option = get_model('catalogue', 'Option')
 
 
-class SduListView(PartnerSduFilterMixin, SingleTableView):
+class ProductListView(PartnerProductFilterMixin, SingleTableView):
 
     """
-    Dashboard view of the sdu list.
+    Dashboard view of the product list.
     Supports the permission-based dashboard.
     """
 
-    template_name = 'oscar/dashboard/catalogue/sdu_list.html'
-    form_class = SduSearchForm
-    sdu_class_form_class = SduClassSelectForm
-    table_class = SduTable
-    context_table_name = 'sdus'
+    template_name = 'oscar/dashboard/catalogue/product_list.html'
+    form_class = ProductSearchForm
+    product_class_form_class = ProductClassSelectForm
+    table_class = ProductTable
+    context_table_name = 'products'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form'] = self.form
-        ctx['sdu_class_form'] = self.sdu_class_form_class()
+        ctx['product_class_form'] = self.product_class_form_class()
         return ctx
 
     def get_description(self, form):
         if form.is_valid() and any(form.cleaned_data.values()):
-            return _('Sdu search results')
-        return _('Sdus')
+            return _('Product search results')
+        return _('Products')
 
     def get_table(self, **kwargs):
         if 'recently_edited' in self.request.GET:
@@ -105,7 +105,7 @@ class SduListView(PartnerSduFilterMixin, SingleTableView):
         """
         Build the queryset for this list
         """
-        queryset = Sdu.objects.browsable_dashboard().base_queryset()
+        queryset = Product.objects.browsable_dashboard().base_queryset()
         queryset = self.filter_queryset(queryset)
         queryset = self.apply_search(queryset)
         return queryset
@@ -131,10 +131,10 @@ class SduListView(PartnerSduFilterMixin, SingleTableView):
             # them if there are any. Otherwise we return all results
             # that contain the UPC.
 
-            # Look up all matches (child sdus, sdus not allowed to access) ...
-            matches_upc = Sdu.objects.filter(Q(upc__iexact=upc) | Q(children__upc__iexact=upc))
+            # Look up all matches (child products, products not allowed to access) ...
+            matches_upc = Product.objects.filter(Q(upc__iexact=upc) | Q(children__upc__iexact=upc))
 
-            # ... and use that to pick all standalone or parent sdus that the user is
+            # ... and use that to pick all standalone or parent products that the user is
             # allowed to access.
             qs_match = queryset.filter(
                 Q(id__in=matches_upc.values('id')) | Q(id__in=matches_upc.values('parent_id')))
@@ -144,7 +144,7 @@ class SduListView(PartnerSduFilterMixin, SingleTableView):
                 queryset = qs_match
             else:
                 # No direct UPC match. Let's try the same with an icontains search.
-                matches_upc = Sdu.objects.filter(Q(upc__icontains=upc) | Q(children__upc__icontains=upc))
+                matches_upc = Product.objects.filter(Q(upc__icontains=upc) | Q(children__upc__icontains=upc))
                 queryset = queryset.filter(
                     Q(id__in=matches_upc.values('id')) | Q(id__in=matches_upc.values('parent_id')))
 
@@ -155,53 +155,53 @@ class SduListView(PartnerSduFilterMixin, SingleTableView):
         return queryset.distinct()
 
 
-class SduCreateRedirectView(generic.RedirectView):
+class ProductCreateRedirectView(generic.RedirectView):
     permanent = False
-    sdu_class_form_class = SduClassSelectForm
+    product_class_form_class = ProductClassSelectForm
 
-    def get_sdu_create_url(self, sdu_class):
+    def get_product_create_url(self, product_class):
         """ Allow site to provide custom URL """
-        return reverse('dashboard:catalogue-sdu-create',
-                       kwargs={'sdu_class_slug': sdu_class.slug})
+        return reverse('dashboard:catalogue-product-create',
+                       kwargs={'product_class_slug': product_class.slug})
 
-    def get_invalid_sdu_class_url(self):
-        messages.error(self.request, _("Please choose a sdu type"))
-        return reverse('dashboard:catalogue-sdu-list')
+    def get_invalid_product_class_url(self):
+        messages.error(self.request, _("Please choose a product type"))
+        return reverse('dashboard:catalogue-product-list')
 
     def get_redirect_url(self, **kwargs):
-        form = self.sdu_class_form_class(self.request.GET)
+        form = self.product_class_form_class(self.request.GET)
         if form.is_valid():
-            sdu_class = form.cleaned_data['sdu_class']
-            return self.get_sdu_create_url(sdu_class)
+            product_class = form.cleaned_data['product_class']
+            return self.get_product_create_url(product_class)
 
         else:
-            return self.get_invalid_sdu_class_url()
+            return self.get_invalid_product_class_url()
 
 
-class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
+class ProductCreateUpdateView(PartnerProductFilterMixin, generic.UpdateView):
     """
-    Dashboard view that is can both create and update sdus of all kinds.
+    Dashboard view that is can both create and update products of all kinds.
     It can be used in three different ways, each of them with a unique URL
     pattern:
-    - When creating a new standalone sdu, this view is called with the
-      desired sdu class
-    - When editing an existing sdu, this view is called with the sdu's
-      primary key. If the sdu is a child sdu, the template considerably
+    - When creating a new standalone product, this view is called with the
+      desired product class
+    - When editing an existing product, this view is called with the product's
+      primary key. If the product is a child product, the template considerably
       reduces the available form fields.
-    - When creating a new child sdu, this view is called with the parent's
+    - When creating a new child product, this view is called with the parent's
       primary key.
 
     Supports the permission-based dashboard.
     """
 
-    template_name = 'oscar/dashboard/catalogue/sdu_update.html'
-    model = Sdu
-    context_object_name = 'sdu'
+    template_name = 'oscar/dashboard/catalogue/product_update.html'
+    model = Product
+    context_object_name = 'product'
 
-    form_class = SduForm
-    category_formset = SduCategoryFormSet
-    image_formset = SduImageFormSet
-    recommendations_formset = SduRecommendationFormSet
+    form_class = ProductForm
+    category_formset = ProductCategoryFormSet
+    image_formset = ProductImageFormSet
+    recommendations_formset = ProductRecommendationFormSet
     stockrecord_formset = StockRecordFormSet
 
     creating = False
@@ -224,61 +224,61 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
         Allows checking the objects fetched by get_object and redirect
         if they don't satisfy our needs.
         Is used to redirect when create a new variant and the specified
-        parent sdu can't actually be turned into a parent sdu.
+        parent product can't actually be turned into a parent product.
         """
         if self.creating and self.parent is not None:
             is_valid, reason = self.parent.can_be_parent(give_reason=True)
             if not is_valid:
                 messages.error(self.request, reason)
-                return redirect('dashboard:catalogue-sdu-list')
+                return redirect('dashboard:catalogue-product-list')
 
     def get_queryset(self):
         """
-        Filter sdus that the user doesn't have permission to update
+        Filter products that the user doesn't have permission to update
         """
-        return self.filter_queryset(Sdu.objects.all())
+        return self.filter_queryset(Product.objects.all())
 
     def get_object(self, queryset=None):
         """
-        This parts allows generic.UpdateView to handle creating sdus as
+        This parts allows generic.UpdateView to handle creating products as
         well. The only distinction between an UpdateView and a CreateView
         is that self.object is None. We emulate this behavior.
 
-        This method is also responsible for setting self.sdu_class and
+        This method is also responsible for setting self.product_class and
         self.parent.
         """
         self.creating = 'pk' not in self.kwargs
         if self.creating:
-            # Specifying a parent sdu is only done when creating a child
-            # sdu.
+            # Specifying a parent product is only done when creating a child
+            # product.
             parent_pk = self.kwargs.get('parent_pk')
             if parent_pk is None:
                 self.parent = None
-                # A sdu class needs to be specified when creating a
-                # standalone sdu.
-                sdu_class_slug = self.kwargs.get('sdu_class_slug')
-                self.sdu_class = get_object_or_404(
-                    SduClass, slug=sdu_class_slug)
+                # A product class needs to be specified when creating a
+                # standalone product.
+                product_class_slug = self.kwargs.get('product_class_slug')
+                self.product_class = get_object_or_404(
+                    ProductClass, slug=product_class_slug)
             else:
-                self.parent = get_object_or_404(Sdu, pk=parent_pk)
-                self.sdu_class = self.parent.sdu_class
+                self.parent = get_object_or_404(Product, pk=parent_pk)
+                self.product_class = self.parent.product_class
 
             return None  # success
         else:
-            sdu = super().get_object(queryset)
-            self.sdu_class = sdu.get_sdu_class()
-            self.parent = sdu.parent
-            return sdu
+            product = super().get_object(queryset)
+            self.product_class = product.get_product_class()
+            self.parent = product.parent
+            return product
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['sdu_class'] = self.sdu_class
+        ctx['product_class'] = self.product_class
         ctx['parent'] = self.parent
         ctx['title'] = self.get_page_title()
 
         for ctx_name, formset_class in self.formsets.items():
             if ctx_name not in ctx:
-                ctx[ctx_name] = formset_class(self.sdu_class,
+                ctx[ctx_name] = formset_class(self.product_class,
                                               self.request.user,
                                               instance=self.object)
         return ctx
@@ -286,21 +286,21 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
     def get_page_title(self):
         if self.creating:
             if self.parent is None:
-                return _('Create new %(sdu_class)s sdu') % {
-                    'sdu_class': self.sdu_class.name}
+                return _('Create new %(product_class)s product') % {
+                    'product_class': self.product_class.name}
             else:
-                return _('Create new variant of %(parent_sdu)s') % {
-                    'parent_sdu': self.parent.title}
+                return _('Create new variant of %(parent_product)s') % {
+                    'parent_product': self.parent.title}
         else:
             if self.object.title or not self.parent:
                 return self.object.title
             else:
-                return _('Editing variant of %(parent_sdu)s') % {
-                    'parent_sdu': self.parent.title}
+                return _('Editing variant of %(parent_product)s') % {
+                    'parent_product': self.parent.title}
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['sdu_class'] = self.sdu_class
+        kwargs['product_class'] = self.product_class
         kwargs['parent'] = self.parent
         return kwargs
 
@@ -309,14 +309,14 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
         Short-circuits the regular logic to have one place to have our
         logic to check all forms
         """
-        # Need to create the sdu here because the inline forms need it
-        # can't use commit=False because SduForm does not support it
+        # Need to create the product here because the inline forms need it
+        # can't use commit=False because ProductForm does not support it
         if self.creating and form.is_valid():
             self.object = form.save()
 
         formsets = {}
         for ctx_name, formset_class in self.formsets.items():
-            formsets[ctx_name] = formset_class(self.sdu_class,
+            formsets[ctx_name] = formset_class(self.product_class,
                                                self.request.user,
                                                self.request.POST,
                                                self.request.FILES,
@@ -332,7 +332,7 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
             return self.forms_invalid(form, formsets)
 
     # form_valid and form_invalid are called depending on the validation result
-    # of just the sdu form and redisplay the form respectively return a
+    # of just the product form and redisplay the form respectively return a
     # redirect to the success URL. In both cases we need to check our formsets
     # as well, so both methods do the same. process_all_forms then calls
     # forms_valid or forms_invalid respectively, which do the redisplay or
@@ -351,13 +351,13 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
     def forms_valid(self, form, formsets):
         """
         Save all changes and display a success url.
-        When creating the first child sdu, this method also sets the new
+        When creating the first child product, this method also sets the new
         parent's structure accordingly.
         """
         if self.creating:
             self.handle_adding_child(self.parent)
         else:
-            # a just created sdu was already saved in process_all_forms()
+            # a just created product was already saved in process_all_forms()
             self.object = form.save()
 
         # Save formsets
@@ -372,19 +372,19 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
 
     def handle_adding_child(self, parent):
         """
-        When creating the first child sdu, the parent sdu needs
-        to be implicitly converted from a standalone sdu to a
-        parent sdu.
+        When creating the first child product, the parent product needs
+        to be implicitly converted from a standalone product to a
+        parent product.
         """
-        # SduForm eagerly sets the future parent's structure to PARENT to
+        # ProductForm eagerly sets the future parent's structure to PARENT to
         # pass validation, but it's not persisted in the database. We ensure
         # it's persisted by calling save()
         if parent is not None:
-            parent.structure = Sdu.PARENT
+            parent.structure = Product.PARENT
             parent.save()
 
     def forms_invalid(self, form, formsets):
-        # delete the temporary sdu again
+        # delete the temporary product again
         if self.creating and self.object and self.object.pk is not None:
             self.object.delete()
             self.object = None
@@ -404,15 +404,15 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
     def get_success_url(self):
         """
         Renders a success message and redirects depending on the button:
-        - Standard case is pressing "Save"; redirects to the sdu list
+        - Standard case is pressing "Save"; redirects to the product list
         - When "Save and continue" is pressed, we stay on the same page
-        - When "Create (another) child sdu" is pressed, it redirects
-          to a new sdu creation page
+        - When "Create (another) child product" is pressed, it redirects
+          to a new product creation page
         """
         msg = render_to_string(
-            'oscar/dashboard/catalogue/messages/sdu_saved.html',
+            'oscar/dashboard/catalogue/messages/product_saved.html',
             {
-                'sdu': self.object,
+                'product': self.object,
                 'creating': self.creating,
                 'request': self.request
             })
@@ -421,63 +421,63 @@ class SduCreateUpdateView(PartnerSduFilterMixin, generic.UpdateView):
         action = self.request.POST.get('action')
         if action == 'continue':
             url = reverse(
-                'dashboard:catalogue-sdu', kwargs={"pk": self.object.id})
+                'dashboard:catalogue-product', kwargs={"pk": self.object.id})
         elif action == 'create-another-child' and self.parent:
             url = reverse(
-                'dashboard:catalogue-sdu-create-child',
+                'dashboard:catalogue-product-create-child',
                 kwargs={'parent_pk': self.parent.pk})
         elif action == 'create-child':
             url = reverse(
-                'dashboard:catalogue-sdu-create-child',
+                'dashboard:catalogue-product-create-child',
                 kwargs={'parent_pk': self.object.pk})
         else:
-            url = reverse('dashboard:catalogue-sdu-list')
+            url = reverse('dashboard:catalogue-product-list')
         return self.get_url_with_querystring(url)
 
 
-class SduDeleteView(PartnerSduFilterMixin, generic.DeleteView):
+class ProductDeleteView(PartnerProductFilterMixin, generic.DeleteView):
     """
-    Dashboard view to delete a sdu. Has special logic for deleting the
-    last child sdu.
+    Dashboard view to delete a product. Has special logic for deleting the
+    last child product.
     Supports the permission-based dashboard.
     """
-    template_name = 'oscar/dashboard/catalogue/sdu_delete.html'
-    model = Sdu
-    context_object_name = 'sdu'
+    template_name = 'oscar/dashboard/catalogue/product_delete.html'
+    model = Product
+    context_object_name = 'product'
 
     def get_queryset(self):
         """
-        Filter sdus that the user doesn't have permission to update
+        Filter products that the user doesn't have permission to update
         """
-        return self.filter_queryset(Sdu.objects.all())
+        return self.filter_queryset(Product.objects.all())
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         if self.object.is_child:
-            ctx['title'] = _("Delete sdu variant?")
+            ctx['title'] = _("Delete product variant?")
         else:
-            ctx['title'] = _("Delete sdu?")
+            ctx['title'] = _("Delete product?")
         return ctx
 
     def delete(self, request, *args, **kwargs):
         # We override the core delete method and don't call super in order to
-        # apply more sophisticated logic around handling child sdus.
-        # Calling super makes it difficult to test if the sdu being deleted
+        # apply more sophisticated logic around handling child products.
+        # Calling super makes it difficult to test if the product being deleted
         # is the last child.
 
         self.object = self.get_object()
 
-        # Before performing the delete, record whether this sdu is the last
+        # Before performing the delete, record whether this product is the last
         # child.
         is_last_child = False
         if self.object.is_child:
             parent = self.object.parent
             is_last_child = parent.children.count() == 1
 
-        # This also deletes any child sdus.
+        # This also deletes any child products.
         self.object.delete()
 
-        # If the sdu being deleted is the last child, then pass control
+        # If the product being deleted is the last child, then pass control
         # to a method than can adjust the parent itself.
         if is_last_child:
             self.handle_deleting_last_child(parent)
@@ -485,30 +485,30 @@ class SduDeleteView(PartnerSduFilterMixin, generic.DeleteView):
         return HttpResponseRedirect(self.get_success_url())
 
     def handle_deleting_last_child(self, parent):
-        # If the last child sdu is deleted, this view defaults to turning
-        # the parent sdu into a standalone sdu. While this is
+        # If the last child product is deleted, this view defaults to turning
+        # the parent product into a standalone product. While this is
         # appropriate for many scenarios, it is intentionally easily
-        # overridable and not automatically done in e.g. a Sdu's delete()
+        # overridable and not automatically done in e.g. a Product's delete()
         # method as it is more a UX helper than hard business logic.
         parent.structure = parent.STANDALONE
         parent.save()
 
     def get_success_url(self):
         """
-        When deleting child sdus, this view redirects to editing the
-        parent sdu. When deleting any other sdu, it redirects to the
-        sdu list view.
+        When deleting child products, this view redirects to editing the
+        parent product. When deleting any other product, it redirects to the
+        product list view.
         """
         if self.object.is_child:
-            msg = _("Deleted sdu variant '%s'") % self.object.get_title()
+            msg = _("Deleted product variant '%s'") % self.object.get_title()
             messages.success(self.request, msg)
             return reverse(
-                'dashboard:catalogue-sdu',
+                'dashboard:catalogue-product',
                 kwargs={'pk': self.object.parent_id})
         else:
-            msg = _("Deleted sdu '%s'") % self.object.title
+            msg = _("Deleted product '%s'") % self.object.title
             messages.success(self.request, msg)
-            return reverse('dashboard:catalogue-sdu-list')
+            return reverse('dashboard:catalogue-product-list')
 
 
 class StockAlertListView(generic.ListView):
@@ -632,8 +632,8 @@ class CategoryDeleteView(CategoryListMixin, generic.DeleteView):
         return super().get_success_url()
 
 
-class SduLookupView(ObjectLookupView):
-    model = Sdu
+class ProductLookupView(ObjectLookupView):
+    model = Product
 
     def get_queryset(self):
         return self.model.objects.browsable().all()
@@ -643,24 +643,24 @@ class SduLookupView(ObjectLookupView):
                          | Q(parent__title__icontains=term))
 
 
-class SduClassCreateUpdateView(generic.UpdateView):
+class ProductClassCreateUpdateView(generic.UpdateView):
 
-    template_name = 'oscar/dashboard/catalogue/sdu_class_form.html'
-    model = SduClass
-    form_class = SduClassForm
-    sdu_attributes_formset = SduAttributesFormSet
+    template_name = 'oscar/dashboard/catalogue/product_class_form.html'
+    model = ProductClass
+    form_class = ProductClassForm
+    product_attributes_formset = ProductAttributesFormSet
 
     def process_all_forms(self, form):
         """
-        This validates both the SduClass form and the
-        SduClassAttributes formset at once
+        This validates both the ProductClass form and the
+        ProductClassAttributes formset at once
         making it possible to display all their errors at once.
         """
         if self.creating and form.is_valid():
-            # the object will be needed by the sdu_attributes_formset
+            # the object will be needed by the product_attributes_formset
             self.object = form.save(commit=False)
 
-        attributes_formset = self.sdu_attributes_formset(
+        attributes_formset = self.product_attributes_formset(
             self.request.POST, self.request.FILES, instance=self.object)
 
         is_valid = form.is_valid() and attributes_formset.is_valid()
@@ -686,7 +686,7 @@ class SduClassCreateUpdateView(generic.UpdateView):
         return self.render_to_response(ctx)
 
     # form_valid and form_invalid are called depending on the validation result
-    # of just the sdu class form, and return a redirect to the success URL
+    # of just the product class form, and return a redirect to the success URL
     # or redisplay the form, respectively. In both cases we need to check our
     # formsets as well, so both methods do the same. process_all_forms then
     # calls forms_valid or forms_invalid respectively, which do the redisplay
@@ -698,7 +698,7 @@ class SduClassCreateUpdateView(generic.UpdateView):
             *args, **kwargs)
 
         if "attributes_formset" not in ctx:
-            ctx["attributes_formset"] = self.sdu_attributes_formset(
+            ctx["attributes_formset"] = self.product_attributes_formset(
                 instance=self.object)
 
         ctx["title"] = self.get_title()
@@ -706,7 +706,7 @@ class SduClassCreateUpdateView(generic.UpdateView):
         return ctx
 
 
-class SduClassCreateView(SduClassCreateUpdateView):
+class ProductClassCreateView(ProductClassCreateUpdateView):
 
     creating = True
 
@@ -714,60 +714,60 @@ class SduClassCreateView(SduClassCreateUpdateView):
         return None
 
     def get_title(self):
-        return _("Add a new sdu type")
+        return _("Add a new product type")
 
     def get_success_url(self):
-        messages.info(self.request, _("Sdu type created successfully"))
+        messages.info(self.request, _("Product type created successfully"))
         return reverse("dashboard:catalogue-class-list")
 
 
-class SduClassUpdateView(SduClassCreateUpdateView):
+class ProductClassUpdateView(ProductClassCreateUpdateView):
 
     creating = False
 
     def get_title(self):
-        return _("Update sdu type '%s'") % self.object.name
+        return _("Update product type '%s'") % self.object.name
 
     def get_success_url(self):
-        messages.info(self.request, _("Sdu type updated successfully"))
+        messages.info(self.request, _("Product type updated successfully"))
         return reverse("dashboard:catalogue-class-list")
 
     def get_object(self):
-        sdu_class = get_object_or_404(SduClass, pk=self.kwargs['pk'])
-        return sdu_class
+        product_class = get_object_or_404(ProductClass, pk=self.kwargs['pk'])
+        return product_class
 
 
-class SduClassListView(generic.ListView):
-    template_name = 'oscar/dashboard/catalogue/sdu_class_list.html'
+class ProductClassListView(generic.ListView):
+    template_name = 'oscar/dashboard/catalogue/product_class_list.html'
     context_object_name = 'classes'
-    model = SduClass
+    model = ProductClass
 
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
-        ctx['title'] = _("Sdu Types")
+        ctx['title'] = _("Product Types")
         return ctx
 
 
-class SduClassDeleteView(generic.DeleteView):
-    template_name = 'oscar/dashboard/catalogue/sdu_class_delete.html'
-    model = SduClass
-    form_class = SduClassForm
+class ProductClassDeleteView(generic.DeleteView):
+    template_name = 'oscar/dashboard/catalogue/product_class_delete.html'
+    model = ProductClass
+    form_class = ProductClassForm
 
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
-        ctx['title'] = _("Delete sdu type '%s'") % self.object.name
-        sdu_count = self.object.sdus.count()
+        ctx['title'] = _("Delete product type '%s'") % self.object.name
+        product_count = self.object.products.count()
 
-        if sdu_count > 0:
+        if product_count > 0:
             ctx['disallow'] = True
             ctx['title'] = _("Unable to delete '%s'") % self.object.name
             messages.error(self.request,
-                           _("%i sdus are still assigned to this type") %
-                           sdu_count)
+                           _("%i products are still assigned to this type") %
+                           product_count)
         return ctx
 
     def get_success_url(self):
-        messages.info(self.request, _("Sdu type deleted successfully"))
+        messages.info(self.request, _("Product type deleted successfully"))
         return reverse("dashboard:catalogue-class-list")
 
 
@@ -893,13 +893,13 @@ class AttributeOptionGroupDeleteView(PopUpWindowDeleteMixin, generic.DeleteView)
 
         ctx['title'] = _("Delete Attribute Option Group '%s'") % self.object.name
 
-        sdu_attribute_count = self.object.sdu_attributes.count()
-        if sdu_attribute_count > 0:
+        product_attribute_count = self.object.product_attributes.count()
+        if product_attribute_count > 0:
             ctx['disallow'] = True
             ctx['title'] = _("Unable to delete '%s'") % self.object.name
             messages.error(self.request,
-                           _("%i sdu attributes are still assigned to this attribute option group") %
-                           sdu_attribute_count)
+                           _("%i product attributes are still assigned to this attribute option group") %
+                           product_attribute_count)
 
         ctx['http_get_params'] = self.request.GET
 
@@ -997,20 +997,20 @@ class OptionDeleteView(PopUpWindowDeleteMixin, generic.DeleteView):
 
         ctx['title'] = _("Delete Option '%s'") % self.object.name
 
-        sdus = self.object.sdu_set.count()
-        sdu_classes = self.object.sdu_class_set.count()
-        if any([sdus, sdu_classes]):
+        products = self.object.product_set.count()
+        product_classes = self.object.product_class_set.count()
+        if any([products, product_classes]):
             ctx['disallow'] = True
             ctx['title'] = _("Unable to delete '%s'") % self.object.name
-            if sdus:
+            if products:
                 messages.error(
                     self.request,
-                    _("%i sdus are still assigned to this option") % sdus
+                    _("%i products are still assigned to this option") % products
                 )
-            if sdu_classes:
+            if product_classes:
                 messages.error(
                     self.request,
-                    _("%i sdu classes are still assigned to this option") % sdu_classes
+                    _("%i product classes are still assigned to this option") % product_classes
                 )
 
         return ctx

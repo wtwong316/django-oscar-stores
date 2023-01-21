@@ -8,8 +8,8 @@ register = template.Library()
 
 
 @register.simple_tag
-def sdf_stock_for_sdu(sdu, location=None, limit=20):
-    query_set = SdfStock.objects.filter(sdu=sdu)
+def sdf_stock_for_product(product, location=None, limit=20):
+    query_set = SdfStock.objects.filter(product=product)
     if location:
         query_set = query_set.annotate(
             distance=Distance('sdf__location', location)

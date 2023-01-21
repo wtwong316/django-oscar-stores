@@ -379,8 +379,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='line',
-            name='sdu',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='catalogue.sdu', verbose_name='Sdu'),
+            name='product',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='catalogue.product', verbose_name='Product'),
         ),
         migrations.AddField(
             model_name='line',

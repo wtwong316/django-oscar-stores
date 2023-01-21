@@ -20,7 +20,7 @@ from oscar.core.utils import datetime_combine
 from oscar.forms import widgets
 
 RenterDispatcher = get_class('renter.utils', 'RenterDispatcher')
-SduAlert = get_model('renter', 'SduAlert')
+ProductAlert = get_model('renter', 'ProductAlert')
 User = get_user_model()
 
 
@@ -342,15 +342,15 @@ else:
     ProfileForm = UserForm
 
 
-class SduAlertForm(forms.ModelForm):
+class ProductAlertForm(forms.ModelForm):
     email = forms.EmailField(required=True, label=_('Send notification to'),
                              widget=forms.TextInput(attrs={
                                  'placeholder': _('Enter your email')
                              }))
 
-    def __init__(self, user, sdu, *args, **kwargs):
+    def __init__(self, user, product, *args, **kwargs):
         self.user = user
-        self.sdu = sdu
+        self.product = product
         super().__init__(*args, **kwargs)
 
         # Only show email field to unauthenticated users
@@ -362,7 +362,7 @@ class SduAlertForm(forms.ModelForm):
         alert = super().save(commit=False)
         if self.user.is_authenticated:
             alert.user = self.user
-        alert.sdu = self.sdu
+        alert.product = self.product
         if commit:
             alert.save()
         return alert
@@ -372,10 +372,10 @@ class SduAlertForm(forms.ModelForm):
         email = cleaned_data.get('email')
         if email:
             try:
-                SduAlert.objects.get(
-                    sdu=self.sdu, email__iexact=email,
-                    status=SduAlert.ACTIVE)
-            except SduAlert.DoesNotExist:
+                ProductAlert.objects.get(
+                    product=self.product, email__iexact=email,
+                    status=ProductAlert.ACTIVE)
+            except ProductAlert.DoesNotExist:
                 pass
             else:
                 raise forms.ValidationError(_(
@@ -384,24 +384,24 @@ class SduAlertForm(forms.ModelForm):
             # Check that the email address hasn't got other unconfirmed alerts.
             # If they do then we don't want to spam them with more until they
             # have confirmed or cancelled the existing alert.
-            if SduAlert.objects.filter(email__iexact=email,
-                                           status=SduAlert.UNCONFIRMED).count():
+            if ProductAlert.objects.filter(email__iexact=email,
+                                           status=ProductAlert.UNCONFIRMED).count():
                 raise forms.ValidationError(_(
-                    "%s has been sent a confirmation email for another sdu "
+                    "%s has been sent a confirmation email for another product "
                     "alert on this site. Please confirm or cancel that request "
                     "before signing up for more alerts.") % email)
         elif self.user.is_authenticated:
             try:
-                SduAlert.objects.get(sdu=self.sdu,
+                ProductAlert.objects.get(product=self.product,
                                          user=self.user,
-                                         status=SduAlert.ACTIVE)
-            except SduAlert.DoesNotExist:
+                                         status=ProductAlert.ACTIVE)
+            except ProductAlert.DoesNotExist:
                 pass
             else:
                 raise forms.ValidationError(_(
-                    "You already have an active alert for this sdu"))
+                    "You already have an active alert for this product"))
         return cleaned_data
 
     class Meta:
-        model = SduAlert
+        model = ProductAlert
         fields = ['email']

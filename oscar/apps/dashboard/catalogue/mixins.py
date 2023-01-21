@@ -1,12 +1,12 @@
 from django.db.models import Q
 
 
-class PartnerSduFilterMixin:
+class PartnerProductFilterMixin:
     def filter_queryset(self, queryset):
         """
-        Restrict the queryset to sdus the given user has access to.
-        A staff user is allowed to access all Sdus.
-        A non-staff user is only allowed access to a sdu if they are in at
+        Restrict the queryset to products the given user has access to.
+        A staff user is allowed to access all Products.
+        A non-staff user is only allowed access to a product if they are in at
         least one stock record's partner user list.
         """
         user = self.request.user

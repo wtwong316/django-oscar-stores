@@ -5,19 +5,19 @@
 {% block report %}
 <table class="table table-striped table-bordered table-hover">
     <tr>
-        <th>{% trans "Sdu" %}</th>
+        <th>{% trans "Product" %}</th>
         <th>{% trans "Views" %}</th>
         <th>{% trans "Basket additions" %}</th>
         <th>{% trans "Purchases" %}</th>
     </tr>
-    {% for sdu in objects %}
+    {% for product in objects %}
     <tr>
         <td>
-        <a href="{% url 'dashboard:catalogue-sdu' sdu.sdu.id %}">{{ sdu.sdu }}</a>
+        <a href="{% url 'dashboard:catalogue-product' product.product.id %}">{{ product.product }}</a>
         </td>
-        <td>{{ sdu.num_views }}</td>
-        <td>{{ sdu.num_basket_additions }}</td>
-        <td>{{ sdu.num_purchases }}</td>
+        <td>{{ product.num_views }}</td>
+        <td>{{ product.num_basket_additions }}</td>
+        <td>{{ product.num_purchases }}</td>
     </tr>
     {% endfor %}
 </table>

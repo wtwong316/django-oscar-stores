@@ -439,20 +439,20 @@ class AbstractConditionalOffer(models.Model):
         return restrictions
 
     @property
-    def has_sdus(self):
+    def has_products(self):
         return self.condition.range is not None
 
-    def sdus(self):
+    def products(self):
         """
-        Return a queryset of sdus in this offer
+        Return a queryset of products in this offer
         """
-        Sdu = get_model('catalogue', 'Sdu')
-        if not self.has_sdus:
-            return Sdu.objects.none()
+        Product = get_model('catalogue', 'Product')
+        if not self.has_products:
+            return Product.objects.none()
 
-        queryset = self.condition.range.all_sdus()
+        queryset = self.condition.range.all_products()
         return queryset.filter(is_discountable=True).exclude(
-            structure=Sdu.CHILD)
+            structure=Product.CHILD)
 
     @cached_property
     def combined_offers(self):
@@ -477,11 +477,11 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
     SHIPPING_PERCENTAGE, SHIPPING_ABSOLUTE, SHIPPING_FIXED_PRICE = (
         'Shipping percentage', 'Shipping absolute', 'Shipping fixed price')
     TYPE_CHOICES = (
-        (PERCENTAGE, _("Discount is a percentage off of the sdu's value")),
-        (FIXED, _("Discount is a fixed amount off of the sdu's value")),
-        (MULTIBUY, _("Discount is to give the cheapest sdu for free")),
+        (PERCENTAGE, _("Discount is a percentage off of the product's value")),
+        (FIXED, _("Discount is a fixed amount off of the product's value")),
+        (MULTIBUY, _("Discount is to give the cheapest product for free")),
         (FIXED_PRICE,
-         _("Get the sdus that meet the condition for a fixed price")),
+         _("Get the products that meet the condition for a fixed price")),
         (SHIPPING_ABSOLUTE,
          _("Discount is a fixed amount of the shipping cost")),
         (SHIPPING_FIXED_PRICE, _("Get shipping for a fixed price")),
@@ -497,7 +497,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
     value = fields.PositiveDecimalField(
         _("Value"), decimal_places=2, max_digits=12, null=True, blank=True)
 
-    # If this is not set, then there is no upper limit on how many sdus
+    # If this is not set, then there is no upper limit on how many products
     # can be discounted by this benefit.
     max_affected_items = models.PositiveIntegerField(
         _("Max Affected Items"), blank=True, null=True,
@@ -551,7 +551,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
         errors = []
 
         if not self.range:
-            errors.append(_("Multibuy benefits require a sdu range"))
+            errors.append(_("Multibuy benefits require a product range"))
         if self.value:
             errors.append(_("Multibuy benefits don't require a value"))
         if self.max_affected_items:
@@ -565,7 +565,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
         errors = []
 
         if not self.range:
-            errors.append(_("Percentage benefits require a sdu range"))
+            errors.append(_("Percentage benefits require a product range"))
 
         if not self.value:
             errors.append(_("Percentage discount benefits require a value"))
@@ -581,7 +581,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
             errors.append(_("A discount value is required"))
         if self.range:
             errors.append(_("No range should be selected as this benefit does "
-                            "not apply to sdus"))
+                            "not apply to products"))
         if self.max_affected_items:
             errors.append(_("Shipping discounts don't require a "
                             "'max affected items' attribute"))
@@ -599,7 +599,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
 
         if self.range:
             errors.append(_("No range should be selected as this benefit does "
-                            "not apply to sdus"))
+                            "not apply to products"))
         if self.max_affected_items:
             errors.append(_("Shipping discounts don't require a "
                             "'max affected items' attribute"))
@@ -610,7 +610,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
         errors = []
         if self.range:
             errors.append(_("No range should be selected as this benefit does "
-                            "not apply to sdus"))
+                            "not apply to products"))
         if self.max_affected_items:
             errors.append(_("Shipping discounts don't require a "
                             "'max affected items' attribute"))
@@ -627,7 +627,7 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
     def clean_absolute(self):
         errors = []
         if not self.range:
-            errors.append(_("Fixed discount benefits require a sdu range"))
+            errors.append(_("Fixed discount benefits require a product range"))
         if not self.value:
             errors.append(_("Fixed discount benefits require a value"))
 
@@ -656,28 +656,28 @@ class AbstractBenefit(BaseOfferMixin, models.Model):
         """
         Determines whether the benefit can be applied to a given basket line
         """
-        return line.stockrecord and line.sdu.is_discountable
+        return line.stockrecord and line.product.is_discountable
 
     def get_applicable_lines(self, offer, basket, range=None):
         """
         Return the basket lines that are available to be discounted
 
         :basket: The basket
-        :range: The range of sdus to use for filtering.  The fixed-price
+        :range: The range of products to use for filtering.  The fixed-price
                 benefit ignores its range and uses the condition range
         """
         if range is None:
             range = self.range
         line_tuples = []
         for line in basket.all_lines():
-            sdu = line.sdu
+            product = line.product
 
-            if (not range.contains_sdu(sdu) or not self.can_apply_benefit(line)):
+            if (not range.contains_product(product) or not self.can_apply_benefit(line)):
                 continue
 
             price = unit_price(offer, line)
             if not price:
-                # Avoid zero price sdus
+                # Avoid zero price products
                 continue
             line_tuples.append((price, line))
 
@@ -744,7 +744,7 @@ class AbstractCondition(BaseOfferMixin, models.Model):
         errors = []
 
         if not self.range:
-            errors.append(_("Count conditions require a sdu range"))
+            errors.append(_("Count conditions require a product range"))
 
         if not self.value:
             errors.append(_("Count conditions require a value"))
@@ -756,7 +756,7 @@ class AbstractCondition(BaseOfferMixin, models.Model):
         errors = []
 
         if not self.range:
-            errors.append(_("Value conditions require a sdu range"))
+            errors.append(_("Value conditions require a product range"))
 
         if not self.value:
             errors.append(_("Value conditions require a value"))
@@ -768,7 +768,7 @@ class AbstractCondition(BaseOfferMixin, models.Model):
         errors = []
 
         if not self.range:
-            errors.append(_("Coverage conditions require a sdu range"))
+            errors.append(_("Coverage conditions require a product range"))
 
         if not self.value:
             errors.append(_("Coverage conditions require a value"))
@@ -804,9 +804,9 @@ class AbstractCondition(BaseOfferMixin, models.Model):
         """
         if not line.stockrecord_id:
             return False
-        sdu = line.sdu
-        return (self.range.contains_sdu(sdu)
-                and sdu.get_is_discountable())
+        product = line.product
+        return (self.range.contains_product(product)
+                and product.get_is_discountable())
 
     def get_applicable_lines(self, offer, basket, most_expensive_first=True):
         """
@@ -829,10 +829,10 @@ class AbstractCondition(BaseOfferMixin, models.Model):
 
 class AbstractRange(models.Model):
     """
-    Represents a range of sdus that can be used within an offer.
+    Represents a range of products that can be used within an offer.
 
-    Ranges only support adding parent or stand-alone sdus. Offers will
-    consider child sdus automatically.
+    Ranges only support adding parent or stand-alone products. Offers will
+    consider child products automatically.
     """
     name = models.CharField(_("Name"), max_length=128, unique=True)
     slug = fields.AutoSlugField(
@@ -845,18 +845,18 @@ class AbstractRange(models.Model):
         _('Is public?'), default=False,
         help_text=_("Public ranges have a renter-facing page"))
 
-    includes_all_sdus = models.BooleanField(
-        _('Includes all sdus?'), default=False)
+    includes_all_products = models.BooleanField(
+        _('Includes all products?'), default=False)
 
-    included_sdus = models.ManyToManyField(
-        'catalogue.Sdu', related_name='includes', blank=True,
-        verbose_name=_("Included Sdus"), through='offer.RangeSdu')
-    excluded_sdus = models.ManyToManyField(
-        'catalogue.Sdu', related_name='excludes', blank=True,
-        verbose_name=_("Excluded Sdus"))
+    included_products = models.ManyToManyField(
+        'catalogue.Product', related_name='includes', blank=True,
+        verbose_name=_("Included Products"), through='offer.RangeProduct')
+    excluded_products = models.ManyToManyField(
+        'catalogue.Product', related_name='excludes', blank=True,
+        verbose_name=_("Excluded Products"))
     classes = models.ManyToManyField(
-        'catalogue.SduClass', related_name='classes', blank=True,
-        verbose_name=_("Sdu Types"))
+        'catalogue.ProductClass', related_name='classes', blank=True,
+        verbose_name=_("Product Types"))
     included_categories = models.ManyToManyField(
         'catalogue.Category', related_name='includes', blank=True,
         verbose_name=_("Included Categories"))
@@ -889,20 +889,20 @@ class AbstractRange(models.Model):
         if self.proxy_class:
             return load_proxy(self.proxy_class)()
 
-    def add_sdu(self, sdu, display_order=None):
-        """ Add sdu to the range
+    def add_product(self, product, display_order=None):
+        """ Add product to the range
 
-        When adding sdu that is already in the range, prevent re-adding it.
+        When adding product that is already in the range, prevent re-adding it.
         If display_order is specified, update it.
 
-        Default display_order for a new sdu in the range is 0; this puts
-        the sdu at the top of the list.
+        Default display_order for a new product in the range is 0; this puts
+        the product at the top of the list.
         """
 
         initial_inquiry = display_order or 0
-        RangeSdu = self.included_sdus.through
-        relation, __ = RangeSdu.objects.get_or_create(
-            range=self, sdu=sdu,
+        RangeProduct = self.included_products.through
+        relation, __ = RangeProduct.objects.get_or_create(
+            range=self, product=product,
             defaults={'display_order': initial_inquiry})
 
         if (display_order is not None
@@ -910,96 +910,96 @@ class AbstractRange(models.Model):
             relation.display_order = display_order
             relation.save()
 
-        # Remove sdu from excluded sdus if it was removed earlier and
-        # re-added again, thus it returns back to the range sdu list.
-        self.excluded_sdus.remove(sdu)
+        # Remove product from excluded products if it was removed earlier and
+        # re-added again, thus it returns back to the range product list.
+        self.excluded_products.remove(product)
 
         # invalidate cache because queryset has changed
         self.invalidate_cached_queryset()
 
-    def remove_sdu(self, sdu):
+    def remove_product(self, product):
         """
-        Remove sdu from range. To save on queries, this function does not
-        check if the sdu is in fact in the range.
+        Remove product from range. To save on queries, this function does not
+        check if the product is in fact in the range.
         """
-        RangeSdu = self.included_sdus.through
-        RangeSdu.objects.filter(range=self, sdu=sdu).delete()
-        # Making sure sdu will be excluded from range sdus list by adding to
-        # respective field. Otherwise, it could be included as a sdu from included
+        RangeProduct = self.included_products.through
+        RangeProduct.objects.filter(range=self, product=product).delete()
+        # Making sure product will be excluded from range products list by adding to
+        # respective field. Otherwise, it could be included as a product from included
         # category or etc.
-        self.excluded_sdus.add(sdu)
+        self.excluded_products.add(product)
 
         # invalidate cache because queryset has changed
         self.invalidate_cached_queryset()
 
-    def contains_sdu(self, sdu):
+    def contains_product(self, product):
         if self.proxy:
-            return self.proxy.contains_sdu(sdu)
-        return self.sdu_queryset.filter(id=sdu.id).exists()
+            return self.proxy.contains_product(product)
+        return self.product_queryset.filter(id=product.id).exists()
 
     def invalidate_cached_queryset(self):
         try:
-            del self.sdu_queryset
+            del self.product_queryset
         except AttributeError:
             pass
 
-    def num_sdus(self):
+    def num_products(self):
         # Delegate to a proxy class if one is provided
         if self.proxy:
-            return self.proxy.num_sdus()
-        if self.includes_all_sdus:
+            return self.proxy.num_products()
+        if self.includes_all_products:
             return None
-        return self.all_sdus().count()
+        return self.all_products().count()
 
-    def all_sdus(self):
+    def all_products(self):
         """
-        Return a queryset containing all the sdus in the range
+        Return a queryset containing all the products in the range
 
-        This includes included_sdus plus the sdus contained in the
-        included classes and categories, minus the sdus in
-        excluded_sdus.
+        This includes included_products plus the products contained in the
+        included classes and categories, minus the products in
+        excluded_products.
         """
         if self.proxy:
-            return self.proxy.all_sdus()
+            return self.proxy.all_products()
 
-        return self.sdu_queryset
+        return self.product_queryset
 
     @cached_property
-    def sdu_queryset(self):
-        "cached queryset of all the sdus in the Range"
-        Sdu = self.included_sdus.model
+    def product_queryset(self):
+        "cached queryset of all the products in the Range"
+        Product = self.included_products.model
 
-        if self.includes_all_sdus:
-            # Filter out blacklisted sdus
-            return Sdu.objects.all().exclude(
-                id__in=self.excluded_sdus.values("id")
+        if self.includes_all_products:
+            # Filter out blacklisted products
+            return Product.objects.all().exclude(
+                id__in=self.excluded_products.values("id")
             )
 
         if self.included_categories.exists():
             expanded_range_categories = ExpandDownwardsCategoryQueryset(
                 self.included_categories.values("id")
             )
-            selected_sdus = Sdu.objects.filter(
+            selected_products = Product.objects.filter(
                 Q(categories__in=expanded_range_categories)
-                | Q(sdu_class__classes=self)
+                | Q(product_class__classes=self)
                 | Q(includes=self)
                 | Q(parent__categories__in=expanded_range_categories)
-                | Q(parent__sdu_class__classes=self)
+                | Q(parent__product_class__classes=self)
                 | Q(parent__includes=self),
                 ~Q(excludes=self),
                 ~Q(parent__excludes=self)
             )
         else:
-            selected_sdus = Sdu.objects.filter(
-                Q(sdu_class__classes=self)
+            selected_products = Product.objects.filter(
+                Q(product_class__classes=self)
                 | Q(includes=self)
-                | Q(parent__sdu_class__classes=self)
+                | Q(parent__product_class__classes=self)
                 | Q(parent__includes=self),
                 ~Q(excludes=self),
                 ~Q(parent__excludes=self)
             )
 
-        return selected_sdus.distinct()
+        return selected_products.distinct()
 
     @property
     def is_editable(self):
@@ -1011,27 +1011,27 @@ class AbstractRange(models.Model):
     @property
     def is_reinquiryable(self):
         """
-        Test whether sdus for the range can be re-inquiryed.
+        Test whether products for the range can be re-inquiryed.
         """
         return not (self.included_categories.exists() or self.classes.exists())
 
 
-class AbstractRangeSdu(models.Model):
+class AbstractRangeProduct(models.Model):
     """
-    Allow inquirying sdus inside ranges
+    Allow inquirying products inside ranges
     Exists to allow customising.
     """
     range = models.ForeignKey('offer.Range', on_delete=models.CASCADE)
-    sdu = models.ForeignKey('catalogue.Sdu', on_delete=models.CASCADE)
+    product = models.ForeignKey('catalogue.Product', on_delete=models.CASCADE)
     display_order = models.IntegerField(default=0)
 
     class Meta:
         abstract = True
         app_label = 'offer'
-        unique_together = ('range', 'sdu')
+        unique_together = ('range', 'product')
 
 
-class AbstractRangeSduFileUpload(models.Model):
+class AbstractRangeProductFileUpload(models.Model):
     range = models.ForeignKey(
         'offer.Range',
         on_delete=models.CASCADE,
@@ -1069,8 +1069,8 @@ class AbstractRangeSduFileUpload(models.Model):
         abstract = True
         app_label = 'offer'
         ordering = ('-date_uploaded',)
-        verbose_name = _("Range Sdu Uploaded File")
-        verbose_name_plural = _("Range Sdu Uploaded Files")
+        verbose_name = _("Range Product Uploaded File")
+        verbose_name_plural = _("Range Product Uploaded Files")
 
     def mark_as_failed(self, message=None):
         self.date_processed = now()
@@ -1091,36 +1091,36 @@ class AbstractRangeSduFileUpload(models.Model):
 
     def process(self, file_obj):
         """
-        Process the file upload and add sdus to the range
+        Process the file upload and add products to the range
         """
         all_ids = set(self.extract_ids(file_obj))
-        sdus = self.range.all_sdus()
-        existing_skus = sdus.values_list(
+        products = self.range.all_products()
+        existing_skus = products.values_list(
             'stockrecords__partner_sku', flat=True)
         existing_skus = set(filter(bool, existing_skus))
-        existing_upcs = sdus.values_list('upc', flat=True)
+        existing_upcs = products.values_list('upc', flat=True)
         existing_upcs = set(filter(bool, existing_upcs))
         existing_ids = existing_skus.union(existing_upcs)
         new_ids = all_ids - existing_ids
 
-        Sdu = get_model('catalogue', 'Sdu')
-        sdus = Sdu._default_manager.filter(
+        Product = get_model('catalogue', 'Product')
+        products = Product._default_manager.filter(
             models.Q(stockrecords__partner_sku__in=new_ids)
             | models.Q(upc__in=new_ids))
-        for sdu in sdus:
-            self.range.add_sdu(sdu)
+        for product in products:
+            self.range.add_product(product)
 
         # Processing stats
-        found_skus = sdus.values_list(
+        found_skus = products.values_list(
             'stockrecords__partner_sku', flat=True)
         found_skus = set(filter(bool, found_skus))
-        found_upcs = set(filter(bool, sdus.values_list('upc', flat=True)))
+        found_upcs = set(filter(bool, products.values_list('upc', flat=True)))
         found_ids = found_skus.union(found_upcs)
         missing_ids = new_ids - found_ids
         dupes = set(all_ids).intersection(existing_ids)
 
-        self.mark_as_processed(sdus.count(), len(missing_ids), len(dupes))
-        return sdus
+        self.mark_as_processed(products.count(), len(missing_ids), len(dupes))
+        return products
 
     def extract_ids(self, file_obj):
         reader = csv.reader(file_obj)

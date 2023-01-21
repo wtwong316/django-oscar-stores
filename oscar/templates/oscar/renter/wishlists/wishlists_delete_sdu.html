@@ -16,7 +16,7 @@
             <li class="breadcrumb-item">
                 <a href="{% url 'renter:wishlists-detail' key=wishlist.key %}">{{ wishlist.name }}</a>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">{% trans "Remove sdu" %}</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans "Remove product" %}</li>
         </ol>
     </nav>
 {% endblock %}
@@ -25,8 +25,8 @@
     <form method="post">
         {% csrf_token %}
         <p>
-            {% blocktrans with sdu_name=object.get_title wishlist_name=wishlist.name %}
-                Are you sure you want to delete {{ sdu_name }} from wish list {{ wishlist_name }}?
+            {% blocktrans with product_name=object.get_title wishlist_name=wishlist.name %}
+                Are you sure you want to delete {{ product_name }} from wish list {{ wishlist_name }}?
             {% endblocktrans %}
         </p>
 

@@ -31,10 +31,10 @@ from oscar.models.fields import AutoSlugField, NullCharField
 from oscar.models.fields.slugfield import SlugField
 from oscar.utils.models import get_image_upload_path
 
-CategoryQuerySet, SduQuerySet = get_classes(
-    'catalogue.managers', ['CategoryQuerySet', 'SduQuerySet'])
-SduAttributesContainer = get_class(
-    'catalogue.sdu_attributes', 'SduAttributesContainer')
+CategoryQuerySet, ProductQuerySet = get_classes(
+    'catalogue.managers', ['CategoryQuerySet', 'ProductQuerySet'])
+ProductAttributesContainer = get_class(
+    'catalogue.product_attributes', 'ProductAttributesContainer')
 
 
 class ReverseStartsWith(StartsWith):
@@ -69,12 +69,12 @@ class ReverseStartsWith(StartsWith):
 Field.register_lookup(ReverseStartsWith, "rstartswith")
 
 
-class AbstractSduClass(models.Model):
+class AbstractProductClass(models.Model):
     """
-    Used for defining options and attributes for a subset of sdus.
-    E.g. Books, DVDs and Toys. A sdu can only belong to one sdu class.
+    Used for defining options and attributes for a subset of products.
+    E.g. Books, DVDs and Toys. A product can only belong to one product class.
 
-    At least one sdu class must be created when setting up a new
+    At least one product class must be created when setting up a new
     Oscar deployment.
 
     Not necessarily equivalent to top-level categories but usually will be.
@@ -83,19 +83,19 @@ class AbstractSduClass(models.Model):
     slug = AutoSlugField(_('Slug'), max_length=128, unique=True,
                          populate_from='name')
 
-    #: Some sdu type don't require shipping (e.g. digital sdus) - we use
+    #: Some product type don't require shipping (e.g. digital products) - we use
     #: this field to take some shortcuts in the checkout.
     #requires_shipping = models.BooleanField(_("Requires shipping?"),
     #                                        default=True)
 
-    #: Digital sdus generally don't require their stock levels to be
+    #: Digital products generally don't require their stock levels to be
     #: tracked.
     #track_stock = models.BooleanField(_("Track stock levels?"), default=True)
 
     #: These are the options (set by the user when they add to basket) for this
-    #: item class.  For instance, a sdu class of "SMS message" would always
+    #: item class.  For instance, a product class of "SMS message" would always
     #: require a message to be specified before it could be bought.
-    #: Note that you can also set options on a per-sdu level.
+    #: Note that you can also set options on a per-product level.
     options = models.ManyToManyField(
         'catalogue.Option', blank=True, verbose_name=_("Options"))
 
@@ -103,8 +103,8 @@ class AbstractSduClass(models.Model):
         abstract = True
         app_label = 'catalogue'
         ordering = ['name']
-        verbose_name = _("Sdu class")
-        verbose_name_plural = _("Sdu classes")
+        verbose_name = _("Product class")
+        verbose_name_plural = _("Product classes")
 
     def __str__(self):
         return self.name
@@ -116,7 +116,7 @@ class AbstractSduClass(models.Model):
 
 class AbstractCategory(MP_Node):
     """
-    A sdu category. Merely used for navigational purposes; has no
+    A product category. Merely used for navigational purposes; has no
     effects on business logic.
 
     Uses :py:mod:`django-treebeard`.
@@ -272,7 +272,7 @@ class AbstractCategory(MP_Node):
         Our URL scheme means we have to look up the category's ancestors. As
         that is a bit more expensive, we cache the generated URL. That is
         safe even for a stale cache, as the default implementation of
-        SduCategoryView does the lookup via primary key anyway. But if
+        ProductCategoryView does the lookup via primary key anyway. But if
         you change that logic, you'll have to reconsider the caching
         approach.
         """
@@ -297,14 +297,14 @@ class AbstractCategory(MP_Node):
         return self.get_children().count()
 
 
-class AbstractSduCategory(models.Model):
+class AbstractProductCategory(models.Model):
     """
-    Joining model between sdus and categories. Exists to allow customising.
+    Joining model between products and categories. Exists to allow customising.
     """
-    sdu = models.ForeignKey(
-        'catalogue.Sdu',
+    product = models.ForeignKey(
+        'catalogue.Product',
         on_delete=models.CASCADE,
-        verbose_name=_("Sdu"))
+        verbose_name=_("Product"))
     category = models.ForeignKey(
         'catalogue.Category',
         on_delete=models.CASCADE,
@@ -313,50 +313,50 @@ class AbstractSduCategory(models.Model):
     class Meta:
         abstract = True
         app_label = 'catalogue'
-        ordering = ['sdu', 'category']
-        unique_together = ('sdu', 'category')
-        verbose_name = _('Sdu category')
-        verbose_name_plural = _('Sdu categories')
+        ordering = ['product', 'category']
+        unique_together = ('product', 'category')
+        verbose_name = _('Product category')
+        verbose_name_plural = _('Product categories')
 
     def __str__(self):
-        return "<sducategory for sdu '%s'>" % self.sdu
+        return "<productcategory for product '%s'>" % self.product
 
 
-class AbstractSdu(models.Model):
+class AbstractProduct(models.Model):
     """
-    The base sdu object
+    The base product object
 
-    There's three kinds of sdus; they're distinguished by the structure
+    There's three kinds of products; they're distinguished by the structure
     field.
 
-    - A stand alone sdu. Regular sdu that lives by itself.
-    - A child sdu. All child sdus have a parent sdu. They're a
+    - A stand alone product. Regular product that lives by itself.
+    - A child product. All child products have a parent product. They're a
       specific version of the parent.
-    - A parent sdu. It essentially represents a set of sdus.
+    - A parent product. It essentially represents a set of products.
 
-    An example could be a yoga course, which is a parent sdu. The different
-    times/locations of the courses would be associated with the child sdus.
+    An example could be a yoga course, which is a parent product. The different
+    times/locations of the courses would be associated with the child products.
     """
     STANDALONE, PARENT, CHILD = 'standalone', 'parent', 'child'
     STRUCTURE_CHOICES = (
-        (STANDALONE, _('Stand-alone sdu')),
-        (PARENT, _('Parent sdu')),
-        (CHILD, _('Child sdu'))
+        (STANDALONE, _('Stand-alone product')),
+        (PARENT, _('Parent product')),
+        (CHILD, _('Child product'))
     )
     structure = models.CharField(
-        _("Sdu structure"), max_length=10, choices=STRUCTURE_CHOICES,
+        _("Product structure"), max_length=10, choices=STRUCTURE_CHOICES,
         default=STANDALONE)
 
     is_public = models.BooleanField(
         _('Is public'),
         default=True,
         db_index=True,
-        help_text=_("Show this sdu in search results and catalogue listings."))
+        help_text=_("Show this product in search results and catalogue listings."))
 
     upc = NullCharField(
         _("UPC"), max_length=64, blank=True, null=True, unique=True,
-        help_text=_("Universal Sdu Code (UPC) is an identifier for "
-                    "a sdu which is not specific to a particular "
+        help_text=_("Universal Product Code (UPC) is an identifier for "
+                    "a product which is not specific to a particular "
                     " supplier. Eg an ISBN for a book."))
 
     parent = models.ForeignKey(
@@ -365,52 +365,52 @@ class AbstractSdu(models.Model):
         null=True,
         on_delete=models.CASCADE,
         related_name='children',
-        verbose_name=_("Parent sdu"),
-        help_text=_("Only choose a parent sdu if you're creating a child "
-                    "sdu.  For example if this is a size "
+        verbose_name=_("Parent product"),
+        help_text=_("Only choose a parent product if you're creating a child "
+                    "product.  For example if this is a size "
                     "4 of a particular t-shirt.  Leave blank if this is a "
-                    "stand-alone sdu (i.e. there is only one version of"
-                    " this sdu)."))
+                    "stand-alone product (i.e. there is only one version of"
+                    " this product)."))
 
-    # Title is mandatory for canonical sdus but optional for child sdus
-    title = models.CharField(pgettext_lazy('Sdu title', 'Title'),
+    # Title is mandatory for canonical products but optional for child products
+    title = models.CharField(pgettext_lazy('Product title', 'Title'),
                              max_length=255, blank=True)
     slug = SlugField(_('Slug'), max_length=255, unique=False)
     description = models.TextField(_('Description'), blank=True)
     meta_title = models.CharField(_('Meta title'), max_length=255, blank=True, null=True)
     meta_description = models.TextField(_('Meta description'), blank=True, null=True)
 
-    #: "Kind" of sdu, e.g. T-Shirt, Book, etc.
-    #: None for child sdus, they inherit their parent's sdu class
-    sdu_class = models.ForeignKey(
-        'catalogue.SduClass',
+    #: "Kind" of product, e.g. T-Shirt, Book, etc.
+    #: None for child products, they inherit their parent's product class
+    product_class = models.ForeignKey(
+        'catalogue.ProductClass',
         null=True,
         blank=True,
         on_delete=models.PROTECT,
-        verbose_name=_('Sdu type'), related_name="sdus",
-        help_text=_("Choose what type of sdu this is"))
+        verbose_name=_('Product type'), related_name="products",
+        help_text=_("Choose what type of product this is"))
     attributes = models.ManyToManyField(
-        'catalogue.SduAttribute',
-        through='SduAttributeValue',
+        'catalogue.ProductAttribute',
+        through='ProductAttributeValue',
         verbose_name=_("Attributes"),
-        help_text=_("A sdu attribute is something that this sdu may "
+        help_text=_("A product attribute is something that this product may "
                     "have, such as a size, as specified by its class"))
-    #: It's possible to have options sdu class-wide, and per sdu.
-    sdu_options = models.ManyToManyField(
-        'catalogue.Option', blank=True, verbose_name=_("Sdu options"),
+    #: It's possible to have options product class-wide, and per product.
+    product_options = models.ManyToManyField(
+        'catalogue.Option', blank=True, verbose_name=_("Product options"),
         help_text=_("Options are values that can be associated with a item "
                     "when it is added to a renter's basket.  This could be "
                     "something like a personalised message to be printed on "
                     "a T-shirt."))
 
-    recommended_sdus = models.ManyToManyField(
-        'catalogue.Sdu', through='SduRecommendation', blank=True,
-        verbose_name=_("Recommended sdus"),
-        help_text=_("These are sdus that are recommended to accompany the "
-                    "main sdu."))
+    recommended_products = models.ManyToManyField(
+        'catalogue.Product', through='ProductRecommendation', blank=True,
+        verbose_name=_("Recommended products"),
+        help_text=_("These are products that are recommended to accompany the "
+                    "main product."))
 
-    # Denormalised sdu rating - used by reviews app.
-    # Sdu has no ratings if rating is None
+    # Denormalised product rating - used by reviews app.
+    # Product has no ratings if rating is None
     rating = models.FloatField(_('Rating'), null=True, editable=False)
 
     date_created = models.DateTimeField(
@@ -421,31 +421,31 @@ class AbstractSdu(models.Model):
         _("Date updated"), auto_now=True, db_index=True)
 
     categories = models.ManyToManyField(
-        'catalogue.Category', through='SduCategory',
+        'catalogue.Category', through='ProductCategory',
         verbose_name=_("Categories"))
 
-    #: Determines if a sdu may be used in an offer. It is illegal to
-    #: discount some types of sdu (e.g. ebooks) and this field helps
-    #: merchants from avoiding discounting such sdus
-    #: Note that this flag is ignored for child sdus; they inherit from
-    #: the parent sdu.
+    #: Determines if a product may be used in an offer. It is illegal to
+    #: discount some types of product (e.g. ebooks) and this field helps
+    #: merchants from avoiding discounting such products
+    #: Note that this flag is ignored for child products; they inherit from
+    #: the parent product.
     is_discountable = models.BooleanField(
         _("Is discountable?"), default=True, help_text=_(
-            "This flag indicates if this sdu can be used in an offer "
+            "This flag indicates if this product can be used in an offer "
             "or not"))
 
-    objects = SduQuerySet.as_manager()
+    objects = ProductQuerySet.as_manager()
 
     class Meta:
         abstract = True
         app_label = 'catalogue'
         ordering = ['-date_created']
-        verbose_name = _('Sdu')
-        verbose_name_plural = _('Sdus')
+        verbose_name = _('Product')
+        verbose_name_plural = _('Products')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.attr = SduAttributesContainer(sdu=self)
+        self.attr = ProductAttributesContainer(product=self)
 
     def __str__(self):
         if self.title:
@@ -457,21 +457,21 @@ class AbstractSdu(models.Model):
 
     def get_absolute_url(self):
         """
-        Return a sdu's absolute URL
+        Return a product's absolute URL
         """
         return reverse('catalogue:detail',
-                       kwargs={'sdu_slug': self.slug, 'pk': self.id})
+                       kwargs={'product_slug': self.slug, 'pk': self.id})
 
     def clean(self):
         """
-        Validate a sdu. Those are the rules:
+        Validate a product. Those are the rules:
 
         +---------------+-------------+--------------+--------------+
         |               | stand alone | parent       | child        |
         +---------------+-------------+--------------+--------------+
         | title         | required    | required     | optional     |
         +---------------+-------------+--------------+--------------+
-        | sdu class | required    | required     | must be None |
+        | product class | required    | required     | must be None |
         +---------------+-------------+--------------+--------------+
         | parent        | forbidden   | forbidden    | required     |
         +---------------+-------------+--------------+--------------+
@@ -481,13 +481,13 @@ class AbstractSdu(models.Model):
         +---------------+-------------+--------------+--------------+
         | attributes    | optional    | optional     | optional     |
         +---------------+-------------+--------------+--------------+
-        | rec. sdus | optional    | optional     | unsupported  |
+        | rec. products | optional    | optional     | unsupported  |
         +---------------+-------------+--------------+--------------+
         | options       | optional    | optional     | forbidden    |
         +---------------+-------------+--------------+--------------+
 
         Because the validation logic is quite complex, validation is delegated
-        to the sub method appropriate for the sdu's structure.
+        to the sub method appropriate for the product's structure.
         """
         getattr(self, '_clean_%s' % self.structure)()
         if not self.is_parent:
@@ -495,43 +495,43 @@ class AbstractSdu(models.Model):
 
     def _clean_standalone(self):
         """
-        Validates a stand-alone sdu
+        Validates a stand-alone product
         """
         if not self.title:
-            raise ValidationError(_("Your sdu must have a title."))
-        if not self.sdu_class:
-            raise ValidationError(_("Your sdu must have a sdu class."))
+            raise ValidationError(_("Your product must have a title."))
+        if not self.product_class:
+            raise ValidationError(_("Your product must have a product class."))
         if self.parent_id:
-            raise ValidationError(_("Only child sdus can have a parent."))
+            raise ValidationError(_("Only child products can have a parent."))
 
     def _clean_child(self):
         """
-        Validates a child sdu
+        Validates a child product
         """
         if not self.parent_id:
-            raise ValidationError(_("A child sdu needs a parent."))
+            raise ValidationError(_("A child product needs a parent."))
         if self.parent_id and not self.parent.is_parent:
             raise ValidationError(
-                _("You can only assign child sdus to parent sdus."))
-        if self.sdu_class:
+                _("You can only assign child products to parent products."))
+        if self.product_class:
             raise ValidationError(
-                _("A child sdu can't have a sdu class."))
+                _("A child product can't have a product class."))
         if self.pk and self.categories.exists():
             raise ValidationError(
-                _("A child sdu can't have a category assigned."))
-        # Note that we only forbid options on sdu level
-        if self.pk and self.sdu_options.exists():
+                _("A child product can't have a category assigned."))
+        # Note that we only forbid options on product level
+        if self.pk and self.product_options.exists():
             raise ValidationError(
-                _("A child sdu can't have options."))
+                _("A child product can't have options."))
 
     def _clean_parent(self):
         """
-        Validates a parent sdu.
+        Validates a parent product.
         """
         self._clean_standalone()
         if self.has_stockrecords:
             raise ValidationError(
-                _("A parent sdu can't have stockrecords."))
+                _("A parent product can't have stockrecords."))
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -555,14 +555,14 @@ class AbstractSdu(models.Model):
 
     def can_be_parent(self, give_reason=False):
         """
-        Helps decide if a the sdu can be turned into a parent sdu.
+        Helps decide if a the product can be turned into a parent product.
         """
         reason = None
         if self.is_child:
-            reason = _('The specified parent sdu is a child sdu.')
+            reason = _('The specified parent product is a child product.')
         if self.has_stockrecords:
             reason = _(
-                "One can't add a child sdu to a sdu with stock"
+                "One can't add a child product to a product with stock"
                 " records.")
         is_valid = reason is None
         if give_reason:
@@ -573,31 +573,31 @@ class AbstractSdu(models.Model):
     @property
     def options(self):
         """
-        Returns a set of all valid options for this sdu.
-        It's possible to have options sdu class-wide, and per sdu.
+        Returns a set of all valid options for this product.
+        It's possible to have options product class-wide, and per product.
         """
-        pclass_options = self.get_sdu_class().options.all()
-        return pclass_options | self.sdu_options.all()
+        pclass_options = self.get_product_class().options.all()
+        return pclass_options | self.product_options.all()
 
     @cached_property
     def has_options(self):
-        # Extracting annotated value with number of sdu class options
-        # from sdu list queryset.
-        has_sdu_class_options = getattr(self, 'has_sdu_class_options', None)
-        has_sdu_options = getattr(self, 'has_sdu_options', None)
-        if has_sdu_class_options is not None and has_sdu_options is not None:
-            return has_sdu_class_options or has_sdu_options
+        # Extracting annotated value with number of product class options
+        # from product list queryset.
+        has_product_class_options = getattr(self, 'has_product_class_options', None)
+        has_product_options = getattr(self, 'has_product_options', None)
+        if has_product_class_options is not None and has_product_options is not None:
+            return has_product_class_options or has_product_options
         return self.options.exists()
 
     @property
     def is_shipping_required(self):
-        #return self.get_sdu_class().requires_shipping
+        #return self.get_product_class().requires_shipping
         return False
 
     @property
     def has_stockrecords(self):
         """
-        Test if this sdu has any stockrecords
+        Test if this product has any stockrecords
         """
         return self.stockrecords.exists()
 
@@ -608,7 +608,7 @@ class AbstractSdu(models.Model):
     @property
     def attribute_summary(self):
         """
-        Return a string of all of a sdu's attributes
+        Return a string of all of a product's attributes
         """
         attributes = self.get_attribute_values()
         pairs = [attribute.summary() for attribute in attributes]
@@ -616,42 +616,42 @@ class AbstractSdu(models.Model):
 
     def get_title(self):
         """
-        Return a sdu's title or it's parent's title if it has no title
+        Return a product's title or it's parent's title if it has no title
         """
         title = self.title
         if not title and self.parent_id:
             title = self.parent.title
         return title
-    get_title.short_description = pgettext_lazy("Sdu title", "Title")
+    get_title.short_description = pgettext_lazy("Product title", "Title")
 
     def get_meta_title(self):
         title = self.meta_title
         if not title and self.is_child:
             title = self.parent.meta_title
         return title or self.get_title()
-    get_meta_title.short_description = pgettext_lazy("Sdu meta title", "Meta title")
+    get_meta_title.short_description = pgettext_lazy("Product meta title", "Meta title")
 
     def get_meta_description(self):
         meta_description = self.meta_description
         if not meta_description and self.is_child:
             meta_description = self.parent.meta_description
         return meta_description or striptags(self.description)
-    get_meta_description.short_description = pgettext_lazy("Sdu meta description", "Meta description")
+    get_meta_description.short_description = pgettext_lazy("Product meta description", "Meta description")
 
-    def get_sdu_class(self):
+    def get_product_class(self):
         """
-        Return a sdu's item class. Child sdus inherit their parent's.
+        Return a product's item class. Child products inherit their parent's.
         """
         if self.is_child:
-            return self.parent.sdu_class
+            return self.parent.product_class
         else:
-            return self.sdu_class
-    get_sdu_class.short_description = _("Sdu class")
+            return self.product_class
+    get_product_class.short_description = _("Product class")
 
     def get_is_discountable(self):
         """
         At the moment, :py:attr:`.is_discountable` can't be set individually for child
-        sdus; they inherit it from their parent.
+        products; they inherit it from their parent.
         """
         if self.is_child:
             return self.parent.is_discountable
@@ -660,7 +660,7 @@ class AbstractSdu(models.Model):
 
     def get_categories(self):
         """
-        Return a sdu's public categories or parent's if there is a parent sdu.
+        Return a product's public categories or parent's if there is a parent product.
         """
         if self.is_child:
             return self.parent.categories.browsable()
@@ -686,7 +686,7 @@ class AbstractSdu(models.Model):
         """
         # This class should have a 'name' property so it mimics the Django file
         # field.
-        return MissingSduImage()
+        return MissingProductImage()
 
     def get_all_images(self):
         if self.is_child and not self.images.exists() and self.parent_id is not None:
@@ -695,21 +695,21 @@ class AbstractSdu(models.Model):
 
     def primary_image(self):
         """
-        Returns the primary image for a sdu. Usually used when one can
-        only display one sdu image, e.g. in a list of sdus.
+        Returns the primary image for a product. Usually used when one can
+        only display one product image, e.g. in a list of products.
         """
         images = self.get_all_images()
         ordering = self.images.model.Meta.ordering
         if not ordering or ordering[0] != 'display_order':
             # Only apply order_by() if a custom model doesn't use default
             # ordering. Applying order_by() busts the prefetch cache of
-            # the SduManager
+            # the ProductManager
             images = images.order_by('display_order')
         try:
             return images[0]
         except IndexError:
             # We return a dict with fields that mirror the key properties of
-            # the SduImage class so this missing image can be used
+            # the ProductImage class so this missing image can be used
             # interchangeably in templates.  Strategy pattern ftw!
             missing_image = self.get_missing_image()
             return {
@@ -749,13 +749,13 @@ class AbstractSdu(models.Model):
 
     def is_review_permitted(self, user):
         """
-        Determines whether a user may add a review on this sdu.
+        Determines whether a user may add a review on this product.
 
         Default implementation respects OSCAR_ALLOW_ANON_REVIEWS and only
-        allows leaving one review per user and sdu.
+        allows leaving one review per user and product.
 
         Override this if you want to alter the default behaviour; e.g. enforce
-        that a user purchased the sdu to be allowed to leave a review.
+        that a user purchased the product to be allowed to leave a review.
         """
         if user.is_authenticated or settings.OSCAR_ALLOW_ANON_REVIEWS:
             return not self.has_review_by(user)
@@ -767,28 +767,28 @@ class AbstractSdu(models.Model):
         return self.reviews.approved().count()
 
     @property
-    def sorted_recommended_sdus(self):
+    def sorted_recommended_products(self):
         """Keeping order by recommendation ranking."""
         return [r.recommendation for r in self.primary_recommendations
                                               .select_related('recommendation').all()]
 
 
-class AbstractSduRecommendation(models.Model):
+class AbstractProductRecommendation(models.Model):
     """
-    'Through' model for sdu recommendations
+    'Through' model for product recommendations
     """
     primary = models.ForeignKey(
-        'catalogue.Sdu',
+        'catalogue.Product',
         on_delete=models.CASCADE,
         related_name='primary_recommendations',
-        verbose_name=_("Primary sdu"))
+        verbose_name=_("Primary product"))
     recommendation = models.ForeignKey(
-        'catalogue.Sdu',
+        'catalogue.Product',
         on_delete=models.CASCADE,
-        verbose_name=_("Recommended sdu"))
+        verbose_name=_("Recommended product"))
     ranking = models.PositiveSmallIntegerField(
         _('Ranking'), default=0, db_index=True,
-        help_text=_('Determines inquiry of the sdus. A sdu with a higher'
+        help_text=_('Determines inquiry of the products. A product with a higher'
                     ' value will appear before one with a lower ranking.'))
 
     class Meta:
@@ -796,22 +796,22 @@ class AbstractSduRecommendation(models.Model):
         app_label = 'catalogue'
         ordering = ['primary', '-ranking']
         unique_together = ('primary', 'recommendation')
-        verbose_name = _('Sdu recommendation')
-        verbose_name_plural = _('Sdu recomendations')
+        verbose_name = _('Product recommendation')
+        verbose_name_plural = _('Product recomendations')
 
 
-class AbstractSduAttribute(models.Model):
+class AbstractProductAttribute(models.Model):
     """
-    Defines an attribute for a sdu class. (For example, number_of_pages for
+    Defines an attribute for a product class. (For example, number_of_pages for
     a 'book' class)
     """
-    sdu_class = models.ForeignKey(
-        'catalogue.SduClass',
+    product_class = models.ForeignKey(
+        'catalogue.ProductClass',
         blank=True,
         on_delete=models.CASCADE,
         related_name='attributes',
         null=True,
-        verbose_name=_("Sdu type"))
+        verbose_name=_("Product type"))
     name = models.CharField(_('Name'), max_length=128)
     code = models.SlugField(
         _('Code'), max_length=128,
@@ -860,7 +860,7 @@ class AbstractSduAttribute(models.Model):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        related_name='sdu_attributes',
+        related_name='product_attributes',
         verbose_name=_("Option Group"),
         help_text=_('Select an option group if using type "Option" or "Multi Option"'))
     required = models.BooleanField(_('Required'), default=False)
@@ -869,9 +869,9 @@ class AbstractSduAttribute(models.Model):
         abstract = True
         app_label = 'catalogue'
         ordering = ['code']
-        verbose_name = _('Sdu attribute')
-        verbose_name_plural = _('Sdu attributes')
-        unique_together = ('code', 'sdu_class')
+        verbose_name = _('Product attribute')
+        verbose_name_plural = _('Product attributes')
+        unique_together = ('code', 'product_class')
 
     @property
     def is_option(self):
@@ -929,18 +929,18 @@ class AbstractSduAttribute(models.Model):
             value_obj.value = value
             value_obj.save()
 
-    def save_value(self, sdu, value):   # noqa: C901 too complex
-        SduAttributeValue = get_model('catalogue', 'SduAttributeValue')
+    def save_value(self, product, value):   # noqa: C901 too complex
+        ProductAttributeValue = get_model('catalogue', 'ProductAttributeValue')
         try:
-            value_obj = sdu.attribute_values.get(attribute=self)
-        except SduAttributeValue.DoesNotExist:
+            value_obj = product.attribute_values.get(attribute=self)
+        except ProductAttributeValue.DoesNotExist:
             # FileField uses False for announcing deletion of the file
             # not creating a new value
             delete_file = self.is_file and value is False
             if value is None or value == '' or delete_file:
                 return
-            value_obj = SduAttributeValue.objects.create(
-                sdu=sdu, attribute=self)
+            value_obj = ProductAttributeValue.objects.create(
+                product=product, attribute=self)
 
         if self.is_file:
             self._save_file(value_obj, value)
@@ -1021,23 +1021,23 @@ class AbstractSduAttribute(models.Model):
     _validate_image = _validate_file
 
 
-class AbstractSduAttributeValue(models.Model):
+class AbstractProductAttributeValue(models.Model):
     """
-    The "through" model for the m2m relationship between :py:class:`Sdu <.AbstractSdu>` and
-    :py:class:`SduAttribute <.AbstractSduAttribute>`  This specifies the value of the attribute for
-    a particular sdu
+    The "through" model for the m2m relationship between :py:class:`Product <.AbstractProduct>` and
+    :py:class:`ProductAttribute <.AbstractProductAttribute>`  This specifies the value of the attribute for
+    a particular product
 
     For example: ``number_of_pages = 295``
     """
     attribute = models.ForeignKey(
-        'catalogue.SduAttribute',
+        'catalogue.ProductAttribute',
         on_delete=models.CASCADE,
         verbose_name=_("Attribute"))
-    sdu = models.ForeignKey(
-        'catalogue.Sdu',
+    product = models.ForeignKey(
+        'catalogue.Product',
         on_delete=models.CASCADE,
         related_name='attribute_values',
-        verbose_name=_("Sdu"))
+        verbose_name=_("Product"))
 
     value_text = models.TextField(_('Text'), blank=True, null=True)
     value_integer = models.IntegerField(_('Integer'), blank=True, null=True, db_index=True)
@@ -1099,9 +1099,9 @@ class AbstractSduAttributeValue(models.Model):
     class Meta:
         abstract = True
         app_label = 'catalogue'
-        unique_together = ('attribute', 'sdu')
-        verbose_name = _('Sdu attribute value')
-        verbose_name_plural = _('Sdu attribute values')
+        unique_together = ('attribute', 'product')
+        verbose_name = _('Product attribute value')
+        verbose_name_plural = _('Product attribute values')
 
     def __str__(self):
         return self.summary()
@@ -1109,7 +1109,7 @@ class AbstractSduAttributeValue(models.Model):
     def summary(self):
         """
         Gets a string representation of both the attribute and it's value,
-        used e.g in sdu summaries.
+        used e.g in product summaries.
         """
         return "%s: %s" % (self.attribute.name, self.value_as_text)
 
@@ -1146,8 +1146,8 @@ class AbstractSduAttributeValue(models.Model):
     @property
     def _boolean_as_text(self):
         if self.value:
-            return pgettext("Sdu attribute value", "Yes")
-        return pgettext("Sdu attribute value", "No")
+            return pgettext("Product attribute value", "Yes")
+        return pgettext("Product attribute value", "No")
 
     @property
     def value_as_html(self):
@@ -1214,7 +1214,7 @@ class AbstractAttributeOption(models.Model):
 
 class AbstractOption(models.Model):
     """
-    An option that can be selected for a particular item when the sdu
+    An option that can be selected for a particular item when the product
     is added to the basket.
 
     For example,  a list ID for an SMS message send, or a personalised message
@@ -1265,7 +1265,7 @@ class AbstractOption(models.Model):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        related_name="sdu_options",
+        related_name="product_options",
         verbose_name=_("Option Group"),
         help_text=_('Select an option group if using type "Option" or "Multi Option"'),
     )
@@ -1277,7 +1277,7 @@ class AbstractOption(models.Model):
         _("Ordering"),
         null=True,
         blank=True,
-        help_text=_("Controls the ordering of sdu options on sdu detail pages"),
+        help_text=_("Controls the ordering of product options on product detail pages"),
         db_index=True,
     )
 
@@ -1338,7 +1338,7 @@ class AbstractOption(models.Model):
         return self.name
 
 
-class MissingSduImage(object):
+class MissingProductImage(object):
 
     """
     Mimics a Django file field by having a name property.
@@ -1379,15 +1379,15 @@ class MissingSduImage(object):
                     "MEDIA_ROOT at %s") % (static_file_path, settings.MEDIA_ROOT))
 
 
-class AbstractSduImage(models.Model):
+class AbstractProductImage(models.Model):
     """
-    An image of a sdu
+    An image of a product
     """
-    sdu = models.ForeignKey(
-        'catalogue.Sdu',
+    product = models.ForeignKey(
+        'catalogue.Product',
         on_delete=models.CASCADE,
         related_name='images',
-        verbose_name=_("Sdu"))
+        verbose_name=_("Product"))
     original = models.ImageField(
         _("Original"), upload_to=get_image_upload_path, max_length=255)
     caption = models.CharField(_("Caption"), max_length=200, blank=True)
@@ -1396,20 +1396,20 @@ class AbstractSduImage(models.Model):
     display_order = models.PositiveIntegerField(
         _("Display inquiry"), default=0, db_index=True,
         help_text=_("An image with a display inquiry of zero will be the primary"
-                    " image for a sdu"))
+                    " image for a product"))
     date_created = models.DateTimeField(_("Date created"), auto_now_add=True)
 
     class Meta:
         abstract = True
         app_label = 'catalogue'
         # Any custom models should ensure that this ordering is unchanged, or
-        # your query count will explode. See AbstractSdu.primary_image.
+        # your query count will explode. See AbstractProduct.primary_image.
         ordering = ["display_order"]
-        verbose_name = _('Sdu image')
-        verbose_name_plural = _('Sdu images')
+        verbose_name = _('Product image')
+        verbose_name_plural = _('Product images')
 
     def __str__(self):
-        return "Image of '%s'" % self.sdu
+        return "Image of '%s'" % self.product
 
     def is_primary(self):
         """
@@ -1423,6 +1423,6 @@ class AbstractSduImage(models.Model):
         issue #855.
         """
         super().delete(*args, **kwargs)
-        for idx, image in enumerate(self.sdu.images.all()):
+        for idx, image in enumerate(self.product.images.all()):
             image.display_order = idx
             image.save()

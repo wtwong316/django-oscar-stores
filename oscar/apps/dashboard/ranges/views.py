@@ -17,11 +17,11 @@ from oscar.core.loading import get_classes, get_model
 from oscar.views.generic import BulkEditMixin
 
 Range = get_model('offer', 'Range')
-RangeSdu = get_model('offer', 'RangeSdu')
-RangeSduFileUpload = get_model('offer', 'RangeSduFileUpload')
-Sdu = get_model('catalogue', 'Sdu')
-RangeForm, RangeSduForm = get_classes('dashboard.ranges.forms',
-                                          ['RangeForm', 'RangeSduForm'])
+RangeProduct = get_model('offer', 'RangeProduct')
+RangeProductFileUpload = get_model('offer', 'RangeProductFileUpload')
+Product = get_model('catalogue', 'Product')
+RangeForm, RangeProductForm = get_classes('dashboard.ranges.forms',
+                                          ['RangeForm', 'RangeProductForm'])
 
 
 class RangeListView(ListView):
@@ -38,7 +38,7 @@ class RangeCreateView(CreateView):
 
     def get_success_url(self):
         if 'action' in self.request.POST:
-            return reverse('dashboard:range-sdus',
+            return reverse('dashboard:range-products',
                            kwargs={'pk': self.object.id})
         else:
             msg = render_to_string(
@@ -66,7 +66,7 @@ class RangeUpdateView(UpdateView):
 
     def get_success_url(self):
         if 'action' in self.request.POST:
-            return reverse('dashboard:range-sdus',
+            return reverse('dashboard:range-products',
                            kwargs={'pk': self.object.id})
         else:
             msg = render_to_string(
@@ -92,18 +92,18 @@ class RangeDeleteView(DeleteView):
         return reverse('dashboard:range-list')
 
 
-class RangeSduListView(BulkEditMixin, ListView):
-    model = Sdu
-    template_name = 'oscar/dashboard/ranges/range_sdu_list.html'
-    context_object_name = 'sdus'
-    actions = ('remove_selected_sdus', 'add_sdus')
-    form_class = RangeSduForm
+class RangeProductListView(BulkEditMixin, ListView):
+    model = Product
+    template_name = 'oscar/dashboard/ranges/range_product_list.html'
+    context_object_name = 'products'
+    actions = ('remove_selected_products', 'add_products')
+    form_class = RangeProductForm
     paginate_by = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
 
     def post(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        if request.POST.get('action', None) == 'add_sdus':
-            return self.add_sdus(request)
+        if request.POST.get('action', None) == 'add_products':
+            return self.add_products(request)
         return super().post(request, *args, **kwargs)
 
     def get_range(self):
@@ -112,8 +112,8 @@ class RangeSduListView(BulkEditMixin, ListView):
         return self._range
 
     def get_queryset(self):
-        sdus = self.get_range().all_sdus()
-        return sdus.order_by('rangesdu__display_order')
+        products = self.get_range().all_products()
+        return products.order_by('rangeproduct__display_order')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -123,18 +123,18 @@ class RangeSduListView(BulkEditMixin, ListView):
             ctx['form'] = self.form_class(range)
         return ctx
 
-    def remove_selected_sdus(self, request, sdus):
+    def remove_selected_products(self, request, products):
         range = self.get_range()
-        for sdu in sdus:
-            range.remove_sdu(sdu)
-        num_sdus = len(sdus)
+        for product in products:
+            range.remove_product(product)
+        num_products = len(products)
         messages.success(
             request,
-            ngettext("Removed %d sdu from range", "Removed %d sdus from range", num_sdus) % num_sdus
+            ngettext("Removed %d product from range", "Removed %d products from range", num_products) % num_products
         )
         return HttpResponseRedirect(self.get_success_url(request))
 
-    def add_sdus(self, request):
+    def add_products(self, request):
         range = self.get_range()
         form = self.form_class(range, request.POST, request.FILES)
         if not form.is_valid():
@@ -142,56 +142,56 @@ class RangeSduListView(BulkEditMixin, ListView):
                                         object_list=self.object_list)
             return self.render_to_response(ctx)
 
-        self.handle_query_sdus(request, range, form)
-        self.handle_file_sdus(request, range, form)
+        self.handle_query_products(request, range, form)
+        self.handle_file_products(request, range, form)
         return HttpResponseRedirect(self.get_success_url(request))
 
-    def handle_query_sdus(self, request, range, form):
-        sdus = form.get_sdus()
-        if not sdus:
+    def handle_query_products(self, request, range, form):
+        products = form.get_products()
+        if not products:
             return
 
-        for sdu in sdus:
-            range.add_sdu(sdu)
+        for product in products:
+            range.add_product(product)
 
-        num_sdus = len(sdus)
+        num_products = len(products)
         messages.success(
             request,
-            ngettext("%d sdu added to range", "%d sdus added to range", num_sdus) % num_sdus
+            ngettext("%d product added to range", "%d products added to range", num_products) % num_products
         )
         dupe_skus = form.get_duplicate_skus()
         if dupe_skus:
             messages.warning(
                 request,
-                _("The sdus with SKUs or UPCs matching %s are already "
+                _("The products with SKUs or UPCs matching %s are already "
                   "in this range") % ", ".join(dupe_skus))
 
         missing_skus = form.get_missing_skus()
         if missing_skus:
             messages.warning(
                 request,
-                _("No sdu(s) were found with SKU or UPC matching %s") %
+                _("No product(s) were found with SKU or UPC matching %s") %
                 ", ".join(missing_skus))
-        self.check_imported_sdus_sku_duplicates(request, sdus)
+        self.check_imported_products_sku_duplicates(request, products)
 
-    def handle_file_sdus(self, request, range, form):
+    def handle_file_products(self, request, range, form):
         if 'file_upload' not in request.FILES:
             return
         f = request.FILES['file_upload']
         upload = self.create_upload_object(request, range, f)
-        sdus = upload.process(TextIOWrapper(f, encoding=request.encoding))
+        products = upload.process(TextIOWrapper(f, encoding=request.encoding))
         if not upload.was_processing_successful():
             messages.error(request, upload.error_message)
         else:
             msg = render_to_string(
-                'oscar/dashboard/ranges/messages/range_sdus_saved.html',
+                'oscar/dashboard/ranges/messages/range_products_saved.html',
                 {'range': range,
                  'upload': upload})
             messages.success(request, msg, extra_tags='safe noicon block')
-        self.check_imported_sdus_sku_duplicates(request, sdus)
+        self.check_imported_products_sku_duplicates(request, products)
 
     def create_upload_object(self, request, range, f):
-        upload = RangeSduFileUpload.objects.create(
+        upload = RangeProductFileUpload.objects.create(
             range=range,
             uploaded_by=request.user,
             filepath=f.name,
@@ -199,32 +199,32 @@ class RangeSduListView(BulkEditMixin, ListView):
         )
         return upload
 
-    def check_imported_sdus_sku_duplicates(self, request, queryset):
-        dupe_sku_sdus = queryset.values('stockrecords__partner_sku')\
+    def check_imported_products_sku_duplicates(self, request, queryset):
+        dupe_sku_products = queryset.values('stockrecords__partner_sku')\
                                     .annotate(total=Count('stockrecords__partner_sku'))\
                                     .filter(total__gt=1).order_by('stockrecords__partner_sku')
-        if dupe_sku_sdus:
-            dupe_skus = [p['stockrecords__partner_sku'] for p in dupe_sku_sdus]
+        if dupe_sku_products:
+            dupe_skus = [p['stockrecords__partner_sku'] for p in dupe_sku_products]
             messages.warning(
                 request,
-                _("There are more than one sdu with SKU %s") %
+                _("There are more than one product with SKU %s") %
                 ", ".join(dupe_skus)
             )
 
 
 class RangeReorderView(View):
     def post(self, request, pk):
-        order = dict(request.POST).get('sdu')
+        order = dict(request.POST).get('product')
         self._save_page_order(order)
         return HttpResponse(status=200)
 
     def _save_page_order(self, order):
         """
-        Save the order of the sdus within range.
+        Save the order of the products within range.
         """
         range = get_object_or_404(Range, pk=self.kwargs['pk'])
         for index, item in enumerate(order):
-            entry = RangeSdu.objects.get(range=range, sdu__pk=item)
+            entry = RangeProduct.objects.get(range=range, product__pk=item)
             if entry.display_order != index:
                 entry.display_order = index
                 entry.save()

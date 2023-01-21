@@ -4,7 +4,7 @@ from django.conf import settings
 
 from oscar.core.loading import get_model
 
-Sdu = get_model('catalogue', 'Sdu')
+Product = get_model('catalogue', 'Product')
 
 
 class RenterHistoryManager:
@@ -14,24 +14,24 @@ class RenterHistoryManager:
         'secure': settings.OSCAR_RECENTLY_VIEWED_COOKIE_SECURE,
         'httponly': True,
     }
-    max_sdus = settings.OSCAR_RECENTLY_VIEWED_PRODUCTS
+    max_products = settings.OSCAR_RECENTLY_VIEWED_PRODUCTS
 
     @classmethod
     def get(cls, request):
         """
-        Return a list of recently viewed sdus
+        Return a list of recently viewed products
         """
         ids = cls.extract(request)
 
         # Reordering as the ID order gets messed up in the query
-        sdu_dict = Sdu.objects.browsable().in_bulk(ids)
+        product_dict = Product.objects.browsable().in_bulk(ids)
         ids.reverse()
-        return [sdu_dict[sdu_id] for sdu_id in ids if sdu_id in sdu_dict]
+        return [product_dict[product_id] for product_id in ids if product_id in product_dict]
 
     @classmethod
     def extract(cls, request, response=None):
         """
-        Extract the IDs of sdus in the history cookie
+        Extract the IDs of products in the history cookie
         """
         ids = []
         if cls.cookie_name in request.COOKIES:
@@ -50,23 +50,23 @@ class RenterHistoryManager:
     @classmethod
     def add(cls, ids, new_id):
         """
-        Add a new sdu ID to the list of sdu IDs
+        Add a new product ID to the list of product IDs
         """
         if new_id in ids:
             ids.remove(new_id)
         ids.append(new_id)
-        if len(ids) > cls.max_sdus:
-            ids = ids[len(ids) - cls.max_sdus:]
+        if len(ids) > cls.max_products:
+            ids = ids[len(ids) - cls.max_products:]
         return ids
 
     @classmethod
-    def update(cls, sdu, request, response):
+    def update(cls, product, request, response):
         """
-        Updates the cookies that store the recently viewed sdus
+        Updates the cookies that store the recently viewed products
         removing possible duplicates.
         """
         ids = cls.extract(request, response)
-        updated_ids = cls.add(ids, sdu.id)
+        updated_ids = cls.add(ids, product.id)
         response.set_cookie(
             cls.cookie_name,
             json.dumps(updated_ids),

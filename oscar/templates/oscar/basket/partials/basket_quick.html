@@ -11,16 +11,16 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="image_container w-100">
-                            {% with image=line.sdu.primary_image %}
+                            {% with image=line.product.primary_image %}
                                 {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
-                                <a href="{{ line.sdu.get_absolute_url }}">
-                                    <img src="{{ thumb.url }}" alt="{{ line.sdu.get_title }}" class="img-thumbnail w-auto mx-auto my-0">
+                                <a href="{{ line.product.get_absolute_url }}">
+                                    <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}" class="img-thumbnail w-auto mx-auto my-0">
                                 </a>
                             {% endwith %}
                         </div>
                     </div>
                     <div class="col-sm-5">
-                        <p><strong><a href="{{ line.sdu.get_absolute_url }}">{{ line.description }}</a></strong></p>
+                        <p><strong><a href="{{ line.product.get_absolute_url }}">{{ line.description }}</a></strong></p>
                     </div>
                     <div class="col-sm-1 text-center"><strong>{% trans "Qty" %}</strong> {{ line.quantity }}</div>
                     <div class="col-sm-3 price_color text-right">{{ line.unit_price_excl_tax|currency:request.basket.currency }}</div>
@@ -35,7 +35,7 @@
                     <small>{% trans "Total:" %} {{ request.basket.total_excl_tax|currency:request.basket.currency }}</small>
                 {% endif %}
             </p>
-            <a href="{% url 'basket:summary' %}" class="btn btn-info btn-sm">{% trans "View SDU" %}</a>
+            <a href="{% url 'basket:summary' %}" class="btn btn-info btn-sm">{% trans "View PRDOUCT" %}</a>
             <a href="{% url 'checkout:index' %}" class="btn btn-primary btn-sm float-right"><i class="fas fa-building-o"></i> {% trans "Checkout" %}</a>
         </li>
     {% else %}

@@ -13,7 +13,7 @@ from oscar.core.utils import redirect_to_referrer, safe_referrer
 
 WishList = get_model('wishlists', 'WishList')
 Line = get_model('wishlists', 'Line')
-Sdu = get_model('catalogue', 'Sdu')
+Product = get_model('catalogue', 'Product')
 WishListForm = get_class('wishlists.forms', 'WishListForm')
 LineFormset, WishListSharedEmailFormset = get_classes(
     'wishlists.formsets', ('LineFormset', 'WishListSharedEmailFormset'))
@@ -36,10 +36,10 @@ class WishListListView(PageTitleMixin, ListView):
 class WishListDetailView(PageTitleMixin, FormView):
     """
     This view acts as a DetailView for a wish list and allows updating the
-    quantities of sdus.
+    quantities of products.
 
     It is implemented as FormView because it's easier to adapt a FormView to
-    display a sdu then adapt a DetailView to handle form validation.
+    display a product then adapt a DetailView to handle form validation.
     """
     template_name = 'oscar/renter/wishlists/wishlists_detail.html'
     active_tab = "wishlists"
@@ -137,7 +137,7 @@ class WishListCreateView(WishListCreateUpdateViewMixin, CreateView):
     """
     Create a new wishlist
 
-    If a sdu ID is passed as a kwargs, then this sdu will be added to
+    If a product ID is passed as a kwargs, then this product will be added to
     the wishlist.
     """
     model = WishList
@@ -145,22 +145,22 @@ class WishListCreateView(WishListCreateUpdateViewMixin, CreateView):
     active_tab = "wishlists"
     page_title = _('Create a new wish list')
     form_class = WishListForm
-    sdu = None
+    product = None
 
     def dispatch(self, request, *args, **kwargs):
-        if 'sdu_pk' in kwargs:
+        if 'product_pk' in kwargs:
             try:
-                self.sdu = Sdu.objects.get(pk=kwargs['sdu_pk'])
+                self.product = Product.objects.get(pk=kwargs['product_pk'])
             except ObjectDoesNotExist:
                 messages.error(
-                    request, _("The requested sdu no longer exists"))
+                    request, _("The requested product no longer exists"))
                 return redirect('wishlists-create')
         return super().dispatch(
             request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['sdu'] = self.sdu
+        ctx['product'] = self.product
 
         # Invalid post response passes this to the context.
         if "shared_emails_formset" not in kwargs:
@@ -179,11 +179,11 @@ class WishListCreateView(WishListCreateUpdateViewMixin, CreateView):
         the post method below. This is also why we do not call form.save() here.
         """
         wishlist = form
-        if self.sdu:
-            wishlist.add(self.sdu)
+        if self.product:
+            wishlist.add(self.product)
             msg = _("Your wishlist has been created and '%(name)s "
                     "has been added") \
-                % {'name': self.sdu.get_title()}
+                % {'name': self.product.get_title()}
         else:
             msg = _("Your wishlist has been created")
         messages.success(self.request, msg)
@@ -191,13 +191,13 @@ class WishListCreateView(WishListCreateUpdateViewMixin, CreateView):
         return redirect(form.get_absolute_url())
 
 
-class WishListCreateWithSduView(View):
+class WishListCreateWithProductView(View):
     """
-    Create a wish list and immediately add a sdu to it
+    Create a wish list and immediately add a product to it
     """
 
     def post(self, request, *args, **kwargs):
-        sdu = get_object_or_404(Sdu, pk=kwargs['sdu_pk'])
+        product = get_object_or_404(Product, pk=kwargs['product_pk'])
         wishlists = request.user.wishlists.all()
         if len(wishlists) == 0:
             wishlist = request.user.wishlists.create()
@@ -206,10 +206,10 @@ class WishListCreateWithSduView(View):
             # wishlist for a user if one already exists when they make this
             # request.
             wishlist = wishlists[0]
-        wishlist.add(sdu)
+        wishlist.add(product)
         messages.success(
             request, _("%(title)s has been added to your wishlist") % {
-                'title': sdu.get_title()})
+                'title': product.get_title()})
         return redirect_to_referrer(request, wishlist.get_absolute_url())
 
 
@@ -270,17 +270,17 @@ class WishListDeleteView(PageTitleMixin, DeleteView):
         return reverse('renter:wishlists-list')
 
 
-class WishListAddSdu(View):
+class WishListAddProduct(View):
     """
-    Adds a sdu to a wish list.
+    Adds a product to a wish list.
 
     - If the user doesn't already have a wishlist then it will be created for
       them.
-    - If the sdu is already in the wish list, its quantity is increased.
+    - If the product is already in the wish list, its quantity is increased.
     """
 
     def dispatch(self, request, *args, **kwargs):
-        self.sdu = get_object_or_404(Sdu, pk=kwargs['sdu_pk'])
+        self.product = get_object_or_404(Product, pk=kwargs['product_pk'])
         self.wishlist = self.get_or_create_wishlist(request, *args, **kwargs)
         return super().dispatch(request)
 
@@ -300,24 +300,24 @@ class WishListAddSdu(View):
 
     def get(self, request, *args, **kwargs):
         # This is nasty as we shouldn't be performing write operations on a GET
-        # request.  It's only included as the UI of the sdu detail page
+        # request.  It's only included as the UI of the product detail page
         # allows a wishlist to be selected from a dropdown.
-        return self.add_sdu()
+        return self.add_product()
 
     def post(self, request, *args, **kwargs):
-        return self.add_sdu()
+        return self.add_product()
 
-    def add_sdu(self):
-        self.wishlist.add(self.sdu)
-        msg = _("'%s' was added to your wish list.") % self.sdu.get_title()
+    def add_product(self):
+        self.wishlist.add(self.product)
+        msg = _("'%s' was added to your wish list.") % self.product.get_title()
         messages.success(self.request, msg)
         return redirect_to_referrer(
-            self.request, self.sdu.get_absolute_url())
+            self.request, self.product.get_absolute_url())
 
 
 class LineMixin(object):
     """
-    Handles fetching both a wish list and a sdu
+    Handles fetching both a wish list and a product
     Views using this mixin must be passed two keyword arguments:
 
     * key: The key of a wish list
@@ -325,10 +325,10 @@ class LineMixin(object):
 
     or
 
-    * sdu_pk: The primary key of the sdu
+    * product_pk: The primary key of the product
     """
 
-    def fetch_line(self, user, wishlist_key, line_pk=None, sdu_pk=None):
+    def fetch_line(self, user, wishlist_key, line_pk=None, product_pk=None):
         if line_pk is not None:
             self.line = get_object_or_404(
                 Line,
@@ -340,18 +340,18 @@ class LineMixin(object):
             try:
                 self.line = get_object_or_404(
                     Line,
-                    sdu_id=sdu_pk,
+                    product_id=product_pk,
                     wishlist__owner=user,
                     wishlist__key=wishlist_key,
                 )
             except Line.MultipleObjectsReturned:
                 raise Http404
         self.wishlist = self.line.wishlist
-        self.sdu = self.line.sdu
+        self.product = self.line.product
 
 
-class WishListRemoveSdu(LineMixin, PageTitleMixin, DeleteView):
-    template_name = 'oscar/renter/wishlists/wishlists_delete_sdu.html'
+class WishListRemoveProduct(LineMixin, PageTitleMixin, DeleteView):
+    template_name = 'oscar/renter/wishlists/wishlists_delete_product.html'
     active_tab = "wishlists"
 
     def get_page_title(self):
@@ -362,14 +362,14 @@ class WishListRemoveSdu(LineMixin, PageTitleMixin, DeleteView):
             self.request.user,
             self.kwargs['key'],
             self.kwargs.get('line_pk'),
-            self.kwargs.get('sdu_pk')
+            self.kwargs.get('product_pk')
         )
         return self.line
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['wishlist'] = self.wishlist
-        ctx['sdu'] = self.sdu
+        ctx['product'] = self.product
         return ctx
 
     def get_success_url(self):
@@ -378,18 +378,18 @@ class WishListRemoveSdu(LineMixin, PageTitleMixin, DeleteView):
             'name': self.wishlist.name}
         messages.success(self.request, msg)
 
-        # We post directly to this view on sdu pages; and should send the
+        # We post directly to this view on product pages; and should send the
         # user back there if that was the case
         referrer = safe_referrer(self.request, '')
-        if (referrer and self.sdu
-                and self.sdu.get_absolute_url() in referrer):
+        if (referrer and self.product
+                and self.product.get_absolute_url() in referrer):
             return referrer
         else:
             return reverse(
                 'renter:wishlists-detail', kwargs={'key': self.wishlist.key})
 
 
-class WishListMoveSduToAnotherWishList(LineMixin, View):
+class WishListMoveProductToAnotherWishList(LineMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         self.fetch_line(request.user, kwargs['key'], line_pk=kwargs['line_pk'])
@@ -399,9 +399,9 @@ class WishListMoveSduToAnotherWishList(LineMixin, View):
         to_wishlist = get_object_or_404(
             WishList, owner=request.user, key=kwargs['to_key'])
 
-        if to_wishlist.lines.filter(sdu=self.line.sdu).count() > 0:
+        if to_wishlist.lines.filter(product=self.line.product).count() > 0:
             msg = _("Wish list '%(name)s' already containing '%(title)s'") % {
-                'title': self.sdu.get_title(),
+                'title': self.product.get_title(),
                 'name': to_wishlist.name}
             messages.error(self.request, msg)
         else:
@@ -409,7 +409,7 @@ class WishListMoveSduToAnotherWishList(LineMixin, View):
             self.line.save()
 
             msg = _("'%(title)s' moved to '%(name)s' wishlist") % {
-                'title': self.sdu.get_title(),
+                'title': self.product.get_title(),
                 'name': to_wishlist.name}
             messages.success(self.request, msg)
 

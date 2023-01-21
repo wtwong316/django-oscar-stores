@@ -544,7 +544,7 @@ class InquiryDetailView(PageTitleMixin, PostActionMixin, generic.DetailView):
                     options.append({
                         'option': attribute.option,
                         'value': attribute.value})
-            basket.add_sdu(line.sdu, line.quantity, options)
+            basket.add_product(line.product, line.quantity, options)
 
         if len(lines_to_add) > 0:
             self.response = redirect('basket:summary')
@@ -590,14 +590,14 @@ class InquiryLineView(PostActionMixin, generic.DetailView):
             if attribute.option:
                 options.append({'option': attribute.option,
                                 'value': attribute.value})
-        basket.add_sdu(line.sdu, line.quantity, options)
+        basket.add_product(line.product, line.quantity, options)
 
         if line.quantity > 1:
-            msg = _("%(qty)d copies of '%(sdu)s' have been added to your"
+            msg = _("%(qty)d copies of '%(product)s' have been added to your"
                     " basket") % {
-                'qty': line.quantity, 'sdu': line.sdu}
+                'qty': line.quantity, 'product': line.product}
         else:
-            msg = _("'%s' has been added to your basket") % line.sdu
+            msg = _("'%s' has been added to your basket") % line.product
 
         messages.info(self.request, msg)
 

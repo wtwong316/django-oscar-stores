@@ -1,6 +1,6 @@
 from oscar.apps.offer.abstract_models import (
     AbstractBenefit, AbstractCondition, AbstractConditionalOffer,
-    AbstractRange, AbstractRangeSdu, AbstractRangeSduFileUpload)
+    AbstractRange, AbstractRangeProduct, AbstractRangeProductFileUpload)
 from oscar.apps.offer.results import (
     SHIPPING_DISCOUNT, ZERO_DISCOUNT, BasketDiscount, PostInquiryAction,
     ShippingDiscount)
@@ -40,18 +40,18 @@ if not is_model_registered('offer', 'Range'):
     __all__.append('Range')
 
 
-if not is_model_registered('offer', 'RangeSdu'):
-    class RangeSdu(AbstractRangeSdu):
+if not is_model_registered('offer', 'RangeProduct'):
+    class RangeProduct(AbstractRangeProduct):
         pass
 
-    __all__.append('RangeSdu')
+    __all__.append('RangeProduct')
 
 
-if not is_model_registered('offer', 'RangeSduFileUpload'):
-    class RangeSduFileUpload(AbstractRangeSduFileUpload):
+if not is_model_registered('offer', 'RangeProductFileUpload'):
+    class RangeProductFileUpload(AbstractRangeProductFileUpload):
         pass
 
-    __all__.append('RangeSduFileUpload')
+    __all__.append('RangeProductFileUpload')
 
 
 # Import the benefits and the conditions. Required after initializing the

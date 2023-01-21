@@ -25,7 +25,7 @@ class OfferListView(ListView):
 
 
 class OfferDetailView(ListView):
-    context_object_name = 'sdus'
+    context_object_name = 'products'
     template_name = 'oscar/offer/detail.html'
     paginate_by = settings.OSCAR_OFFERS_PER_PAGE
 
@@ -46,15 +46,15 @@ class OfferDetailView(ListView):
 
     def get_queryset(self):
         """
-        Return a queryset of all :py:class:`Sdu <oscar.apps.catalogue.abstract_models.AbstractSdu>`
+        Return a queryset of all :py:class:`Product <oscar.apps.catalogue.abstract_models.AbstractProduct>`
         instances related to the :py:class:`ConditionalOffer <oscar.apps.offer.abstract_models.AbstractConditionalOffer>`.
         """  # noqa
-        return self.offer.sdus()
+        return self.offer.products()
 
 
 class RangeDetailView(ListView):
     template_name = 'oscar/offer/range.html'
-    context_object_name = 'sdus'
+    context_object_name = 'products'
     paginate_by = settings.OSCAR_PRODUCTS_PER_PAGE
 
     def dispatch(self, request, *args, **kwargs):
@@ -65,11 +65,11 @@ class RangeDetailView(ListView):
 
     def get_queryset(self):
         """
-        Return a queryset of all :py:class:`Sdu <oscar.apps.catalogue.abstract_models.AbstractSdu>`
+        Return a queryset of all :py:class:`Product <oscar.apps.catalogue.abstract_models.AbstractProduct>`
         instances related to the :py:class:`Range <oscar.apps.offer.abstract_models.AbstractRange>`.
         """  # noqa
-        sdus = self.range.all_sdus()
-        return sdus.order_by('rangesdu__display_order')
+        products = self.range.all_products()
+        return products.order_by('rangeproduct__display_order')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

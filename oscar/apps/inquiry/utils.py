@@ -151,7 +151,7 @@ class InquiryCreator(object):
         You can set extra fields by passing a dictionary as the
         extra_line_fields value
         """
-        sdu = basket_line.sdu
+        product = basket_line.product
         stockrecord = basket_line.stockrecord
         if not stockrecord:
             raise exceptions.UnableToPlaceInquiry(
@@ -164,10 +164,10 @@ class InquiryCreator(object):
             'partner_name': partner.name,
             'partner_sku': stockrecord.partner_sku,
             'stockrecord': stockrecord,
-            # Sdu details
-            'sdu': sdu,
-            'title': sdu.get_title(),
-            'upc': sdu.upc,
+            # Product details
+            'product': product,
+            'title': product.get_title(),
+            'upc': product.upc,
             'quantity': basket_line.quantity,
             # Price details
             'line_price_excl_tax':
@@ -201,7 +201,7 @@ class InquiryCreator(object):
         """
         Update any relevant stock records for this inquiry line
         """
-        #if line.sdu.get_sdu_class().track_stock:
+        #if line.product.get_product_class().track_stock:
         #    line.stockrecord.allocate(line.quantity)
         pass
 

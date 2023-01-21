@@ -12,17 +12,17 @@ RenterHistoryManager = get_class('renter.history', 'RenterHistoryManager')
 register = template.Library()
 
 
-@register.inclusion_tag('oscar/renter/history/recently_viewed_sdus.html',
+@register.inclusion_tag('oscar/renter/history/recently_viewed_products.html',
                         takes_context=True)
-def recently_viewed_sdus(context, current_sdu=None):
+def recently_viewed_products(context, current_product=None):
     """
-    Inclusion tag listing the most recently viewed sdus
+    Inclusion tag listing the most recently viewed products
     """
     request = context['request']
-    sdus = RenterHistoryManager.get(request)
-    if current_sdu:
-        sdus = [p for p in sdus if p != current_sdu]
-    return {'sdus': sdus,
+    products = RenterHistoryManager.get(request)
+    if current_product:
+        products = [p for p in products if p != current_product]
+    return {'products': products,
             'request': request}
 
 
