@@ -109,6 +109,8 @@ class SdfDetailView(MapsContextMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        #ctx['all_sdus'] = SdfSdu.objects.get(sdfId_id=ctx['sdf']['pk'])
+        pk = self.object.id
+        all_sdus = SdfSdu.objects.select_related().filter(sdfId_id=pk)
+        ctx['all_sdus'] = all_sdus
         return ctx
 
