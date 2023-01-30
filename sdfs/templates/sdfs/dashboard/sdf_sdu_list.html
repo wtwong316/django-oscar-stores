@@ -1,0 +1,79 @@
+{% extends 'oscar/dashboard/layout.html' %}
+{% load i18n %}
+
+{% block body_class %}sdfs{% endblock %}
+{% block title %}
+{% trans "Sdf management" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Sdf Sdus" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if sdu_list.all|length %}
+<form method="post" class="inquiry_table">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>{% trans "Group Name" %}</th>
+            <th>{% trans "Sdf" %}</th>
+            <th>{% trans "Street" %}</th>
+            <th>{% trans "City" %}</th>
+            <th>{% trans "Post Code" %}</th>
+            <th>{% trans "State" %}</th>
+            <th>{% trans "Country" %}</th>
+            <th></th>
+        </tr>
+        {% for sdf in sdf_list %}
+            {% for sdu in sdfs.sdus.all %}
+            <tr>
+                {% if forloop.first %}
+                    <td rowspan="{{ sdfs.sdus.all|length }}">{{ sdu.name }}</td>
+                {% endif%}
+                <td>{{ sdf.name }}</td>
+                <!--
+                {% with address=sdf.address %}
+                    <td>{{ address.street }}</td>
+                    <td>{{ address.city }}</td>
+                    <td>{{ address.postcode }}</td>
+                    <td>{{ address.state }}</td>
+                    <td>{{ address.country }}</td>
+                {% endwith %}
+                -->
+                {% if forloop.first %}
+                    <td rowspan="{{ sdfs.sdus.all|length }}">
+                        <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdf.id %}">{% trans "Edit" %}</a>
+                        <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdf.id %}">{% trans "Delete" %}</a>
+                    </td>
+                {% endif%}
+            </tr>
+            {% empty %}
+            <tr>
+                <td>{{ group.name }}</td>
+                <td colspan="6">{% trans "No Sdu assigned to this Sdf." %}</td>
+                <td>
+                    <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdf.id %}">{% trans "Edit" %}</a>
+                    <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdf.id %}">{% trans "Delete" %}</a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+
+    {% if page_obj %}
+        {% include "oscar/partials/pagination.html" %}
+    {% endif %}
+</form>
+
+{% else %}
+    <p>{% trans "No sdf Sdus found." %}</p>
+{% endif %}
+
+{% endblock dashboard_content %}

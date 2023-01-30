@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from extra_views import CreateWithInlinesView, InlineFormSetFactory, UpdateWithInlinesView
 from oscar.core.loading import get_class, get_classes, get_model
+from django import forms
 
 MapsContextMixin = get_class('sdfs.views', 'MapsContextMixin')
 (DashboardSdfSearchForm,
@@ -18,6 +19,7 @@ MapsContextMixin = get_class('sdfs.views', 'MapsContextMixin')
                                                      'SdfAddressForm',
                                                      'SdfForm'))
 Sdf = get_model('sdfs', 'Sdf')
+SdfSdu = get_model('sdfs', 'SdfSdu')
 SdfGroup = get_model('sdfs', 'SdfGroup')
 #OpeningPeriod = get_model('sdfs', 'OpeningPeriod')
 SdfAddress = get_model('sdfs', 'SdfAddress')
@@ -144,6 +146,74 @@ class SdfDeleteView(generic.DeleteView):
             time.delete()
         """
         return super().delete(request, *args, **kwargs)
+
+
+class SdfSduListView(generic.ListView):
+    model = SdfSdu
+    context_object_name = 'sdu_list'
+    template_name = "sdfs/dashboard/sdf_sdu_list.html"
+
+
+class SdfSduCreateView(generic.CreateView):
+    model = SdfSdu
+    #fields = ['name', 'slug', 'size', 'household_size', 'rent', 'has_contract', 'has_individual_kitchen',
+    fields = ['name', 'size', 'household_size', 'rent', 'has_contract', 'has_individual_kitchen',
+              'has_individual_bath', 'has_exterior_window', 'internal_grading']
+    template_name = "sdfs/dashboard/sdf_sdu_update.html"
+    success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
+    widgets = {"sdfId": forms.HiddenInput()}
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['title'] = _("Create new SDU")
+        if 'pk' in self.kwargs:
+            ctx['pk'] = self.kwargs['pk']
+        return ctx
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        form.instance.sdfId_id = self.kwargs['pk']
+        messages.success(self.request, _("Sdu created"))
+        return super(SdfSduCreateView, self).form_valid(form)
+
+    def get_form(self):
+        form = super().get_form()
+        return form
+
+
+class SdfSduUpdateView(generic.CreateView):
+    model = SdfSdu
+    template_name = "sdfs/dashboard/sdf_sdu_update.html"
+    form_class = SdfForm
+    success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['title'] = self.object.name
+        return ctx
+
+    def forms_invalid(self, form, inlines):
+        messages.error(
+            self.request,
+            "Your submitted data was not valid - please correct the below errors")
+        return super().forms_invalid(form, inlines)
+
+    def forms_valid(self, form, inlines):
+        msg = render_to_string('sdfs/dashboard/messages/sdu_saved.html',
+                               {'sdu': self.object})
+        messages.success(self.request, msg, extra_tags='safe')
+        return super().forms_valid(form, inlines)
+
+
+class SdfSduDeleteView(generic.DeleteView):
+    model = SdfSdu
+    template_name = "sdfs/dashboard/sdf_sdu_delete.html"
+    success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("Sdf sdu deleted"))
+        return response
 
 
 class SdfGroupListView(generic.ListView):

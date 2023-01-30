@@ -51,6 +51,7 @@
             {% csrf_token %}
             <table class="table table-striped table-bordered">
                 <tr>
+                    <th>{% trans "SdfId" %}</th>
                     <th>{% trans "SurveyId" %}</th>
                     <th>{% trans "Street name" %}</th>
                     <th>{% trans "Street number" %}</th>
@@ -66,11 +67,13 @@
                     <th>{% trans "Is pick up sdf?" %}</th>
                     -->
                     <th>{% trans "Status" %}</th>
-                    <th></th>
+                    <th>{% trans "View on Map" %}</th>
+                    <th>{% trans "Add SDU" %}</th>
                 </tr>
                 {% for sdf in sdf_list %}
                     <tr>
-                        <th><a href="{% url 'sdfs-dashboard:sdf-update' sdf.pk %}">{{ sdf.name }}</a></th>
+                        <th><a href="{% url 'sdfs-dashboard:sdf-update' sdf.pk %}">{{ sdf.id }}</a></th>
+                        <th>{{ sdf.name }}</th>
                         <td>{{ sdf.address.line1 }}</td>
                         <td>{{ sdf.address.line2 }}</td>
                         <td>{{ sdf.address.line3 }}</td>
@@ -108,6 +111,9 @@
                                 </div>
                             </div>
                             {% endblock row_actions %}
+                        </td>
+                        <td>
+                            <a href="{% url 'sdfs-dashboard:sdf-sdu-create' sdf.id %}" class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> {% trans "Create new sdu" %}</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load l10n %}
+<br><br>
+<h3>{% trans "SDUs" %}</h3>
+<br>
+
+{% if all_sdus %}
+   all_sdus =
+{% else %}
+    <br>
+    {% trans "No sdf Sdus found." %}
+{% endif %}

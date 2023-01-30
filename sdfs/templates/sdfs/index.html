@@ -31,7 +31,7 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        {% if all_sdfs %}
+        {% if sdf_list %}
         <div class="col-md-3 view-sdfs">
             <form id="sdf-search" method="get">
                 <button type="button" class="btn btn-primary btn-block" data-behaviours="geo-location"><i class="fas fa-map-marker-alt"></i> {% trans "Use my location" %}</button>
@@ -63,10 +63,10 @@
 
                 <h3>All sdfs</h3>
                     <ul class="nav flex-column">
-                {% for sdf in all_sdfs %}
+                {% for sdf in sdf_list %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'sdfs:detail' sdf.slug sdf.pk %}">
-                        {{ sdf.name }}
+                    <a class="nav-link" href="{% url 'sdfs:detail' sdf.slug sdf.id %}">
+                        {{ sdf.id }}
                     </a>
                 </li>
                 {% endfor %}
@@ -80,17 +80,17 @@
                 {% for sdf in sdf_list %}
                 <div class="sdfs-list">
                     <div class="sub-header">
-                        <h4>{{ sdf.name }}
+                        <h4>{{ sdf.id }}
                         {% if sdf.distance %}
                             <span class="text-muted small">{{ sdf.distance.km|floatformat:2 }} km</span>
                         {% endif %}
-                        <a href="{% url 'sdfs:detail' sdf.slug sdf.pk %}" class="btn btn-primary float-right">{% trans "View sdf details" %}</a></h4>
+                        <a href="{% url 'sdfs:detail' sdf.slug sdf.id %}" class="btn btn-primary float-right">{% trans "View sdf details" %}</a></h4>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
                             {% if sdf.image %}
                                 {% oscar_thumbnail sdf.image "400x400" as im %}
-                                <a href="{{ sdf.get_absolute_url }}"><img alt="{{ sdf.name }}" src="{{ im.url }}" width="{{ im.width}}" height="{{ im.height }}" class="img-fluid"></a>
+                                <a href="{{ sdf.get_absolute_url }}"><img alt="{{ sdf.id }}" src="{{ im.url }}" width="{{ im.width}}" height="{{ im.height }}" class="img-fluid"></a>
                             {% else %}
                                 <a href="{{ sdf.get_absolute_url }}">{{ sdf.name }}</a>
                             {% endif %}

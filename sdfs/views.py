@@ -6,7 +6,7 @@ from oscar.core.loading import get_class, get_model
 
 SdfSearchForm = get_class('sdfs.forms', 'SdfSearchForm')
 Sdf = get_model('sdfs', 'sdf')
-
+SdfSdu = get_model('sdfs', 'SdfSdu')
 
 class MapsContextMixin:
 
@@ -91,8 +91,7 @@ class SdfListView(MapsContextMixin, generic.ListView):
         ctx = super().get_context_data(**kwargs)
 
         ctx['form'] = self.form
-        ctx['all_sdfs'] = self.model.objects.select_related('group', 'address').all()
-
+        #ctx['all_sdfs'] = self.model.objects.select_related('group', 'address').all()
         if hasattr(self.form, 'point') and self.form.point:
             coords = self.form.point.coords
             ctx['latitude'] = coords[1]
@@ -107,3 +106,9 @@ class SdfDetailView(MapsContextMixin, generic.DetailView):
     model = Sdf
     template_name = 'sdfs/detail.html'
     context_object_name = 'sdf'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        #ctx['all_sdus'] = SdfSdu.objects.get(sdfId_id=ctx['sdf']['pk'])
+        return ctx
+

@@ -19,12 +19,12 @@
         <li class="breadcrumb-item">
             <a href="{% url 'sdfs:index' %}">{% trans "Sdfs" %}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">{{ sdf.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ sdf.pk }}</li>
     </ol>
 </nav>
 {% endblock %}
 
-{% block headertext %}{{ sdf.name }}{% endblock %}
+{% block headertext %}{{ sdf.pk }}{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -51,6 +51,10 @@
                 {{ sdf.description|safe }}
             </section>
         </div>
+    </div>
+    <br>
+    <div class="row">
+        {% include "sdfs/partials/sdf_sdu.html" %}
     </div>
 {% endblock %}
 

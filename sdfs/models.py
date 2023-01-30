@@ -38,3 +38,10 @@ if not is_model_registered('sdfs', 'SdfStock'):
         pass
 
     __all__.append('SdfStock')
+
+
+if not is_model_registered('sdfs', 'SdfSdu'):
+    class SdfSdu(abstract_models.SdfSdu):
+        pass
+
+    __all__.append('SdfSdu')

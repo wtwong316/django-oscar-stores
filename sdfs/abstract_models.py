@@ -48,6 +48,44 @@ class SdfGroup(models.Model):
         return self.name
 
 
+class SdfSdu(models.Model):
+    name = models.CharField(_('AppId'), max_length=100, unique=True)
+    #slug = models.SlugField(_('Slug'), max_length=100, unique=True)
+    size = models.DecimalField(_('Size in sqft'), decimal_places=2, max_digits=10, default=0.0, null=True)
+    household_size = models.IntegerField(_('Household size'), default=1)
+    rent = models.DecimalField(_('Rent'), decimal_places=2, max_digits=10, default=0.0, null=True)
+    has_contract = models.BooleanField(_('Has contract'), default=False)
+    has_individual_kitchen = models.BooleanField(_('Has individual kitchen'), default=False)
+    has_individual_bath = models.BooleanField(_('Has individual bath'), default=False)
+    has_exterior_window = models.BooleanField(_('Has exterior windows'), default=False)
+    internal_grading = models.IntegerField(_('Internal grading'), default=0)
+
+    sdfId = models.ForeignKey(
+        'sdfs.Sdf',
+        related_name='Sdf',
+        verbose_name=_("SdfId"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        abstract = True
+        verbose_name = _("Sdf Sdu details")
+        verbose_name_plural = _("Sdf Sdu details")
+        app_label = 'sdfs'
+
+    objects = Manager()
+
+    def save(self, *args, **kwargs):
+#        if not self.slug:
+#            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
 class Sdf(models.Model):
     name = models.CharField(_('SurveyId'), max_length=100)
     slug = models.SlugField(_('Slug'), max_length=100, null=True)
@@ -161,6 +199,7 @@ class OpeningPeriod(models.Model):
         if self.start and self.end and self.end <= self.start:
             raise ValidationError(_("Start must be before end"))
 """
+
 
 class SdfStock(models.Model):
     sdf = models.ForeignKey(
