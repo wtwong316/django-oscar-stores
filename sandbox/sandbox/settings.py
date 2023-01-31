@@ -136,6 +136,10 @@ OSCAR_DASHBOARD_NAVIGATION.append(
                 'url_name': 'sdfs-dashboard:sdf-list',
             },
             {
+                'label': _('Sdus'),
+                'url_name': 'sdfs-dashboard:sdf-sdu-list',
+            },
+            {
                 'label': _('Sdf groups'),
                 'url_name': 'sdfs-dashboard:sdf-group-list',
             },

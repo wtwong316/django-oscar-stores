@@ -72,7 +72,7 @@
                 </tr>
                 {% for sdf in sdf_list %}
                     <tr>
-                        <th><a href="{% url 'sdfs-dashboard:sdf-update' sdf.pk %}">{{ sdf.id }}</a></th>
+                        <th><a href="{% url 'sdfs-dashboard:sdf-update' sdf.pk %}">{{ sdf.pk }}</a></th>
                         <th>{{ sdf.name }}</th>
                         <td>{{ sdf.address.line1 }}</td>
                         <td>{{ sdf.address.line2 }}</td>

@@ -153,6 +153,11 @@ class SdfSduListView(generic.ListView):
     context_object_name = 'sdu_list'
     template_name = "sdfs/dashboard/sdf_sdu_list.html"
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['title'] = _("List SDU")
+        return ctx
+
 
 class SdfSduCreateView(generic.CreateView):
     model = SdfSdu

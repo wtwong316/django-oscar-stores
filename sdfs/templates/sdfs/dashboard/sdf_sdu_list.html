@@ -22,48 +22,43 @@
     {% csrf_token %}
     <table class="table table-striped table-bordered">
         <tr>
-            <th>{% trans "Group Name" %}</th>
-            <th>{% trans "Sdf" %}</th>
-            <th>{% trans "Street" %}</th>
-            <th>{% trans "City" %}</th>
-            <th>{% trans "Post Code" %}</th>
-            <th>{% trans "State" %}</th>
-            <th>{% trans "Country" %}</th>
+            <th>{% trans "SdfId" %}</th>
+            <th>{% trans "SduId" %}</th>
+            <th>{% trans "Survey Id" %}</th>
+            <th>{% trans "Size in sqft" %}</th>
+            <th>{% trans "Household Size" %}</th>
+            <th>{% trans "Rent" %}</th>
+            <th>{% trans "Contract" %}</th>
+            <th>{% trans "Individual Kitchen" %}</th>
+            <th>{% trans "Individual Bath" %}</th>
+            <th>{% trans "Exterior Window" %}</th>
+            <th>{% trans "Internal Grading" %}</th>
+            <th>{% trans "Is active" %}</th>
             <th></th>
         </tr>
-        {% for sdf in sdf_list %}
-            {% for sdu in sdfs.sdus.all %}
-            <tr>
-                {% if forloop.first %}
-                    <td rowspan="{{ sdfs.sdus.all|length }}">{{ sdu.name }}</td>
-                {% endif%}
-                <td>{{ sdf.name }}</td>
-                <!--
-                {% with address=sdf.address %}
-                    <td>{{ address.street }}</td>
-                    <td>{{ address.city }}</td>
-                    <td>{{ address.postcode }}</td>
-                    <td>{{ address.state }}</td>
-                    <td>{{ address.country }}</td>
-                {% endwith %}
-                -->
-                {% if forloop.first %}
-                    <td rowspan="{{ sdfs.sdus.all|length }}">
-                        <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdf.id %}">{% trans "Edit" %}</a>
-                        <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdf.id %}">{% trans "Delete" %}</a>
-                    </td>
-                {% endif%}
-            </tr>
-            {% empty %}
-            <tr>
-                <td>{{ group.name }}</td>
-                <td colspan="6">{% trans "No Sdu assigned to this Sdf." %}</td>
-                <td>
-                    <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdf.id %}">{% trans "Edit" %}</a>
-                    <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdf.id %}">{% trans "Delete" %}</a>
+        {% for sdu in sdu_list %}
+        <tr>
+            {% if forloop.first %}
+                <td rowspan="{{ sdu_list.all|length }}">{{ sdu.sdfId_id}}</td>
+            {% endif%}
+            <td>{{ sdu.id }}</td>
+            <td>{{ sdu.name }}</td>
+            <td>{{ sdu.size }}</td>
+            <td>{{ sdu.household_size }}</td>
+            <td>{{ sdu.rent }}</td>
+            <td>{{ sdu.has_contract }}</td>
+            <td>{{ sdu.has_individual_kitchen }}</td>
+            <td>{{ sdu.has_individual_bath }}</td>
+            <td>{{ sdu.has_exterior_window }}</td>
+            <td>{{ sdu.internal_grading }}</td>
+            <td>{{ sdu.is_active }}</td>
+            {% if forloop.first %}
+                <td rowspan="{{ sdfs.sdu.all|length }}">
+                    <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdu.pk %}">{% trans "Edit" %}</a>
+                    <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdu.pk %}">{% trans "Delete" %}</a>
                 </td>
-            </tr>
-            {% endfor %}
+            {% endif%}
+        </tr>
         {% endfor %}
     </table>
 

@@ -12,12 +12,12 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'sdfs-dashboard:sdf-list' %}">{% trans "Sdfs" %}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ pk }}</li>
     </ol>
 </nav>
 {% endblock %}
 
-{% block headertext %}{{ title }}{% endblock %}
+{% block headertext %}{{ pk }}{% endblock %}
 
 {% block dashboard_content %}
 

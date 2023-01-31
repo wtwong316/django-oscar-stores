@@ -17,6 +17,7 @@
             <th>{% trans "Individual Bath" %}</th>
             <th>{% trans "Exterior Window" %}</th>
             <th>{% trans "Internal Grading" %}</th>
+            <th>{% trans "Is active" %}</th>
         </tr>
         {% for sdu in all_sdus %}
          <tr>
@@ -30,6 +31,7 @@
                 <td>{{ sdu.has_individual_bath }}</td>
                 <td>{{ sdu.has_exterior_window }}</td>
                 <td>{{ sdu.internal_grading }}</td>
+                <td>{{ sdu.is_active }}</td>
          </tr>
         {% endfor %}
     </table>

@@ -59,7 +59,7 @@ class SdfSdu(models.Model):
     has_individual_bath = models.BooleanField(_('Has individual bath'), default=False)
     has_exterior_window = models.BooleanField(_('Has exterior windows'), default=False)
     internal_grading = models.IntegerField(_('Internal grading'), default=0)
-
+    is_active = models.BooleanField(_("Is active"), default=True)
     sdfId = models.ForeignKey(
         'sdfs.Sdf',
         related_name='Sdf',
