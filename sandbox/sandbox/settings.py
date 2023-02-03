@@ -237,3 +237,5 @@ ELASTICSEARCH_DSL = {
 ELASTICSEARCH_INDEX_NAMES = {
     'sdfs.SdfSdu': 'sdus',
 }
+
+ALLOWED_HOSTS = ['*']

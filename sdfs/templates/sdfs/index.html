@@ -131,7 +131,7 @@
         var sdfData = [
             {% for sdf in sdf_list %}
             {
-                'name': '{{ sdf.name|escapejs }}',
+                'name': '{{ sdf.pk|escapejs }}',
                 'location': new google.maps.LatLng({{ sdf.location.y|unlocalize }}, {{ sdf.location.x|unlocalize }}),
                 'imageURL': '{% if sdf.image %}{{ sdf.image.url }}{% endif %}',
                 'address1': '{{ sdf.address.line1|escapejs }}',
