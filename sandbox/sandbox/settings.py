@@ -116,7 +116,13 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'sdfs',
     'sdfs.dashboard',
-    'django_countries'] + oscar.INSTALLED_APPS
+    'sdfs.action',
+    'esearch',
+    'rest_framework',
+    'django_countries',
+    "django_elasticsearch_dsl",
+    "django_elasticsearch_dsl_drf",
+] + oscar.INSTALLED_APPS
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.renter.auth_backends.EmailBackend',
@@ -222,3 +228,12 @@ LOCALE_PATHS = (
 )
 
 OSCAR_DEFAULT_CURRENCY = 'HKD'
+
+# Elasticsearch
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "localhost:9200/"},
+}
+
+ELASTICSEARCH_INDEX_NAMES = {
+    'sdfs.SdfSdu': 'sdus',
+}

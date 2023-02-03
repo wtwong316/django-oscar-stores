@@ -1,0 +1,38 @@
+{% extends "oscar/layout.html" %}
+{% load currency_filters i18n image_tags l10n static widget_tweaks %}
+
+{% block extrahead %}
+    <style>map img { max-width: none; }</style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}sdfs/css/sdfs.css" />
+{% endblock %}
+{% block description %}
+    {{ category.get_meta_description }}
+{% endblock %}
+{% block title %}
+{{ queryset_description }} | {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+    <form action = "" method = "post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+
+
+{% if results %}
+      <div class="txtCentrado margenSup20 grisDC">
+          <h3>We found {{ count }} result{{ count|pluralize }} for your search </h3>
+      </div>
+{%elif not search_term %}
+
+{%elif not results %}
+    <p>No results found.</p>
+{% endif %}
+{% endblock %}
+
+{% block extrascripts %}
+    {{ block.super }}
+    {% include "sdfs/partials/extrascripts.html" %}
+{% endblock %}

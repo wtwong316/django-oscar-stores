@@ -8,6 +8,7 @@ SdfSearchForm = get_class('sdfs.forms', 'SdfSearchForm')
 Sdf = get_model('sdfs', 'sdf')
 SdfSdu = get_model('sdfs', 'SdfSdu')
 
+
 class MapsContextMixin:
 
     def get_context_data(self, **kwargs):

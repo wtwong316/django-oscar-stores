@@ -15,6 +15,8 @@ js_info_dict = {
 urlpatterns = [
     path('', include(apps.get_app_config('oscar').urls[0])),
     path('dashboard/sdfs/', apps.get_app_config('sdfs_dashboard').urls),
+    path('sdfs/action/', apps.get_app_config('sdfs_action').urls),
+    path('esearch/', apps.get_app_config('esearch').urls),
     path('sdfs/', apps.get_app_config('sdfs').urls),
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),

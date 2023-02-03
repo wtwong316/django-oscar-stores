@@ -65,10 +65,10 @@
     {% endblock %}
 
     {% if products %}
-        {% block product_list %}
+        {% block all_sdus %}
             <form method="post">
                 {% csrf_token %}
-                {% render_table products %}
+                {% render_table sdus %}
             </form>
             <div class="modal fade" id="product-image-modal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -83,7 +83,7 @@
                     </div>
                 </div>
             </div>
-        {% endblock product_list %}
+        {% endblock all_sdus %}
     {% else %}
         <p>{% trans "No products found." %}</p>
     {% endif %}
