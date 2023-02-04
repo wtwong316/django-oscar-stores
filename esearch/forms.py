@@ -3,9 +3,9 @@ from django import forms
 
 class SearchSduForm(forms.Form):
     min_sdu_size = forms.IntegerField(label='Minimum size in sqft', required=False)
-    max_sdu_size = forms.IntegerField(label='Maximum size in sqft', min_value=0, required=False)
-    household_size = forms.IntegerField(label='Household size', required=False)
-    min_rent = forms.IntegerField(label='Minimum monthly rent', required=False)
+    #max_sdu_size = forms.IntegerField(label='Maximum size in sqft', min_value=0, required=False)
+    #household_size = forms.IntegerField(label='Household size', required=False)
+    #min_rent = forms.IntegerField(label='Minimum monthly rent', required=False)
     max_rent = forms.IntegerField(label='Maximum monthly rent', required=False)
     has_individual_kitchen = forms.BooleanField(label='Has individual kitchen', required=True)
     has_individual_bath = forms.BooleanField(label='Has individual bath', required=True)
