@@ -9,7 +9,8 @@ from esearch.documents import SduDocument
 from esearch.serializers import SduDocumentSerializer
 from django.views.generic import FormView
 from oscar.core.loading import get_class
-
+from django.core.paginator import Paginator
+from django.conf import settings
 
 SearchSduForm = get_class('esearch.forms', 'SearchSduForm')
 
@@ -41,9 +42,29 @@ class SearchSduView(FormView):
 
     def get(self, request):
         context = {}
-        form = self.form_class()
+        context = self.get_context_data()
         context['form'] = self.form_class()
         return render(request, self.template_name, context)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_result = self.get_context_search_results()
+        sdus = search_result
+        paginator = Paginator(sdus, settings.OSCAR_SDUS_PER_PAGE)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context["page_obj"] = page_obj
+        context["paginator"] = paginator
+
+        return context
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def search_result(self):
+        pass
+
+    def get_context_search_results(self):
+        return []
 
 

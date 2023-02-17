@@ -1,105 +1,33 @@
-{% load i18n static %}
+{% extends "oscar/layout.html" %}
+{% load currency_filters i18n image_tags l10n static widget_tweaks %}
 
-{% block body_class %}sdfs{% endblock %}
-
+{% block extrahead %}
+    <style>map img { max-width: none; }</style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}sdfs/css/sdfs.css" />
+{% endblock %}
+{% block description %}
+    {{ category.get_meta_description }}
+{% endblock %}
 {% block title %}
-{{ title }} | {{ block.super }}
+{{ queryset_description }} | {{ block.super }}
 {% endblock %}
 
-{% block breadcrumbs %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'sdfs-dashboard:sdf-list' %}">{% trans "Sdfs" %}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ pk }}</li>
-    </ol>
-</nav>
-{% endblock %}
+{% block content %}
+    <h2> {% trans "劏房單位租金估算器" %} </h2>
+    <br/>
+    <form action = "" method = "post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="提交">
+    </form>
 
-{% block headertext %}{{ pk }}{% endblock %}
+    {% if results %}
+          <div class="txtCentrado margenSup20 grisDC">
+              <h3>We found {{ count }} result{{ count|pluralize }} for your search </h3>
+          </div>
+    {%elif not search_term %}
 
-{% block dashboard_content %}
-
-{% if form.errors %}
-<div class="alert alert-danger">
-    {% trans "Your submitted data did not validate - please correct the below errors and resubmit." %}
-</div>
-{% endif %}
-
-<form method="post" class="form-vertical wysiwyg" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-                <span class="help-inline"><i class="fas fa-exclamation"></i> {{ error }}</span>
-            </div>
-        {% endfor %}
+    {%elif not results %}
+        <p>No results found.</p>
     {% endif %}
-
-    <div class="table-header">
-        <h3>{% trans "Sdf details" %}</h3>
-    </div>
-    <div class="card card-body bg-light">
-        {% block sdf_details_fields %}
-        {% include "oscar/dashboard/partials/form_field.html" with field=form.name %}
-        {% endblock sdf_details_fields %}
-    </div>
-
-    <div class="table-header">
-        <h3>{% trans "Address" %}</h3>
-    </div>
-    <div class="card card-body bg-light">
-        {% block address_fields %}
-        {% with formset=inlines.0 %}
-            {{ formset.management_form }}
-            {% for address_form in formset %}
-                {% if address_form.non_field_errors %}
-                    {% for error in address_form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            <span class="help-inline"><i class="fas fa-exclamation"></i> {{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% for field in address_form %}
-                    {% include "oscar/dashboard/partials/form_field.html" %}
-                {% endfor %}
-            {% endfor %}
-        {% endwith %}
-        {% endblock address_fields %}
-    </div>
-
-    <div class="table-header">
-        <h3>{% trans "Location" %}</h3>
-    </div>
-    <div class="card card-body bg-light">
-        {% block location_fields %}
-        <p>
-            {% blocktrans %}
-            Enter an address in the location input and select your address from the options that appear.
-            You can drag the marker around on the map to fine-tune the location.
-            {% endblocktrans %}
-        </p>
-        {% include "oscar/dashboard/partials/form_field.html" with field=form.location %}
-        <div class="controls">
-            <input type="text" id="search-text-field" style="margin-bottom: 10px; width: 968px;"/>
-            {% if form.location.errors %}
-                <div class="alert alert-danger">{% trans "Please select a location for your sdf." %}</div>
-            {% endif %}
-            <div id="sdf-map" style="width: 968px; height: 380px"></div>
-        </div>
-        {% endblock location_fields %}
-    </div>
-
-    {% block extra_field_blocks %}
-    {% endblock extra_field_blocks %}
-
-    <div class="card card-body bg-light">
-        <div class="form-actions">
-            <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
-            {% trans "or" %}
-            <a href="{% url 'sdfs-dashboard:sdf-list' %}">{% trans "cancel" %}</a>
-        </div>
-    </div>
-</form>
-{% endblock dashboard_content %}
+{% endblock %}

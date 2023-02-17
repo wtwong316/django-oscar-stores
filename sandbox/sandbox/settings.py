@@ -154,7 +154,7 @@ OSCAR_DASHBOARD_NAVIGATION.append(
 
 OSCAR_ALLOW_ANON_CHECKOUT = True
 
-OSCAR_SHOP_TAGLINE = "SDU Agent"
+OSCAR_SHOP_TAGLINE = "劏房住戶好幫手"
 
 GEOIP_ENABLED = True
 GEOIP_PATH = os.path.join(os.path.dirname(__file__), '../geoip')

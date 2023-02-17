@@ -13,11 +13,12 @@
 {% endblock %}
 
 {% block content %}
-
+    <h2> {% trans "劏房單位搜索助手" %} </h2>
+    <br/>
     <form action = "" method = "post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Submit">
+        <input type="submit" value="提交">
     </form>
 
 

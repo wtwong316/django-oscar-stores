@@ -34,15 +34,17 @@
                     {% block nav_items %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {% block browse_store_text %}{% trans "Operation Menu" %}{% endblock %}
+                                {% block browse_store_text %}{% trans "操作選項" %}{% endblock %}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{% url 'sdfs:index' %}">Sdf locator</a>
+                                <a class="dropdown-item" href="{% url 'sdfs:index' %}">{% trans "劏房單位位置搜索" %}</a>
 
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'sdfs-action:sdu-estimator' %}">{% trans "SDU Rent Estimator" %}</a>
+                                <a class="dropdown-item" href="{% url 'sdfs-action:sdu-estimator' %}">{% trans "劏房單位租金估算器" %}</a>
+                                <!--
                                 <a class="dropdown-item" href="{% url 'esearch:search-sdu-document-view' %}">{% trans "SDU Document Search" %}</a>
-                                <a class="dropdown-item" href="{% url 'esearch:search-sdu-view' %}">{% trans "SDU Search" %}</a>
+                                -->
+                                <a class="dropdown-item" href="{% url 'esearch:search-sdu-view' %}">{% trans "劏房單位搜索助手" %}</a>
                                 <!--
                                 {% block nav_dropdown_extra_items %}
                                 {% endblock %}
