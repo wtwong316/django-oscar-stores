@@ -20,14 +20,21 @@
         {{ form.as_p }}
         <input type="submit" value="提交">
     </form>
-
-    {% if results %}
+    <br/>
+    {% if results  %}
           <div class="txtCentrado margenSup20 grisDC">
-              <h3>We found {{ count }} result{{ count|pluralize }} for your search </h3>
+              <h3>估计租金每月約港元 $ {{ value }} </h3>
+              {% if compare > 0  %}
+                <h3>估计租金高於給定的金額</h3>
+              {% elif compare < 0 %}
+                <h3>估计租金低於給定的金額</h3>
+              {% else %}
+                <h3>估计租金和給定的金額相同</h3>
+              {% endif %}
           </div>
-    {%elif not search_term %}
-
-    {%elif not results %}
-        <p>No results found.</p>
+    {% else %}
+          <div class="txtCentrado margenSup20 grisDC">
+            <h3>無法估計租金金額</h3>
+          </div>
     {% endif %}
 {% endblock %}
