@@ -14,12 +14,12 @@ MapsContextMixin = get_class('sdfs.views', 'MapsContextMixin')
  #OpeningHoursInline,
  #OpeningPeriodForm,
  SdfAddressForm,
- SdfForm, SdfSduForm) = get_classes('sdfs.dashboard.forms', ('DashboardSdfSearchForm',
+ SdfForm, SdfSduCreateForm,
+ SdfSduUpdateForm) = get_classes('sdfs.dashboard.forms', ('DashboardSdfSearchForm',
                                                      #'OpeningHoursInline',
                                                      #'OpeningPeriodForm',
-                                                     'SdfAddressForm',
-                                                     'SdfForm',
-                                                     'SdfSduForm'))
+                                                     'SdfAddressForm', 'SdfForm',
+                                                     'SdfSduCreateForm', 'SdfSduUpdateForm'))
 Sdf = get_model('sdfs', 'Sdf')
 SdfSdu = get_model('sdfs', 'SdfSdu')
 SdfGroup = get_model('sdfs', 'SdfGroup')
@@ -163,13 +163,13 @@ class SdfSduListView(generic.ListView):
 
 class SdfSduCreateView(generic.CreateView):
     model = SdfSdu
-    form_class = SdfSduForm
+    form_class = SdfSduCreateForm
     template_name = "sdfs/dashboard/sdf_sdu_update.html"
     success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
     context_object_name = 'ctx'
 
     def get_context_data(self, **kwargs):
-        ctx = {'title': _("Create new SDU"), 'form':  SdfSduForm}
+        ctx = {'title': _("Create new SDU"), 'form':  super().get_form(self.form_class)}
         if 'pk' in self.kwargs:
             ctx['pk'] = self.kwargs['pk']
         request = self.request
@@ -188,24 +188,25 @@ class SdfSduCreateView(generic.CreateView):
             instance.building = self.request.GET.get('building')
             instance.district = self.request.GET.get('district')
             instance.sdfId_id = self.kwargs['pk']
-            form = SdfSduForm(self.request.POST, instance=instance)
+            form = SdfSduCreateForm(self.request.POST, instance=instance)
 
         return form
 
 
 class SdfSduUpdateView(generic.UpdateView):
     model = SdfSdu
-    form_class = SdfSduForm
+    form_class = SdfSduUpdateForm
     template_name = "sdfs/dashboard/sdf_sdu_update.html"
     success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
     context_object_name = 'ctx'
 
     def get_context_data(self, **kwargs):
-        ctx = {'title': _("Update SDU"), 'form':  SdfSduForm}
+        ctx = {'title': _("Update SDU"), 'form':  super().get_form(self.form_class)}
         if 'pk' in self.kwargs:
             ctx['pk'] = self.kwargs['pk']
         ctx['district'] = 'district'
         ctx['building'] = 'building'
+        return ctx
 
     def forms_invalid(self, form, inlines):
         messages.error(
@@ -220,9 +221,6 @@ class SdfSduUpdateView(generic.UpdateView):
         messages.success(self.request, msg, extra_tags='safe')
         return super().forms_valid(form, inlines)
 
-    def get_form(self):
-        form = super().get_form()
-        return form
 
 
 class SdfSduDeleteView(generic.DeleteView):

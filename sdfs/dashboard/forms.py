@@ -206,7 +206,7 @@ class IsOpenForm(forms.Form):
 #            self.instance,
 #        )
 
-class SdfSduForm(forms.ModelForm):
+class SdfSduCreateForm(forms.ModelForm):
     class Meta:
         model = SdfSdu
         fields = ['name', 'size', 'rent', 'has_contract', 'has_individual_kitchen', 'has_individual_bath',
@@ -220,3 +220,18 @@ class SdfSduForm(forms.ModelForm):
         form = super().get_form()
         return form
 
+
+class SdfSduUpdateForm(forms.ModelForm):
+    class Meta:
+        model = SdfSdu
+        fields = ['size', 'rent', 'has_contract', 'has_individual_kitchen', 'has_individual_bath',
+            'has_exterior_window', 'internal_grading']
+
+        widgets = {'name': forms.IntegerField(widget=forms.HiddenInput()),
+                   'sdfId_id': forms.IntegerField(widget=forms.HiddenInput()),
+                   'district': forms.IntegerField(widget=forms.HiddenInput()),
+                   'building': forms.IntegerField(widget=forms.HiddenInput())}
+
+    def get_form(self):
+        form = super().get_form()
+        return form
