@@ -6,24 +6,16 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from extra_views import CreateWithInlinesView, InlineFormSetFactory, UpdateWithInlinesView
 from oscar.core.loading import get_class, get_classes, get_model
-from django.shortcuts import get_object_or_404
-from django import forms
 
 MapsContextMixin = get_class('sdfs.views', 'MapsContextMixin')
 (DashboardSdfSearchForm,
- #OpeningHoursInline,
- #OpeningPeriodForm,
  SdfAddressForm,
  SdfForm, SdfSduCreateForm,
- SdfSduUpdateForm) = get_classes('sdfs.dashboard.forms', ('DashboardSdfSearchForm',
-                                                     #'OpeningHoursInline',
-                                                     #'OpeningPeriodForm',
-                                                     'SdfAddressForm', 'SdfForm',
-                                                     'SdfSduCreateForm', 'SdfSduUpdateForm'))
+ SdfSduUpdateForm) = get_classes('sdfs.dashboard.forms', ('DashboardSdfSearchForm', 'SdfAddressForm', 'SdfForm',
+                                                          'SdfSduCreateForm', 'SdfSduUpdateForm'))
 Sdf = get_model('sdfs', 'Sdf')
 SdfSdu = get_model('sdfs', 'SdfSdu')
 SdfGroup = get_model('sdfs', 'SdfGroup')
-#OpeningPeriod = get_model('sdfs', 'OpeningPeriod')
 SdfAddress = get_model('sdfs', 'SdfAddress')
 
 
@@ -41,11 +33,11 @@ class SdfListView(generic.ListView):
         address = data.get('address', None)
 
         if name and not address:
-            return gettext('Sdfs matching "%s"') % (name)
+            return gettext('Sdfs matching "%s"') % name
         elif name and address:
             return gettext('Sdfs matching "%s" near "%s"') % (name, address)
         elif address:
-            return gettext('Sdfs near "%s"') % (address)
+            return gettext('Sdfs near "%s"') % address
         else:
             return gettext('Sdfs')
 
@@ -74,15 +66,7 @@ class SdfAddressInline(InlineFormSetFactory):
     }
 
 
-#class OpeningPeriodInline(InlineFormSetFactory):
-#    extra = 7
-#    max_num = 7
-#    model = OpeningPeriod
-#    form_class = OpeningPeriodForm
-
-
 class SdfEditMixin(MapsContextMixin):
-    #inlines = [OpeningHoursInline, SdfAddressInline]
     inlines = [SdfAddressInline]
 
 
@@ -182,15 +166,16 @@ class SdfSduCreateView(generic.CreateView):
         messages.success(self.request, _("Sdf sdu created"))
         return response
 
-    def get_form(self):
+    def get_form(self, **kwargs):
         if self.request.POST:
             instance = SdfSdu()
             instance.building = self.request.GET.get('building')
             instance.district = self.request.GET.get('district')
             instance.sdfId_id = self.kwargs['pk']
             form = SdfSduCreateForm(self.request.POST, instance=instance)
-
-        return form
+            return form
+        else:
+            return super().get_form(self.form_class)
 
 
 class SdfSduUpdateView(generic.UpdateView):
@@ -208,19 +193,10 @@ class SdfSduUpdateView(generic.UpdateView):
         ctx['building'] = 'building'
         return ctx
 
-    def forms_invalid(self, form, inlines):
-        messages.error(
-            self.request,
-            "Your submitted data was not valid - please correct the below errors")
-        return super().forms_invalid(form, inlines)
-
-    def forms_valid(self, form, inlines):
-        #form.instance = get_object_or_404(SdfSdu, pk=self.kwargs['pk'])
-        msg = render_to_string('sdfs/dashboard/messages/sdu_saved.html',
-                               {'sdu': self.object})
-        messages.success(self.request, msg, extra_tags='safe')
-        return super().forms_valid(form, inlines)
-
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("Sdf Sdu Updated"))
+        return response
 
 
 class SdfSduDeleteView(generic.DeleteView):
