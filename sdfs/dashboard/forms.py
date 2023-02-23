@@ -212,9 +212,12 @@ class SdfSduCreateForm(forms.ModelForm):
         fields = ['name', 'size', 'rent', 'has_contract', 'has_individual_kitchen', 'has_individual_bath',
             'has_exterior_window', 'internal_grading']
 
-        widgets = { 'sdfId_id': forms.IntegerField(widget=forms.HiddenInput()),
-                    'district': forms.IntegerField(widget=forms.HiddenInput()),
-                    'building': forms.IntegerField(widget=forms.HiddenInput())}
+        widgets = {'sdfId_id': forms.IntegerField(widget=forms.HiddenInput()),
+                   'district': forms.CharField(widget=forms.HiddenInput()),
+                   'building': forms.CharField(widget=forms.HiddenInput()),
+                   'evaluate_rent': forms.IntegerField(widget=forms.HiddenInput()),
+                   'street': forms.CharField(widget=forms.HiddenInput())
+                   }
 
     def get_form(self):
         form = super().get_form()
@@ -227,10 +230,13 @@ class SdfSduUpdateForm(forms.ModelForm):
         fields = ['size', 'rent', 'has_contract', 'has_individual_kitchen', 'has_individual_bath',
             'has_exterior_window', 'internal_grading']
 
-        widgets = {'name': forms.IntegerField(widget=forms.HiddenInput()),
+        widgets = {'name': forms.CharField(widget=forms.HiddenInput()),
                    'sdfId_id': forms.IntegerField(widget=forms.HiddenInput()),
-                   'district': forms.IntegerField(widget=forms.HiddenInput()),
-                   'building': forms.IntegerField(widget=forms.HiddenInput())}
+                   'district': forms.CharField(widget=forms.HiddenInput()),
+                   'building': forms.CharField(widget=forms.HiddenInput()),
+                   'evaluate_rent': forms.IntegerField(widget=forms.HiddenInput()),
+                   'street': forms.CharField(widget=forms.HiddenInput())
+                   }
 
     def get_form(self):
         form = super().get_form()

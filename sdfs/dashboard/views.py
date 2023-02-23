@@ -159,6 +159,7 @@ class SdfSduCreateView(generic.CreateView):
         request = self.request
         ctx['district'] = request.GET.get('district')
         ctx['building'] = request.GET.get('building')
+        ctx['street'] = request.GET.get('street')
         return ctx
 
     def form_valid(self, form):
@@ -171,6 +172,7 @@ class SdfSduCreateView(generic.CreateView):
             instance = SdfSdu()
             instance.building = self.request.GET.get('building')
             instance.district = self.request.GET.get('district')
+            instance.street = self.request.GET.get('street')
             instance.sdfId_id = self.kwargs['pk']
             form = SdfSduCreateForm(self.request.POST, instance=instance)
             return form
@@ -189,8 +191,6 @@ class SdfSduUpdateView(generic.UpdateView):
         ctx = {'title': _("Update SDU"), 'form':  super().get_form(self.form_class)}
         if 'pk' in self.kwargs:
             ctx['pk'] = self.kwargs['pk']
-        ctx['district'] = 'district'
-        ctx['building'] = 'building'
         return ctx
 
     def form_valid(self, form):
