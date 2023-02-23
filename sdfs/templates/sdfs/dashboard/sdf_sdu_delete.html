@@ -2,22 +2,22 @@
 {% load i18n %}
 
 {% block title %}
-{% trans "Delete sdf group?" %} | {{ block.super }}
+{% trans "Delete sdf sdu?" %} | {{ block.super }}
 {% endblock %}
 
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'sdfs-dashboard:sdf-group-list' %}">{% trans "Sdf groups" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'sdfs-dashboard:sdf-sdu-list' %}">{% trans "Sdf Sdu" %}</a></li>
         <li class="breadcrumb-item">{{ object.name }}</li>
         <li class="breadcrumb-item active" aria-current="page">{% trans "Delete?" %}</li>
     </ol>
 </nav>
 {% endblock %}
 
-{% block headertext %}
-    {% trans "Delete sdf group?" %}
+{% block headertext %}Sdu
+    {% trans "Delete sdf ?" %}
 {% endblock headertext %}
 
 {% block dashboard_content %}
@@ -25,8 +25,8 @@
     <form method="post">
         {% csrf_token %}
         <div class="form-actions">
-            {% blocktrans with group_name=object.name %}
-            <p>Delete sdf group <strong>{{ group_name }}</strong> - are you sure?</p>
+            {% blocktrans with sdu_name=object.name %}
+            <p>Delete Sdf Sdu Survey Id:  <strong>{{ sdu_name }}</strong> - are you sure?</p>
             {% endblocktrans %}
             <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
             {% trans "or" %}

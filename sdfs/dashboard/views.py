@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from extra_views import CreateWithInlinesView, InlineFormSetFactory, UpdateWithInlinesView
 from oscar.core.loading import get_class, get_classes, get_model
+from django.shortcuts import get_object_or_404
 from django import forms
 
 MapsContextMixin = get_class('sdfs.views', 'MapsContextMixin')
@@ -13,11 +14,12 @@ MapsContextMixin = get_class('sdfs.views', 'MapsContextMixin')
  #OpeningHoursInline,
  #OpeningPeriodForm,
  SdfAddressForm,
- SdfForm) = get_classes('sdfs.dashboard.forms', ('DashboardSdfSearchForm',
+ SdfForm, SdfSduForm) = get_classes('sdfs.dashboard.forms', ('DashboardSdfSearchForm',
                                                      #'OpeningHoursInline',
                                                      #'OpeningPeriodForm',
                                                      'SdfAddressForm',
-                                                     'SdfForm'))
+                                                     'SdfForm',
+                                                     'SdfSduForm'))
 Sdf = get_model('sdfs', 'Sdf')
 SdfSdu = get_model('sdfs', 'SdfSdu')
 SdfGroup = get_model('sdfs', 'SdfGroup')
@@ -161,41 +163,49 @@ class SdfSduListView(generic.ListView):
 
 class SdfSduCreateView(generic.CreateView):
     model = SdfSdu
-    #fields = ['name', 'slug', 'size', 'household_size', 'rent', 'has_contract', 'has_individual_kitchen',
-    fields = ['name', 'size', 'household_size', 'rent', 'has_contract', 'has_individual_kitchen',
-              'has_individual_bath', 'has_exterior_window', 'internal_grading']
+    form_class = SdfSduForm
     template_name = "sdfs/dashboard/sdf_sdu_update.html"
     success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
-    widgets = {"sdfId": forms.HiddenInput()}
+    context_object_name = 'ctx'
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['title'] = _("Create new SDU")
+        ctx = {'title': _("Create new SDU"), 'form':  SdfSduForm}
         if 'pk' in self.kwargs:
             ctx['pk'] = self.kwargs['pk']
+        request = self.request
+        ctx['district'] = request.GET.get('district')
+        ctx['building'] = request.GET.get('building')
         return ctx
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        form.instance.sdfId_id = self.kwargs['pk']
-        messages.success(self.request, _("Sdu created"))
-        return super(SdfSduCreateView, self).form_valid(form)
+        messages.success(self.request, _("Sdf sdu created"))
+        return response
 
     def get_form(self):
-        form = super().get_form()
+        if self.request.POST:
+            instance = SdfSdu()
+            instance.building = self.request.GET.get('building')
+            instance.district = self.request.GET.get('district')
+            instance.sdfId_id = self.kwargs['pk']
+            form = SdfSduForm(self.request.POST, instance=instance)
+
         return form
 
 
-class SdfSduUpdateView(generic.CreateView):
+class SdfSduUpdateView(generic.UpdateView):
     model = SdfSdu
+    form_class = SdfSduForm
     template_name = "sdfs/dashboard/sdf_sdu_update.html"
-    form_class = SdfForm
     success_url = reverse_lazy('sdfs-dashboard:sdf-sdu-list')
+    context_object_name = 'ctx'
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['title'] = self.object.name
-        return ctx
+        ctx = {'title': _("Update SDU"), 'form':  SdfSduForm}
+        if 'pk' in self.kwargs:
+            ctx['pk'] = self.kwargs['pk']
+        ctx['district'] = 'district'
+        ctx['building'] = 'building'
 
     def forms_invalid(self, form, inlines):
         messages.error(
@@ -204,10 +214,15 @@ class SdfSduUpdateView(generic.CreateView):
         return super().forms_invalid(form, inlines)
 
     def forms_valid(self, form, inlines):
+        #form.instance = get_object_or_404(SdfSdu, pk=self.kwargs['pk'])
         msg = render_to_string('sdfs/dashboard/messages/sdu_saved.html',
                                {'sdu': self.object})
         messages.success(self.request, msg, extra_tags='safe')
         return super().forms_valid(form, inlines)
+
+    def get_form(self):
+        form = super().get_form()
+        return form
 
 
 class SdfSduDeleteView(generic.DeleteView):

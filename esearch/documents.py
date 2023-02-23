@@ -17,7 +17,10 @@ class SduDocument(Document):
     class Django:
         model = SdfSdu
         fields = [
+#            'district',
             'size',
-            'household_size',
             'rent',
+            'has_individual_kitchen',
+            'has_individual_bath',
+            'has_exterior_window'
         ]

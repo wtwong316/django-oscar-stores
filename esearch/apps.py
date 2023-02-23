@@ -10,12 +10,10 @@ class EsearchConfig(OscarConfig):
     namespace = 'esearch'
 
     def ready(self):
-        self.SearchSduDocumentView = get_class('esearch.views', 'SearchSduDocumentView')
         self.SearchSduView = get_class('esearch.views', 'SearchSduView')
 
     def get_urls(self):
         urls = [
-            path('', self.SearchSduDocumentView.as_view({'get': 'list'}), name='search-sdu-document-view'),
             path('sdus/', self.SearchSduView.as_view(), name='search-sdu-view')
         ]
         return self.post_process_urls(urls)

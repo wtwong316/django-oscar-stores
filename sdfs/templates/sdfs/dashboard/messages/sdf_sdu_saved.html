@@ -1,0 +1,5 @@
+{% load i18n %}
+{% blocktrans with name=name %}
+<strong>{{ name }}</strong> sdf sdu saved.
+{% endblocktrans %}
+<a href="{% url 'sdfs-dashboard:sdf-sdu-update' pk %}" class="btn btn-warning">{% trans "Edit again" %}</a>

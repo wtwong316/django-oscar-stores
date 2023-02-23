@@ -23,6 +23,8 @@
     <table class="table table-striped table-bordered">
         <tr>
             <th>{% trans "SdfId" %}</th>
+            <th>{% trans "District" %}</th>
+            <th>{% trans "Building" %}</th>
             <th>{% trans "SduId" %}</th>
             <th>{% trans "Survey Id" %}</th>
             <th>{% trans "Size in sqft" %}</th>
@@ -34,13 +36,13 @@
             <th>{% trans "Exterior Window" %}</th>
             <th>{% trans "Internal Grading" %}</th>
             <th>{% trans "Is active" %}</th>
-            <th></th>
+            <th>{% trans "Operation" %}</th>
         </tr>
         {% for sdu in sdu_list %}
         <tr>
-            {% if forloop.first %}
-                <td rowspan="{{ sdu_list.all|length }}">{{ sdu.sdfId_id}}</td>
-            {% endif%}
+            <td>{{ sdu.sdfId_id}}</td>
+            <td>{{ sdu.district}}</td>
+            <td>{{ sdu.building}}</td>
             <td>{{ sdu.id }}</td>
             <td>{{ sdu.name }}</td>
             <td>{{ sdu.size }}</td>
@@ -52,12 +54,11 @@
             <td>{{ sdu.has_exterior_window }}</td>
             <td>{{ sdu.internal_grading }}</td>
             <td>{{ sdu.is_active }}</td>
-            {% if forloop.first %}
-                <td rowspan="{{ sdfs.sdu.all|length }}">
-                    <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdu.pk %}">{% trans "Edit" %}</a>
-                    <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdu.pk %}">{% trans "Delete" %}</a>
-                </td>
-            {% endif%}
+            <td colspan=length>
+                <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdu.pk %}">{% trans "Edit" %}</a>
+                <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdu.pk %}">{% trans "Delete" %}</a>
+            </td>
+
         </tr>
         {% endfor %}
     </table>

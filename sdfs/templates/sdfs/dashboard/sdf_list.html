@@ -113,7 +113,7 @@
                             {% endblock row_actions %}
                         </td>
                         <td>
-                            <a href="{% url 'sdfs-dashboard:sdf-sdu-create' sdf.id %}" class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> {% trans "Create new sdu" %}</a>
+                            <a href="{% url 'sdfs-dashboard:sdf-sdu-create' sdf.id %}?building={{ sdf.address.line3}}&district={{ sdf.address.line6 }}" class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> {% trans "Create new sdu" %}</a>
                         </td>
                     </tr>
                 {% endfor %}

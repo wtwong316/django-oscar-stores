@@ -7,7 +7,7 @@ from oscar.core.loading import get_class, get_model
 
 #OpeningPeriod = get_model('sdfs', 'OpeningPeriod')
 Sdf = get_model('sdfs', 'Sdf')
-
+SdfSdu = get_model('sdfs', 'SdfSdu')
 
 class SdfAddressForm(forms.ModelForm):
 
@@ -205,3 +205,18 @@ class IsOpenForm(forms.Form):
 #            self.data or None,
 #            self.instance,
 #        )
+
+class SdfSduForm(forms.ModelForm):
+    class Meta:
+        model = SdfSdu
+        fields = ['name', 'size', 'rent', 'has_contract', 'has_individual_kitchen', 'has_individual_bath',
+            'has_exterior_window', 'internal_grading']
+
+        widgets = { 'sdfId_id': forms.IntegerField(widget=forms.HiddenInput()),
+                    'district': forms.IntegerField(widget=forms.HiddenInput()),
+                    'building': forms.IntegerField(widget=forms.HiddenInput())}
+
+    def get_form(self):
+        form = super().get_form()
+        return form
+

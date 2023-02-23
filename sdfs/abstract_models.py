@@ -49,17 +49,19 @@ class SdfGroup(models.Model):
 
 
 class SdfSdu(models.Model):
-    name = models.CharField(_('AppId'), max_length=100, unique=True)
+    name = models.CharField(_('調查編號'), max_length=25, unique=True)
+    district = models.CharField(_('行政分區'), max_length=25, unique=False, null=False, default='')
+    building = models.CharField(_('大廈名稱'), max_length=25, unique=False, null=True, default='')
     #slug = models.SlugField(_('Slug'), max_length=100, unique=True)
-    size = models.DecimalField(_('Size in sqft'), decimal_places=2, max_digits=10, default=0.0, null=True)
-    household_size = models.IntegerField(_('Household size'), default=1)
-    rent = models.DecimalField(_('Rent'), decimal_places=2, max_digits=10, default=0.0, null=True)
-    has_contract = models.BooleanField(_('Has contract'), default=False)
-    has_individual_kitchen = models.BooleanField(_('Has individual kitchen'), default=False)
-    has_individual_bath = models.BooleanField(_('Has individual bath'), default=False)
-    has_exterior_window = models.BooleanField(_('Has exterior windows'), default=False)
-    internal_grading = models.IntegerField(_('Internal grading'), default=0)
-    is_active = models.BooleanField(_("Is active"), default=True)
+    size = models.DecimalField(_('面積（平方英尺)'), decimal_places=2, max_digits=10, default=0.0, null=True)
+    household_size = models.IntegerField(_('住户人数'), default=1)
+    rent = models.DecimalField(_('每月租金'), decimal_places=2, max_digits=10, default=0.0, null=True)
+    has_contract = models.BooleanField(_('有租约'), default=False)
+    has_individual_kitchen = models.BooleanField(_('有獨立廚房'), default=False)
+    has_individual_bath = models.BooleanField(_('有獨立浴室'), default=False)
+    has_exterior_window = models.BooleanField(_('有外窗'), default=False)
+    internal_grading = models.IntegerField(_('内部裝修评分'), default=0)
+    is_active = models.BooleanField(_("有效"), default=True)
     sdfId = models.ForeignKey(
         'sdfs.Sdf',
         related_name='Sdf',

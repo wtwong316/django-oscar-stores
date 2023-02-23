@@ -31,13 +31,14 @@
         <h3>{% trans "Sdf Sdu Details" %}</h3>
     </div>
     <div class="card card-body bg-light">
-        {% include 'oscar/dashboard/partials/form_fields.html' %}
-
+        {% block sdf_sdu_details_fields %}
+        {{ form.as_p }}
         <div class="form-actions">
             <button class="btn btn-primary" type="submit">{% trans "Save Sdf Sdu" %}</button>
             {% trans "or" %}
-            <a href="{% url 'sdfs-dashboard:sdf-sdu-create' pk %}">{% trans "cancel" %}</a>
+            <a href="{% url 'sdfs-dashboard:sdf-sdu-update' pk %}">{% trans "cancel" %}</a>
         </div>
+        {% endblock sdf_sdu_details_fields %}
     </div>
 </form>
 {% endblock dashboard_content %}
