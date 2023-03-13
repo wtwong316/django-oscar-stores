@@ -21,15 +21,15 @@
         <input type="submit" value="提交">
     </form>
 
-
+<br/>
 {% if results %}
       <div class="txtCentrado margenSup20 grisDC">
-          <h3>We found {{ count }} result{{ count|pluralize }} for your search </h3>
+          <h3>我們為您的搜索找到了  個結果</h3>
       </div>
-{%elif not search_term %}
-
 {%elif not results %}
-    <p>No results found.</p>
+      <div class="txtCentrado margenSup20 grisDC">
+        <h3>沒有找到細分單位</h3>
+      </div>
 {% endif %}
 {% endblock %}
 

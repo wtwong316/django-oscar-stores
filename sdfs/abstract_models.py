@@ -89,6 +89,10 @@ class SdfSdu(models.Model):
     def __str__(self):
         return self.name
 
+    def sdfId_indexing(self):
+        if self.sdfId is not None:
+            return self.sdfId
+
 
 class Sdf(models.Model):
     name = models.CharField(_('SurveyId'), max_length=100)
