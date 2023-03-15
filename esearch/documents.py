@@ -15,18 +15,21 @@ class SduDocument(Document):
         settings = {'number_of_shards': 1,
                     'number_of_replicas': 0}
 
+    district = fields.KeywordField()
+    street = fields.TextField(
+        fields={'raw': fields.KeywordField()}
+    )
+    building = fields.KeywordField()
+    size = fields.IntegerField()
+    rent = fields.IntegerField()
+    has_individual_kitchen = fields.BooleanField()
+    has_individual_bath = fields.BooleanField()
+    has_exterior_window = fields.BooleanField()
+
     class Django:
         model = SdfSdu
-        fields = [
-            'district',
-            'building',
-            'street',
-            'size',
-            'rent',
-            'has_individual_kitchen',
-            'has_individual_bath',
-            'has_exterior_window'
-        ]
+
+
 
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
@@ -34,9 +37,13 @@ class SduDocument(Document):
         return sdf
 
 
-def search_sdus(district, min_sdu_size, max_rent, has_individual_kitchen, has_individual_bath):
-    query_str = []
-    query_str.append(Q('term', district=district))
+def search_sdus(district, street, building, min_sdu_size, max_rent, has_individual_bath, has_individual_kitchen,
+                has_exterior_window):
+    query_str = [Q('term', district=district)]
+    if len(street) > 0:
+        query_str.append(Q('match', street=street))
+    if len(building) > 0:
+        query_str.append(Q('term', building=building))
     if max_rent > 0:
         query_str.append(Q('range', rent={'lte': max_rent}))
     if min_sdu_size > 0:
@@ -45,7 +52,10 @@ def search_sdus(district, min_sdu_size, max_rent, has_individual_kitchen, has_in
         query_str.append(Q('term', has_individual_kitchen=True))
     if has_individual_bath:
         query_str.append(Q('term', has_individual_bath=True))
+    if has_exterior_window:
+        query_str.append(Q('term', has_exterior_window=True))
 
     q = Q('bool', must=query_str)
-    result = SduDocument.search().query(q).execute()
+    search_request = SduDocument.search()
+    result = search_request.query(q).execute()
     return result

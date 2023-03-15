@@ -22,15 +22,48 @@
     </form>
 
 <br/>
-{% if results %}
+    {% if results %}
       <div class="txtCentrado margenSup20 grisDC">
-          <h3>我們為您的搜索找到了  個結果</h3>
+          <h3>我們為您的搜索找到了 {{len}} 個結果</h3>
+            <form method="post" class="inquiry_table">
+                {% csrf_token %}
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>{% trans "SdfId" %}</th>
+                        <th>{% trans "District" %}</th>
+                        <th>{% trans "Street" %}</th>
+                        <th>{% trans "Building" %}</th>
+                        <th>{% trans "Size in sqft" %}</th>
+                        <th>{% trans "Rent" %}</th>
+                        <th>{% trans "Individual Kitchen" %}</th>
+                        <th>{% trans "Individual Bath" %}</th>
+                        <th>{% trans "Exterior Window" %}</th>
+                    </tr>
+                    {% for sdu in sdus %}
+                    <tr>
+                        <td>{{ sdu.sdfId_id}}</td>
+                        <td>{{ sdu.district}}</td>
+                        <td>{{ sdu.street}}</td>
+                        <td>{{ sdu.building}}</td>
+                        <td>{{ sdu.size }}</td>
+                        <td>{{ sdu.rent }}</td>
+                        <td>{{ sdu.has_individual_kitchen }}</td>
+                        <td>{{ sdu.has_individual_bath }}</td>
+                        <td>{{ sdu.has_exterior_window }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                {% if page_obj %}
+                    {% include "oscar/partials/pagination.html" %}
+                {% endif %}
+            </form>
       </div>
-{%elif not results %}
-      <div class="txtCentrado margenSup20 grisDC">
-        <h3>沒有找到細分單位</h3>
-      </div>
-{% endif %}
+    {%elif not results %}
+          <div class="txtCentrado margenSup20 grisDC">
+            <h3>沒有找到細分單位</h3>
+          </div>
+    {% endif %}
 {% endblock %}
 
 {% block extrascripts %}

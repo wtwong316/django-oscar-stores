@@ -73,6 +73,7 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
+    'compression_middleware.middleware.CompressionMiddleware',
 )
 
 ROOT_URLCONF = 'sandbox.urls'
@@ -231,7 +232,7 @@ OSCAR_DEFAULT_CURRENCY = 'HKD'
 
 # Elasticsearch
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": "localhost:9200/"},
+    "default": {"hosts": "localhost:9200/"}
 }
 
 ELASTICSEARCH_INDEX_NAMES = {

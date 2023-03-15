@@ -4,19 +4,27 @@ from django.db.models import Q
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from oscar.core.loading import get_class, get_model
+from sdfs.utils import DISTRICTS
 
 #OpeningPeriod = get_model('sdfs', 'OpeningPeriod')
 Sdf = get_model('sdfs', 'Sdf')
 SdfSdu = get_model('sdfs', 'SdfSdu')
+Sdf_Address = get_model('sdfs', 'SdfAddress')
+
 
 class SdfAddressForm(forms.ModelForm):
 
     class Meta:
-        model = get_model('sdfs', 'SdfAddress')
+        model = Sdf_Address
         #fields = [
         #    'line1', 'line2', 'line3', 'line4', 'state', 'postcode', 'country']
         fields = [
-            'line1', 'line2', 'line3', 'line4', 'line5', 'line6']
+            'line1', 'line2', 'line3', 'line4', 'line5', 'line6'
+        ]
+
+    def get_form(self):
+        form = super().get_form()
+        return form
 
 
 class SdfForm(forms.ModelForm):

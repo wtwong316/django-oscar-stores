@@ -1,4 +1,4 @@
-#!/media/wai/data/git/django-oscar-stores/venv/bin/python
+#!/data/git/django-oscar-stores/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
