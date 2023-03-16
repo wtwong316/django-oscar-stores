@@ -29,8 +29,6 @@ class SduDocument(Document):
     class Django:
         model = SdfSdu
 
-
-
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
         sdf = super(SduDocument, self).get_queryset().select_related('sdfId')

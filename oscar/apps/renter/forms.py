@@ -104,9 +104,9 @@ class ConfirmPasswordForm(forms.Form):
 class EmailUserCreationForm(forms.ModelForm):
     email = forms.EmailField(label=_('Email address'))
     password1 = forms.CharField(
-        label=_('Password'), widget=forms.PasswordInput)
+        label=_('密碼'), widget=forms.PasswordInput)
     password2 = forms.CharField(
-        label=_('Confirm password'), widget=forms.PasswordInput)
+        label=_('確認密碼'), widget=forms.PasswordInput)
     redirect_url = forms.CharField(
         widget=forms.HiddenInput, required=False)
 

@@ -1,23 +1,23 @@
 {% load i18n %}
 {% load l10n %}
 <br><br>
-<h3>{% trans "SDUs" %}</h3>
+<h3>{% trans "劏房列表" %}</h3>
 <br>
 
 {% if all_sdus %}
     <table class="table table-striped table-bordered">
         <tr>
-            <th>{% trans "SduId" %}</th>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "Size in sqft" %}</th>
-            <th>{% trans "Household Size" %}</th>
-            <th>{% trans "Rent" %}</th>
-            <th>{% trans "Contract" %}</th>
-            <th>{% trans "Individual Kitchen" %}</th>
-            <th>{% trans "Individual Bath" %}</th>
-            <th>{% trans "Exterior Window" %}</th>
-            <th>{% trans "Internal Grading" %}</th>
-            <th>{% trans "Is active" %}</th>
+            <th>{% trans "劏房編號" %}</th>
+            <th>{% trans "調查編號" %}</th>
+            <th>{% trans "面積（平方英尺)" %}</th>
+            <th>{% trans "住户人数" %}</th>
+            <th>{% trans "每月租金" %}</th>
+            <th>{% trans "有租约" %}</th>
+            <th>{% trans "有獨立廚房" %}</th>
+            <th>{% trans "有獨立浴室" %}</th>
+            <th>{% trans "有外窗" %}</th>
+            <th>{% trans "内部裝修评分 (1:最好)" %}</th>
+            <th>{% trans "有效" %}</th>
         </tr>
         {% for sdu in all_sdus %}
          <tr>
@@ -26,16 +26,16 @@
                 <td>{{ sdu.size }}</td>
                 <td>{{ sdu.household_size }}</td>
                 <td>{{ sdu.rent }}</td>
-                <td>{{ sdu.has_contract }}</td>
-                <td>{{ sdu.has_individual_kitchen }}</td>
-                <td>{{ sdu.has_individual_bath }}</td>
-                <td>{{ sdu.has_exterior_window }}</td>
+                <td>{% if sdu.has_contract %} 有 {% else %} 沒有 {% endif %}</td>
+                <td>{% if sdu.has_individual_kitchen %} 有 {% else %} 沒有 {% endif %}</td>
+                <td>{% if sdu.has_individual_bath %} 有 {% else %} 沒有 {% endif %}</td>
+                <td>{% if sdu.has_exterior_window %} 有 {% else %} 沒有 {% endif %}</td>
                 <td>{{ sdu.internal_grading }}</td>
-                <td>{{ sdu.is_active }}</td>
+                <td>{% if sdu.is_active %} 有 {% else %} 沒有 {% endif %}</td>
          </tr>
         {% endfor %}
     </table>
 {% else %}
     <br>
-    {% trans "No sdf Sdus found." %}
+    {% trans "沒有找到所属的劏房" %}
 {% endif %}

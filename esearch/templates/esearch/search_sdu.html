@@ -29,15 +29,15 @@
                 {% csrf_token %}
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th>{% trans "SdfId" %}</th>
-                        <th>{% trans "District" %}</th>
-                        <th>{% trans "Street" %}</th>
-                        <th>{% trans "Building" %}</th>
-                        <th>{% trans "Size in sqft" %}</th>
-                        <th>{% trans "Rent" %}</th>
-                        <th>{% trans "Individual Kitchen" %}</th>
-                        <th>{% trans "Individual Bath" %}</th>
-                        <th>{% trans "Exterior Window" %}</th>
+                        <th>{% trans "劏房單位編號" %}</th>
+                        <th>{% trans "行政分區" %}</th>
+                        <th>{% trans "街道" %}</th>
+                        <th>{% trans "大廈名稱" %}</th>
+                        <th>{% trans "面積（平方英尺)" %}</th>
+                        <th>{% trans "每月租金" %}</th>
+                        <th>{% trans "有獨立廚房" %}</th>
+                        <th>{% trans "有獨立浴室" %}</th>
+                        <th>{% trans "有外窗" %}</th>
                     </tr>
                     {% for sdu in sdus %}
                     <tr>
@@ -61,7 +61,7 @@
       </div>
     {%elif not results %}
           <div class="txtCentrado margenSup20 grisDC">
-            <h3>沒有找到細分單位</h3>
+            <h3>沒有找到合適的劏房</h3>
           </div>
     {% endif %}
 {% endblock %}

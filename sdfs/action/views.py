@@ -18,7 +18,7 @@ class SduEstimatorView(generic.ListView):
     success_url = "."
 
     def get(self, request):
-        context = {'form': self.form_class()}
+        context = {'form': self.form_class(), 'results': 0}
         return render(request, self.template_name, context)
 
     def form_valid(self, form):
@@ -28,15 +28,19 @@ class SduEstimatorView(generic.ListView):
         form = SduEstimateForm(request.POST)
         context = {'form': form}
         value = rent_estimation()
-        if value > 0:
-            context['results'] = True
+        rent = 0
+        if len(request.POST.get('rent')) > 0:
+            rent = int(request.POST.get('rent'))
+
+        if rent > 0:
+            context['results'] = 1
             context['value'] = value
             context['compare'] = 0
-            rent = int(request.POST.get('rent'))
             if value > rent:
                 context['compare'] = 1
             elif value < rent:
                 context['compare'] = -1
         else:
-            context['results'] = False
+            context['value'] = value
+            context['results'] = 2
         return render(request, self.template_name, context)

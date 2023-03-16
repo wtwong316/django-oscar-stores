@@ -144,6 +144,9 @@ class SdfSduListView(generic.ListView):
         ctx['title'] = _("List SDU")
         return ctx
 
+    def get_form(self, **kwargs):
+        return super().get_form(self.form_class)
+
 
 class SdfSduCreateView(generic.CreateView):
     model = SdfSdu

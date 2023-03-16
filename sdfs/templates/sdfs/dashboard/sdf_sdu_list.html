@@ -22,22 +22,22 @@
     {% csrf_token %}
     <table class="table table-striped table-bordered">
         <tr>
-            <th>{% trans "SdfId" %}</th>
-            <th>{% trans "District" %}</th>
-            <th>{% trans "Street" %}</th>
-            <th>{% trans "Building" %}</th>
-            <th>{% trans "SduId" %}</th>
-            <th>{% trans "Survey Id" %}</th>
-            <th>{% trans "Size in sqft" %}</th>
-            <th>{% trans "Household Size" %}</th>
-            <th>{% trans "Rent" %}</th>
+            <th>{% trans "劏房單位編號" %}</th>
+            <th>{% trans "行政分區" %}</th>
+            <th>{% trans "街道" %}</th>
+            <th>{% trans "大廈名稱" %}</th>
+            <th>{% trans "劏房編號" %}</th>
+            <th>{% trans "調查編號" %}</th>
+            <th>{% trans "面積（平方英尺)" %}</th>
+            <th>{% trans "住户人数" %}</th>
+            <th>{% trans "每月租金" %}</th>
             <th>{% trans "Contract" %}</th>
-            <th>{% trans "Individual Kitchen" %}</th>
-            <th>{% trans "Individual Bath" %}</th>
-            <th>{% trans "Exterior Window" %}</th>
-            <th>{% trans "Internal Grading" %}</th>
-            <th>{% trans "Is active" %}</th>
-            <th>{% trans "Operation" %}</th>
+            <th>{% trans "有獨立廚房" %}</th>
+            <th>{% trans "有獨立浴室" %}</th>
+            <th>{% trans "有外窗" %}</th>
+            <th>{% trans "内部裝修评分" %}</th>
+            <th>{% trans "有效" %}</th>
+            <th>{% trans "操作" %}</th>
         </tr>
         {% for sdu in sdu_list %}
         <tr>
@@ -50,12 +50,12 @@
             <td>{{ sdu.size }}</td>
             <td>{{ sdu.household_size }}</td>
             <td>{{ sdu.rent }}</td>
-            <td>{{ sdu.has_contract }}</td>
-            <td>{{ sdu.has_individual_kitchen }}</td>
-            <td>{{ sdu.has_individual_bath }}</td>
-            <td>{{ sdu.has_exterior_window }}</td>
+            <td>{% if sdu.has_contract %} 有 {% else %} 沒有 {% endif %}</td>
+            <td>{% if sdu.has_individual_kitchen %} 有 {% else %} 沒有 {% endif %}</td>
+            <td>{% if sdu.has_individual_bath %} 有 {% else %} 沒有 {% endif %}</td>
+            <td>{% if sdu.has_exterior_window %} 有 {% else %} 沒有 {% endif %}</td>
             <td>{{ sdu.internal_grading }}</td>
-            <td>{{ sdu.is_active }}</td>
+            <td>{% if sdu.is_active %} 有 {% else %} 沒有 {% endif %}</td>
             <td colspan=length>
                 <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdu.pk %}">{% trans "Edit" %}</a>
                 <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdu.pk %}">{% trans "Delete" %}</a>

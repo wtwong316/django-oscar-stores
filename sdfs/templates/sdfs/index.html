@@ -34,7 +34,7 @@
         {% if sdf_list %}
         <div class="col-md-3 view-sdfs">
             <form id="sdf-search" method="get">
-                <button type="button" class="btn btn-primary btn-block" data-behaviours="geo-location"><i class="fas fa-map-marker-alt"></i> {% trans "Use my location" %}</button>
+                <button type="button" class="btn btn-primary btn-block" data-behaviours="geo-location"><i class="fas fa-map-marker-alt"></i> {% trans "使用當前的位置" %}</button>
                 <header class="divide-header">
                     <em>-</em> <span>{% trans "or" %}</span> <em>-</em>
                 </header>
@@ -61,7 +61,7 @@
                 -->
             </form>
 
-                <h3>All sdfs</h3>
+                <h3>所有劏房單位</h3>
                     <ul class="nav flex-column">
                 {% for sdf in sdf_list %}
                 <li class="nav-item">
@@ -84,7 +84,7 @@
                         {% if sdf.distance %}
                             <span class="text-muted small">{{ sdf.distance.km|floatformat:2 }} km</span>
                         {% endif %}
-                        <a href="{% url 'sdfs:detail' sdf.slug sdf.id %}" class="btn btn-primary float-right">{% trans "View sdf details" %}</a></h4>
+                        <a href="{% url 'sdfs:detail' sdf.slug sdf.id %}" class="btn btn-primary float-right">{% trans "查看劏房詳情" %}</a></h4>
                     </div>
                     <div class="row">
                         <div class="col-md-4">

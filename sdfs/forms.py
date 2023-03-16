@@ -16,7 +16,7 @@ class SdfSearchForm(forms.Form):
         required=False,
         widget=forms.TextInput(
             attrs={
-                'placeholder': _("Enter your postcode or address..."),
+                'placeholder': _("輸入地址..."),
                 'class': 'search-query',
             }))
     group = forms.ModelChoiceField(

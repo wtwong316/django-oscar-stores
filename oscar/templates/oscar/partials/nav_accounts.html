@@ -34,13 +34,13 @@
                             {# If user has new notifications - we change account link to go to inbox #}
                             <a href="{% url 'renter:notifications-inbox' %}" class="nav-link mt-2 mt-lg-0">
                                 <i class="far fa-user mr-2"></i>
-                                {% trans "Account" %}
+                                {% trans "帳戶" %}
                                 <span class="badge badge-warning">{{ num_unread_notifications }}</span>
                             </a>
                         {% else %}
                             <a href="{% url 'renter:summary' %}" class="nav-link mt-2 mt-lg-0">
                                 <i class="far fa-user mr-2"></i>
-                                {% trans "Account" %}
+                                {% trans "帳戶" %}
                             </a>
                         {% endif %}
                     </li>
@@ -55,7 +55,7 @@
                     <li class="nav-item mr-2">
                         <a id="logout_link" href="{% url 'renter:logout' %}" class="nav-link">
                             <i class="fas fa-sign-out-alt mr-2"></i>
-                            {% trans "Logout" %}
+                            {% trans "登出" %}
                         </a>
                     </li>
                 {% endblock %}
@@ -63,7 +63,7 @@
                     <li class="nav-item mr-2">
                         <a id="login_link" href="{% url 'renter:login' %}" class="nav-link">
                             <i class="fas fa-sign-in-alt mr-2"></i>
-                            {% trans "Login or register" %}
+                            {% trans "登錄 或 註冊" %}
                         </a>
                     </li>
                 {% endif %}

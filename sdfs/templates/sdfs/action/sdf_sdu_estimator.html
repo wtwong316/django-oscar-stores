@@ -21,18 +21,18 @@
         <input type="submit" value="提交">
     </form>
     <br/>
-    {% if results  %}
+    {% if results == 1  %}
           <div class="txtCentrado margenSup20 grisDC">
               <h3>估计租金每月約港元 $ {{ value }} </h3>
               {% if compare > 0  %}
-                <h3>估计租金高於給定的金額</h3>
+                <h3>估计租金高於輸入的金額</h3>
               {% elif compare < 0 %}
-                <h3>估计租金低於給定的金額</h3>
+                <h3>估计租金低於輸入的金額</h3>
               {% else %}
-                <h3>估计租金和給定的金額相同</h3>
+                <h3>估计租金和輸入的金額相同</h3>
               {% endif %}
           </div>
-    {% else %}
+    {% elif results == 2 %}
           <div class="txtCentrado margenSup20 grisDC">
             <h3>無法估計租金金額</h3>
           </div>
