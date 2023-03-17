@@ -20,3 +20,4 @@ settings_local.py
 /venv/
 venv/
 **/venv/
+venv/*
