@@ -20,7 +20,7 @@ DATABASES = {
         'NAME': 'oscar_stores',
         'USER': 'wai_takwong',
         'PASSWORD': 'wai_takwong',
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': 5432,
     }
 }
@@ -73,7 +73,6 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
-    'compression_middleware.middleware.CompressionMiddleware',
 )
 
 ROOT_URLCONF = 'sandbox.urls'

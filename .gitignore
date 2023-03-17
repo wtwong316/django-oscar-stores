@@ -17,7 +17,10 @@ sandbox/public/media/uploads
 sandbox/public/media/cache
 
 settings_local.py
+<<<<<<< HEAD
 /venv/
 venv/
 **/venv/
+=======
+>>>>>>> 4c9077e (fix)
 venv/*
