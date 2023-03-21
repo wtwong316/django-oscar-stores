@@ -4,15 +4,15 @@
 <h3>{% trans "Address" %}</h3>
 <address data-name="{{ sdf.name }}" data-lat="{{ sdf.location.y|unlocalize }}" data-lng="{{ sdf.location.x|unlocalize }}">
     <p>
-        {% trans "Street name: " %} {{ sdf.address.line1|wordwrap:20 }}<br />
+        {% trans "街道: " %} {{ sdf.address.line1|wordwrap:20 }}<br />
         {% if sdf.address.line2 %}
-            {% trans "Street number: " %} {{ sdf.address.line2|wordwrap:20 }}<br />
+            {% trans "號碼: " %} {{ sdf.address.line2|wordwrap:20 }}<br />
         {% endif %}
         {% if sdf.address.line3 %}
-            {% trans "Building: " %} {{ sdf.address.line3|wordwrap:20 }}<br />
+            {% trans "大廈名稱: " %} {{ sdf.address.line3|wordwrap:20 }}<br />
         {% endif %}
         {% if sdf.address.line4 %}
-            {% trans "Floor: " %} {{ sdf.address.line4|wordwrap:20 }}<br />
+            {% trans "樓層: " %} {{ sdf.address.line4|wordwrap:20 }}<br />
         {% endif %}
         <!--
         {% if sdf.address.line5 %}
@@ -20,7 +20,7 @@
         {% endif %}
         -->
         {% if sdf.address.line6 %}
-            {% trans "District: " %} {{ sdf.address.line6|wordwrap:20 }}<br />
+            {% trans "行政分區: " %} {{ sdf.address.line6|wordwrap:20 }}<br />
         {% endif %}
         {% if sdf.address.line7 %}
             {{ sdf.address.line7|wordwrap:20 }}<br />

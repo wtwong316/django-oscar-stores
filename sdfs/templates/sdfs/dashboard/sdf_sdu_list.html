@@ -27,11 +27,11 @@
             <th>{% trans "街道" %}</th>
             <th>{% trans "大廈名稱" %}</th>
             <th>{% trans "劏房編號" %}</th>
-            <th>{% trans "調查編號" %}</th>
+            <th>{% trans "劏房調查編號" %}</th>
             <th>{% trans "面積（平方英尺)" %}</th>
             <th>{% trans "住户人数" %}</th>
             <th>{% trans "每月租金" %}</th>
-            <th>{% trans "Contract" %}</th>
+            <th>{% trans "租約" %}</th>
             <th>{% trans "有獨立廚房" %}</th>
             <th>{% trans "有獨立浴室" %}</th>
             <th>{% trans "有外窗" %}</th>
@@ -41,7 +41,7 @@
         </tr>
         {% for sdu in sdu_list %}
         <tr>
-            <td>{{ sdu.sdfId_id}}</td>
+            <th><a href="{% url 'sdfs:detail' sdu.sdfId_id %}">{{ sdu.sdfId_id }}</a></th>
             <td>{{ sdu.district}}</td>
             <td>{{ sdu.street}}</td>
             <td>{{ sdu.building}}</td>
@@ -57,8 +57,8 @@
             <td>{{ sdu.internal_grading }}</td>
             <td>{% if sdu.is_active %} 有 {% else %} 沒有 {% endif %}</td>
             <td colspan=length>
-                <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdu.pk %}">{% trans "Edit" %}</a>
-                <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdu.pk %}">{% trans "Delete" %}</a>
+                <a class="btn btn-info" href="{% url 'sdfs-dashboard:sdf-sdu-update' sdu.pk %}">{% trans "修改" %}</a>
+                <a class="btn btn-danger" href="{% url 'sdfs-dashboard:sdf-sdu-delete' sdu.pk %}">{% trans "刪除" %}</a>
             </td>
 
         </tr>

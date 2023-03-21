@@ -153,8 +153,7 @@ class Sdf(models.Model):
     #    return self.name
 
     def get_absolute_url(self):
-        return reverse('sdfs:detail', kwargs={'dummyslug': self.slug,
-                                                'pk': self.pk})
+        return reverse('sdfs:detail', kwargs={'pk': self.pk})
 
     #@property
     #def has_contact_details(self):

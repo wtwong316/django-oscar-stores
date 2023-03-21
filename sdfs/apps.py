@@ -20,7 +20,7 @@ class SdfsConfig(OscarConfig):
     def get_urls(self):
         urls = [
             path('', self.list_view.as_view(), name='index'),
-            path('<slug:dummyslug>/<int:pk>/', self.detail_view.as_view(), name='detail'),
+            path('<int:pk>/', self.detail_view.as_view(), name='detail'),
         ]
         return self.post_process_urls(urls)
 

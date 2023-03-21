@@ -65,7 +65,7 @@
                     <ul class="nav flex-column">
                 {% for sdf in sdf_list %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'sdfs:detail' sdf.slug sdf.id %}">
+                    <a class="nav-link" href="{% url 'sdfs:detail' sdf.id %}">
                         {{ sdf.id }}
                     </a>
                 </li>
@@ -84,7 +84,7 @@
                         {% if sdf.distance %}
                             <span class="text-muted small">{{ sdf.distance.km|floatformat:2 }} km</span>
                         {% endif %}
-                        <a href="{% url 'sdfs:detail' sdf.slug sdf.id %}" class="btn btn-primary float-right">{% trans "查看劏房詳情" %}</a></h4>
+                        <a href="{% url 'sdfs:detail' sdf.id %}" class="btn btn-primary float-right">{% trans "查看劏房詳情" %}</a></h4>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
