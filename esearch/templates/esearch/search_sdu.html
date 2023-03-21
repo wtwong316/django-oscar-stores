@@ -47,9 +47,9 @@
                         <td>{{ sdu.building}}</td>
                         <td>{{ sdu.size }}</td>
                         <td>{{ sdu.rent }}</td>
-                        <td>{{ sdu.has_individual_kitchen }}</td>
-                        <td>{{ sdu.has_individual_bath }}</td>
-                        <td>{{ sdu.has_exterior_window }}</td>
+                        <td>{% if sdu.has_individual_kitchen %} 有 {% else %} 沒有 {% endif %}</td>
+                        <td>{% if sdu.has_individual_bath %} 有 {% else %} 沒有 {% endif %}</td>
+                        <td>{% if sdu.has_exterior_window %} 有 {% else %} 沒有 {% endif %}</td>
                     </tr>
                     {% endfor %}
                 </table>

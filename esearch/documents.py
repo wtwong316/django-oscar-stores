@@ -16,9 +16,7 @@ class SduDocument(Document):
                     'number_of_replicas': 0}
 
     district = fields.KeywordField()
-    street = fields.TextField(
-        fields={'raw': fields.KeywordField()}
-    )
+    street = fields.KeywordField()
     building = fields.KeywordField()
     size = fields.IntegerField()
     rent = fields.IntegerField()
