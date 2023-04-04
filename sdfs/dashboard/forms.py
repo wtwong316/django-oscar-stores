@@ -91,8 +91,8 @@ class SdfForm(forms.ModelForm):
 
 
 class DashboardSdfSearchForm(forms.Form):
-    name = forms.CharField(label=_('SurveyId'), required=False)
-    address = forms.CharField(label=_('Address'), required=False)
+    name = forms.CharField(label=_('調查編號'), required=False)
+    address = forms.CharField(label=_('地址'), required=False)
 
     def is_empty(self):
         d = getattr(self, 'cleaned_data', {})

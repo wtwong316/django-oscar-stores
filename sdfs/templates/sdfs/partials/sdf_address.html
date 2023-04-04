@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load l10n %}
 
-<h3>{% trans "Address" %}</h3>
+<h3>{% trans "地址" %}</h3>
 <address data-name="{{ sdf.name }}" data-lat="{{ sdf.location.y|unlocalize }}" data-lng="{{ sdf.location.x|unlocalize }}">
     <p>
         {% trans "街道: " %} {{ sdf.address.line1|wordwrap:20 }}<br />
